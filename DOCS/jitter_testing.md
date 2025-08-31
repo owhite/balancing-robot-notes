@@ -66,6 +66,10 @@ The result is here:
   - **Jitter histogram** (distribution shape)
   - **Jitter violin plot** (spread + density)
 
+An example:
+
+<img src="plot1.png" alt="Plot result" width="400"/>
+
 ---
 
 ### ✅ Outcome
