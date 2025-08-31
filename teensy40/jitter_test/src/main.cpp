@@ -3,15 +3,24 @@
 // - Outputs NDJSON lines: seq, t_us, period_us, err_us (period - target).
 // - No printing in ISR; ISR just records cycle counter timestamps.
 
+// Teensy 4.x: Period / jitter measurement from a square-wave input pin.
+// - Connect your square wave to PIN_IN (GND common).
+// - Outputs NDJSON lines: seq, t_us, period_us, err_us (period - target).
+// - ISR is minimal: just timestamp with cycle counter.
+
 #include <Arduino.h>
+#include "imxrt.h"   // Teensy low-level register access
+
+#define ARM_DWT_CTRL_CYCCNTENA (1 << 0)
+
 
 // === Config ===
-const int PIN_IN         = 3;        // any interrupt-capable pin
-const uint32_t TARGET_HZ = 1000;     // expected frequency (for "err" calc)
-const uint32_t LOG_DECIM = 1;        // log every Nth edge (1 = every edge)
+const int PIN_IN         = 9;        // pin 9 is interrupt-capable
+const uint32_t TARGET_HZ = 20000;    // expected frequency (fastLoop/2)
+const uint32_t LOG_DECIM = 1;        // log every Nth edge
 
-// === Ring buffer for ISR->main transfer ===
-constexpr size_t RB_CAP = 512;       // power-of-two is convenient but not required
+// === Ring buffer ===
+constexpr size_t RB_CAP = 512;
 volatile uint32_t rb[RB_CAP];
 volatile size_t rb_head = 0, rb_tail = 0, rb_drops = 0;
 volatile uint32_t edge_seq = 0;
@@ -30,21 +39,26 @@ static inline bool rb_pop(uint32_t &out) {
   return true;
 }
 
-// === DWT cycle counter ===
+#define ARM_DWT_CTRL_CYCCNTENA (1 << 0)
+
 static inline void dwt_enable() {
-  CoreDebug->DEMCR |= CoreDebug_DEMCR_TRCENA_Msk;
-  DWT->CYCCNT = 0;
-  DWT->CTRL  |= DWT_CTRL_CYCCNTENA_Msk;
+  ARM_DEMCR     |= ARM_DEMCR_TRCENA;     // enable DWT/ITM
+  ARM_DWT_CYCCNT = 0;                    // reset counter
+  ARM_DWT_CTRL  |= ARM_DWT_CTRL_CYCCNTENA; // enable cycle counter (bit 0)
+}
+
+static inline uint32_t dwt_get() {
+  return ARM_DWT_CYCCNT;
 }
 
 // === ISR ===
-void IRAM_ATTR onRise() {
+void onRise() {
   static uint32_t div = 0;
-  uint32_t cyc = DWT->CYCCNT;                // timestamp this edge
+  uint32_t cyc = dwt_get();
   if (++div >= LOG_DECIM) {
     div = 0;
-    rb_push_isr(cyc);                        // push for main loop
-    edge_seq++;                              // monotonic (debug/stat)
+    rb_push_isr(cyc);
+    edge_seq++;
   }
 }
 
@@ -55,7 +69,6 @@ void setup() {
   pinMode(PIN_IN, INPUT_PULLDOWN);
   dwt_enable();
 
-  // Attach fast edge interrupt
   attachInterrupt(digitalPinToInterrupt(PIN_IN), onRise, RISING);
 
   Serial.printf("{\"msg\":\"teensy_period_logger_start\",\"pin\":%d,\"target_hz\":%lu}\n",
@@ -70,13 +83,11 @@ void loop() {
   uint32_t cyc;
   while (rb_pop(cyc)) {
     if (have_prev) {
-      uint32_t dcyc = cyc - prev_cyc; // handles wrap-around naturally for 32-bit counter
-      // Convert cycles -> microseconds
+      uint32_t dcyc = cyc - prev_cyc;
       double period_us = (double)dcyc * 1e6 / (double)F_CPU_ACTUAL;
       double target_us = 1e6 / (double)TARGET_HZ;
       double err_us    = period_us - target_us;
 
-      // NDJSON line, easy to parse on host
       Serial.printf(
         "{\"seq\":%lu,\"t_us\":%.3f,\"period_us\":%.3f,\"target_us\":%.3f,\"err_us\":%.3f}\n",
         (unsigned long)(++seq),
@@ -88,7 +99,6 @@ void loop() {
     have_prev = true;
   }
 
-  // optional: once per second, report ISR drops
   static uint32_t last_ms = 0;
   if (millis() - last_ms > 1000) {
     last_ms = millis();
