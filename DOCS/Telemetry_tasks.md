@@ -1,6 +1,6 @@
 # Balancing Robot Telemetry Checklist
 
-This checklist outlines staged plotting and logging goals for developing a Teensy + ESP32 balancing robot.  
+This checklist outlines staged plotting and logging goals for developing a Teensy + ESP32 balancing robot.
 Stages progress from low-level comms timing to full closed-loop balancing performance.
 
 ---
