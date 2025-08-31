@@ -66,7 +66,7 @@ The result is here:
   - **Jitter histogram** (distribution shape)
   - **Jitter violin plot** (spread + density)
 
-An example:
+Typical result showing there is a very small amount of fastLoop() delays:
 
 <img src="plot1.png" alt="Plot result" width="400"/>
 
