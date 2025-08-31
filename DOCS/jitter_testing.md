@@ -24,13 +24,14 @@ static inline void jit_toggle(void) {  GPIOB->ODR ^= (1U << 5); }
 
 Then with MESC_Firmware/MESC_Common/Src/MESCfoc.c
 
-add this into the end of fastLoop()
+add this into the end of **fastLoop()**
 
 ```c
 static inline void jit_toggle(void) {  GPIOB->ODR ^= (1U << 5); }
 ```
 
-The result is here
+The result is here:
+
 <img src="scope1.png" alt="Block diagram" width="400"/>
 
 ---
