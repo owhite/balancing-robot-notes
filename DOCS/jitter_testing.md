@@ -34,8 +34,6 @@ The result is here:
 
 <img src="scope1.png" alt="Block diagram" width="400"/>
 
----
-
 ### Result:
 - **Each toggle = one call to `fastLoop()`**, so:
   - Square wave frequency = half the loop frequency.
