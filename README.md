@@ -61,6 +61,7 @@
 ## NEEDS WORK
 
 * Not great design w/ DC-DC conversion from high voltage VBat
+* replace out the IMU for a ICM-42688-P
 
 ## VERSIONS
 
