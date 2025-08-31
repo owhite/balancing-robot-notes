@@ -41,7 +41,7 @@ Put a scope on PB5 and get this:
 
 ---
 
-### 2. Capturing with Teensy 4.0
+### 2. Measure the output with the Teensy 4.0
 - Connected ESC test pin → **Teensy pin 9** (interrupt-capable).
 - On the brain board this is the PWM in header for reading an RC transmitter
 - Teensy runs an **ISR on rising edges**:
