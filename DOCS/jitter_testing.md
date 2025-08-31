@@ -30,7 +30,7 @@ add this into the end of **fastLoop()**
 static inline void jit_toggle(void) {  GPIOB->ODR ^= (1U << 5); }
 ```
 
-The result is here:
+Put a scope on PB5 and get this:
 
 <img src="scope1.png" alt="Block diagram" width="400"/>
 
