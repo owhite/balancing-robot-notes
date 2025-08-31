@@ -75,3 +75,4 @@ The result is here:
 - Jitter measured in **sub-µs range**, with only rare small spikes.
 - Demonstrates loop timing is stable enough for deterministic FOC.
 - Workflow (ESC pin toggle → Teensy capture → Python plots) provides a **portable jitter analyzer** for real-time firmware validation.
+- This will be useful to test if other changes to MESC code have a negative impact
