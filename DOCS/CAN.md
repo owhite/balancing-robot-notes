@@ -13,27 +13,37 @@
 
 ## Why 500 Hz (or 1 kHz) Makes Sense
 - 2 kHz sampling in a classic LQR balancing system ([Park et al.](https://link.springer.com/article/10.1007/s10015-011-0897-9?utm_source=chatgpt.com)) establishes an upper benchmark—suggesting that balance control benefits from high-frequency updates.
-  - See also: [Ref1](https://indusedu.org/pdfs/IJREISS/IJREISS_3094_97729.pdf?utm_source=chatgpt.com) and [Ref2](https://www.mdpi.com/1424-8220/25/4/1056?utm_source=chatgpt.com)
+  - See also: [Ref 1](https://indusedu.org/pdfs/IJREISS/IJREISS_3094_97729.pdf?utm_source=chatgpt.com) and [Ref 2](https://www.mdpi.com/1424-8220/25/4/1056?utm_source=chatgpt.com)
 - Running at 500–1000 Hz provides plenty of bandwidth to implement LQR-based stabilization effectively—while being manageable for embedded systems like Teensy + ESCs.
+- For now let's settle on 500Hz
 
-## There already is a telemetry-plane (slow, ~10–50 Hz)
+## MESC has telemetry-plane (slow, ~10–50 Hz)
 - Useful for monitoring/logging: Vbus, Ibus, eHz, Idq/Vdq, state, etc.
 - Will not be used for balancing
 - MESC “fast” telemetry is actually ~10 Hz (every 100 ms)
-- Not for stabilization; too slow for 1 kHz balancing.
+- Not for stabilization; too slow for 500 Hz balancing.
+
+## MESC receives CAN commands
+- MESC already spawns `TASK_CAN_rx` at high priority (`osPriorityAboveNormal`) to process incoming frames.
+- Torque setpoint commands are mapped to CAN_ID_IQREQ, which updates `_motor->FOC.Idq_req.q`.
+- `_motor->FOC.Idq_req.q` is a signed float:
+  - Positive → forward torque
+  - Negative → reverse torque
+- FOC loop (20 kHz) consumes this value each cycle; if no new frame arrives, it reuses the last command.
+- Teensy should send a new command per 500 Hz control tick, ensuring ESC always has a fresh reference.
 
 ## Bus Load Reality Check (CAN 2.0 @ 1 Mb/s)
 - 2 ESCs × 1 kHz commands (~128 b per frame) ≈ 256 kb/s.
 - 2 ESCs × 1 kHz POS/VEL ≈ 256 kb/s.
 - Total ≈ 50% bus load (before additional telemetry). At 500 Hz POS/VEL, ≈ 25%.
 
-## Commands vs Telemetry (Priority)
-- Commands: highest priority, periodic/event-driven; send right after compute.
+## Priorities: Commands vs Telemetry
+- **Commands:** highest priority, periodic/event-driven; send right after compute.
   - Coalesce (latest-wins) if back-pressured; never block.
-- Telemetry: lower priority, best-effort; okay to drop when bus busy.
-- Fast POS/VEL: own tiny task on ESC; independent of slow telemetry.
+- **Telemetry:* lower priority, best-effort; okay to drop when bus busy.
+- **Fast POS/VEL:** separate tiny task on ESC; independent of slow telemetry.
 
-# Inserting CAN code into MESC
+# Inserting control-plane CAN code into MESC
 ## From looking at `MESC_F405RG/MESC_F405RG.ioc`:
 - PWM frequency = ~41 kHz
 - MESC_ADC_IRQ_handler() execution rate = ~82 kHz
@@ -128,15 +138,6 @@ void TASK_CAN_telemetry_posvel(TASK_CAN_handle *handle) {
 #endif
 ```
 
-## Receiving CAN commands from Teensy
-- MESC already spawns `TASK_CAN_rx` at high priority (`osPriorityAboveNormal`) to process incoming frames.
-- Torque setpoint commands are mapped to CAN_ID_IQREQ, which updates `_motor->FOC.Idq_req.q`.
-- `_motor->FOC.Idq_req.q` is a signed float:
-  - Positive → forward torque
-  - Negative → reverse torque
-- FOC loop (82 kHz) consumes this value each cycle; if no new frame arrives, it reuses the last command.
-- Teensy should send one new command per 1 kHz control tick, ensuring ESC always has a fresh reference.
-
 # Teensy side considerations
 ## Teensy Architecture (not using RTOS)
 - Timing & Priority
@@ -168,7 +169,7 @@ static inline void mesc_unpack_id(uint32_t id, uint16_t &msg, uint8_t &snd, uint
 }
 ```
 
-### Key IDs
+### Important CAN Key IDs
 - Existing telemetry (slow): **CAN_ID_SPEED**, **CAN_ID_BUS_VOLT_CURR**, **CAN_ID_MOTOR_CURRENT**, **CAN_ID_MOTOR_VOLTAGE**, **CAN_ID_ADC1_2_REQ**, **CAN_ID_STATUS**.
 - Control/utility: **CAN_ID_PING** (8-byte ASCII name, ~1 Hz), **CAN_ID_CONNECT**, **CAN_ID_TERMINAL**.
 - New (proposed): **CAN_ID_POSVEL** (8 bytes) → pos, vel at 500–1000 Hz.
