@@ -3,6 +3,7 @@ import serial
 import json
 import matplotlib.pyplot as plt
 from collections import deque
+import numpy as np
 
 # === Config ===
 if len(sys.argv) < 2:
@@ -21,24 +22,45 @@ period_buf = deque(maxlen=WINDOW)
 err_buf    = deque(maxlen=WINDOW)
 
 plt.ion()
-fig, (ax1, ax2, ax3) = plt.subplots(3, 1, figsize=(10, 10))
+fig, (ax1, ax2, ax3) = plt.subplots(3, 1, figsize=(12, 10))
+# Leave room on the right for sidebar, and add vertical spacing for titles
+fig.subplots_adjust(right=0.75, hspace=0.6, top=0.92, bottom=0.08)
 
 # --- Time series plots ---
 ln1, = ax1.plot([], [], lw=1)
-ax1.set_title("Period (µs)")
+ax1.set_title("Period (µs)", fontsize=12, pad=12)
 ax1.set_xlabel("Sample")
 ax1.set_ylabel("Period [µs]")
 
 ln2, = ax2.plot([], [], lw=1, color="red")
-ax2.set_title("Jitter (Error vs Target)")
+ax2.set_title("Jitter (Error vs Target)", fontsize=12, pad=12)
 ax2.set_xlabel("Sample")
 ax2.set_ylabel("Error [µs]")
 
 # --- Violin plot ---
-ax3.set_title("Jitter Distribution (Violin Plot)")
+ax3.set_title("Jitter Distribution (Violin Plot)", fontsize=12, pad=12)
 ax3.set_ylabel("Error [µs]")
 
-plt.tight_layout()
+# --- Sidebar stats text ---
+stats_text = fig.text(0.8, 0.5, "", va="center", ha="left", fontsize=10,
+                      family="monospace")
+
+def update_stats():
+    if not err_buf:
+        return ""
+
+    arr = np.array(err_buf)
+    mean = np.mean(arr)
+    std = np.std(arr)
+    p99 = np.percentile(arr, 99)
+    mn, mx = np.min(arr), np.max(arr)
+
+    return (f"Samples: {len(arr):>6}\n"
+            f"Mean:    {mean:8.2f} µs\n"
+            f"StdDev:  {std:8.2f} µs\n"
+            f"99%ile:  {p99:8.2f} µs\n"
+            f"Min:     {mn:8.2f} µs\n"
+            f"Max:     {mx:8.2f} µs")
 
 def update_plot():
     # update time series
@@ -52,8 +74,11 @@ def update_plot():
     ax3.cla()
     if len(err_buf) > 10:  # need enough points
         ax3.violinplot(err_buf, showmeans=True, showextrema=True, showmedians=True)
-        ax3.set_title("Jitter Distribution (Violin Plot)")
+        ax3.set_title("Jitter Distribution (Violin Plot)", fontsize=12, pad=12)
         ax3.set_ylabel("Error [µs]")
+
+    # update stats sidebar
+    stats_text.set_text(update_stats())
 
     plt.pause(0.01)
 

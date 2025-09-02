@@ -73,8 +73,11 @@ python3 ./plot_teensy_jitter.py /dev/cu.usbmodem178888901
 
 Typical result showing there is a very small amount of fastLoop() delays:
 
-
 <img src="plot1.png" alt="Plot result" width="400"/>
+
+This example shows virtually no change after increasing CAN messages to 500kz:
+
+<img src="plot2.png" alt="Plot result" width="400"/>
 
 ---
 

@@ -1,18 +1,16 @@
-// Teensy 4.x: Period / jitter measurement from a square-wave input pin.
-// - Connect your square wave to PIN_IN (GND common).
-// - Outputs NDJSON lines: seq, t_us, period_us, err_us (period - target).
-// - No printing in ISR; ISR just records cycle counter timestamps.
-
-// Teensy 4.x: Period / jitter measurement from a square-wave input pin.
-// - Connect your square wave to PIN_IN (GND common).
-// - Outputs NDJSON lines: seq, t_us, period_us, err_us (period - target).
-// - ISR is minimal: just timestamp with cycle counter.
+// Period / jitter measurement from a square-wave input pin.
+//  requires that the MESC controller has been set up to toggle PB5
+//   at important intervals (e.g., fastLoop)
+//   to generate a square wave
+//  On teensy, connect your square wave to PIN_IN 
+//    program outputs NDJSON lines: seq, t_us, period_us, err_us (period - target).
+// 
+//  use: python3 plot_teensy_jitter.py port_name to view results at computer
 
 #include <Arduino.h>
-#include "imxrt.h"   // Teensy low-level register access
+#include "imxrt.h"   // low-level register access on teensy
 
 #define ARM_DWT_CTRL_CYCCNTENA (1 << 0)
-
 
 // === Config ===
 const int PIN_IN         = 9;        // pin 9 is interrupt-capable
