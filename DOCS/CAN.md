@@ -221,3 +221,51 @@ void handle_mesc(const CAN_message_t &m) {
 }
 ```
 
+---
+## IMPORTANT CAN CODES:
+
+### Gathering position data
+- **CAN_ID_POSVEL (0x2D0) `0x2D0` base id, (13-bit message ID, packed into extended 29-bit CAN ID).
+- **Purpose:** High-rate telemetry of **mechanical position** and **velocity** from the ESC to the brain board.
+- **Update Rate:** Typically scheduled at **500–1000 Hz** in a FreeRTOS task (`TASK_CAN_posvel`), decoupled from the 20 kHz FOC ISR to avoid jitter.
+- **Resolution:**  
+  - Position: based on MT6816 14-bit encoder (≈0.022° per step, normalized to radians).  
+  - Velocity: computed in FOC ISR → reported in **rad/s**.  
+- **CAN ID packing:**  
+- **Frame format:**  
+- Extended CAN frame (29-bit ID)  
+- 8-byte payload:  
+  - Bytes 0–3 → float32 `pos_rad` (mechanical angle, radians)  
+  - Bytes 4–7 → float32 `vel_rad_s` (mechanical velocity, rad/s)  
+
+
+### Sending data to MESC
+- **CAN_ID_ADC1_2_REQ** `0x010` base ID (13-bit message ID, packed into extended 29-bit CAN ID).
+- **Purpose (original MESC):** Transmit ADC1/ADC2 values, typically throttle or analog request channels.
+- **Current Use (in this firmware):**  
+  - Sends `axis_vars.throttle_mapped` (normalized throttle in range **-1.0 … +1.0**).  
+  - Second float is unused (`0.0f` placeholder).  
+- **Resolution:** Derived from MT6816 encoder → ~14-bit effective precision (≈16,384 steps across -1 … +1).  
+- **CAN ID packing:**  
+- Extended CAN frame (29-bit ID)  
+- 8-byte payload:  
+  - Bytes 0–3 → float32 throttle_mapped  
+  - Bytes 4–7 → float32 (currently 0.0)  
+  
+### CAN_ID_IQREQ (0x020)
+
+- **Base ID:** `0x020` (13-bit message ID, packed into extended 29-bit CAN ID).
+- **Purpose:** Control-plane command — send **q-axis current request (torque command)** to the ESC.  
+  - ESC maps received float to `_motor->FOC.Idq_req.q`.  
+  - Positive values = forward torque, negative = reverse torque.
+- **Update Rate:** Expected at **500–1000 Hz** from the brain board (Teensy), synchronized with control loop ticks.  
+- **Resolution:** Full 32-bit float precision (no loss on CAN side). Effective resolution determined by ESC’s internal FOC current loop.  
+- **CAN ID packing:**  
+- Extended CAN frame (29-bit ID)  
+- 8-byte payload:  
+  - Bytes 0–3 → float32 `Iq_req` (torque request)  
+  - Bytes 4–7 → float32 (unused / padding = 0.0f)   
+
+### NOTE TO SELF
+
+Ask David if I should use CAN_ID_ADC1_2_REQ or CAN_ID_IQREQ

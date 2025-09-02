@@ -49,6 +49,7 @@
 * Telemetry considerations [[LINK](DOCS/telemetry_checklist.md)]
 * Brain board firmware specs [[LINK](DOCS/software_specs.md)]
 * Using the MT6701 [[LINK](DOCS/MT6701.md)]
+* Implementing CAN on MESC [[LINK](DOCS/CAN.md)]
 * Measuring jitter on the MESC [[LINK](DOCS/jitter_testing.md)]
 
 ## NOT IMPLEMENTED
