@@ -28,8 +28,7 @@
   * helps with modeling
   * keyboards are useful for input
 
-## FEATURES
-
+## BRAIN BOARD FEATURES
 * Teensy 4.0
 * ESP32
 * RC receiver connector (for PWM/PPM/SBUS input)
@@ -47,29 +46,27 @@
 ## Chapters to my story
 * Hardware considerations [[LINK](DOCS/hardware.md)]
 * FreeRTOS considerations [[LINK](DOCS/free_rtos.md)]
+* Telemetry considerations [[LINK](DOCS/telemetry_checklist.md)]
 * Brain board firmware specs [[LINK](DOCS/software_specs.md)]
 * Using the MT6701 [[LINK](DOCS/MT6701.md)]
+* Measuring jitter on the MESC [[LINK](DOCS/jitter_testing.md)]
 
 ## NOT IMPLEMENTED
-
 * Optional I²C header (for sensors like INA219 or IMU)
 * Encoder inputs (if reading position directly)
 * SWD debug access for Teensy
 * Big red e-stop button
 * Voltage divider (to monitor battery voltage)
 
-## NEEDS WORK
-
+## STILL NEEDS WORK
 * Not great design w/ DC-DC conversion from high voltage VBat
 * replace out the IMU for a ICM-42688-P
 
 ## VERSIONS
-
 * See github tag [pcb-v1](https://github.com/owhite/MESC_brain_board/releases/tag/pcb-v1) for V1.0
 * Retreive with this command: "git checkout pcb-v1"
 
 ## NOTES
-
 ever wanted to change all the names of kicad files at once?
 
 use this:
