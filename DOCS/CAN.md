@@ -232,7 +232,6 @@ void handle_mesc(const CAN_message_t &m) {
   - Position: based on MT6816 14-bit encoder (≈0.022° per step, normalized to radians).  
   - Velocity: computed in FOC ISR → reported in **rad/s**.  
 - **CAN ID packing:**  
-- **Frame format:**  
 - Extended CAN frame (29-bit ID)  
 - 8-byte payload:  
   - Bytes 0–3 → float32 `pos_rad` (mechanical angle, radians)  
