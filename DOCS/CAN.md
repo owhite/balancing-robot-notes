@@ -225,7 +225,7 @@ void handle_mesc(const CAN_message_t &m) {
 ## IMPORTANT CAN CODES:
 
 ### Gathering position data
-- **CAN_ID_POSVEL** (0x2D0) `0x2D0` base id, (13-bit message ID, packed into extended 29-bit CAN ID).
+- **CAN_ID_POSVEL** `0x2D0` base id, (13-bit message ID, packed into extended 29-bit CAN ID).
 - **Purpose:** High-rate telemetry of **mechanical position** and **velocity** from the ESC to the brain board.
 - **Update Rate:** Typically scheduled at **500–1000 Hz** in a FreeRTOS task (`TASK_CAN_posvel`), decoupled from the 20 kHz FOC ISR to avoid jitter.
 - **Resolution:**  
