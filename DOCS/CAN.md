@@ -248,7 +248,7 @@ void handle_mesc(const CAN_message_t &m) {
 - **CAN ID packing:**  
 - Extended CAN frame (29-bit ID)  
 - 8-byte payload:  
-  - Bytes 0–3 → float32 throttle_mapped  
+  - Bytes 0–3 → float32 `throttle_mapped`  
   - Bytes 4–7 → float32 (currently 0.0)  
   
 ### CAN_ID_IQREQ (0x020)
