@@ -1,9 +1,13 @@
 # Intro
-## CAN POS/VEL, Telemetry, and Scheduling — Project Synopsis
+## CAN POS/VEL, Telemetry, and Scheduling — System Goals
+- System Goals (Teensy 4.0 “brain” + ESCs over CAN)
+- Note: the ESC in this case uses firmware called "MESC"
+- Deterministic control at 1 kHz on Teensy.
+- Low-jitter I/O: CAN setpoints and fast encoder feedback for balancing.
+- Separation of concerns: control-plane (fast) vs telemetry-plane (slow).
 - Goal: (Teensy 4.0 “brain board” & ESCs over CAN)
 - Deterministic control at 1 kHz on Teensy.
 - Low-jitter I/O: CAN setpoints and fast encoder feedback for balancing.
-- Implement: control-plane (fast) vs telemetry-plane (slow).
 
 ## Control plane
 - Control-plane (fast, 500–1000 Hz).
@@ -32,25 +36,25 @@
 - FOC loop (20 kHz) consumes this value each cycle; if no new frame arrives, it reuses the last command.
 - Teensy should send a new command per 500 Hz control tick, ensuring ESC always has a fresh reference.
 
+## Priorities: Commands vs Telemetry
+- **Commands:** highest priority, periodic/event-driven; send right after compute.
+  - Coalesce (latest-wins) if back-pressured; never block.
+- **Telemetry:** lower priority, best-effort; okay to drop when bus busy.
+- **Fast POS/VEL:** separate tiny task on ESC; independent of slow telemetry.
+
 ## Bus Load Reality Check (CAN 2.0 @ 1 Mb/s)
 - 2 ESCs × 1 kHz commands (~128 b per frame) ≈ 256 kb/s.
 - 2 ESCs × 1 kHz POS/VEL ≈ 256 kb/s.
 - Total ≈ 50% bus load (before additional telemetry). At 500 Hz POS/VEL, ≈ 25%.
 
-## Priorities: Commands vs Telemetry
-- **Commands:** highest priority, periodic/event-driven; send right after compute.
-  - Coalesce (latest-wins) if back-pressured; never block.
-- **Telemetry:* lower priority, best-effort; okay to drop when bus busy.
-- **Fast POS/VEL:** separate tiny task on ESC; independent of slow telemetry.
-
 # Inserting control-plane CAN code into MESC
 ## From looking at `MESC_F405RG/MESC_F405RG.ioc`:
 - PWM frequency = ~41 kHz
-- MESC_ADC_IRQ_handler() execution rate = ~82 kHz
-- `fastLoop()` runs at ~82 kHz
+- MESC_ADC_IRQ_handler() execution rate = ~20 kHz
+- `fastLoop()` runs at ~20 kHz
 
 ## Sending encoder position and motor velocity over CAN
-- Putting it inside `fastLoop()` (82 kHz ISR) is not appropriate.
+- Putting it inside `fastLoop()` (20 kHz ISR) is not appropriate.
 - It risks jitter in a time-critical ISR.
 - The correct place is a separate FreeRTOS task.
 - Schedule the task at 500–1000 Hz.
@@ -70,7 +74,7 @@ _motor->FOC.mechanical_angle += diff * (2π / encoder_ticks_per_rev);
 _motor->FOC.mechanical_omega = diff * (2π / encoder_ticks_per_rev) * sample_rate;
 ```
 
-- MESC normalizes by encoder CPR (counts per revolution) and multiplies by the loop rate (82 kHz ISR).
+- MESC normalizes by encoder CPR (counts per revolution) and multiplies by the loop rate (20 kHz ISR).
   - As a result:
     - `mechanical_angle` → radians (can wrap or accumulate).
     - `mechanical_omega` → radians/second (rad/s).
@@ -88,13 +92,15 @@ xTaskCreate(TASK_CAN_telemetry, "can_metry",   256, (void*)port, osPriorityAbove
 ### 2. New FreeRTOS Task (in `task_can.c`)
 ```c
 #ifdef POSVEL_PLANE
-static void TASK_CAN_posvel(void *arg) {
-    TASK_CAN_handle *h = (TASK_CAN_handle*)arg;
+static void TASK_CAN_posvel(void *argument) {
+    port_str *port = argument;                  // same as telemetry
+    TASK_CAN_handle *handle = port->hw;         // resolve handle
+
     const TickType_t period = pdMS_TO_TICKS(1000 / POSVEL_HZ);
     TickType_t last = xTaskGetTickCount();
 
     for (;;) {
-        TASK_CAN_telemetry_posvel(h);
+        TASK_CAN_telemetry_posvel(handle);      // enqueue pos/vel frame
         vTaskDelayUntil(&last, period ? period : 1);
     }
 }
@@ -130,9 +136,17 @@ Add to one of these headers:
 #ifdef POSVEL_PLANE
 void TASK_CAN_telemetry_posvel(TASK_CAN_handle *handle) {
     MESC_motor_typedef *motor_curr = &mtr[0];
+
+    // Mechanical position: enc_angle → mechanical radians
+    volatile float pos_rad = ((float)motor_curr->FOC.enc_angle / (float)motor_curr->m.pole_pairs)
+                    * (2.0f * M_PI / 65536.0f);
+
+    // Mechanical velocity: mechRPM → rad/s
+    volatile float vel_rad_s = motor_curr->FOC.mechRPM * (2.0f * M_PI / 60.0f);
+
     TASK_CAN_add_float(handle, CAN_ID_POSVEL, CAN_BROADCAST,
-                       motor_curr->FOC.mechanical_angle,
-                       motor_curr->FOC.mechanical_omega,
+                       pos_rad,
+                       vel_rad_s,
                        0);
 }
 #endif
@@ -206,8 +220,3 @@ void handle_mesc(const CAN_message_t &m) {
 }
 ```
 
-In `control_step()`, copy latest snapshot into local variables. Optionally extrapolate:
-
-```
-pos_est = pos + vel * dt; // dt = time since RX
-```

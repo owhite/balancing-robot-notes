@@ -66,7 +66,13 @@ Put a scope on PB5 and get this:
   - **Jitter histogram** (distribution shape)
   - **Jitter violin plot** (spread + density)
 
+Run script:
+```
+python3 ./plot_teensy_jitter.py /dev/cu.usbmodem178888901
+```
+
 Typical result showing there is a very small amount of fastLoop() delays:
+
 
 <img src="plot1.png" alt="Plot result" width="400"/>
 

@@ -1,143 +1,48 @@
-#include "main.h"
-#include "LED.h"
-#include "pushbutton.h"
-#include "tone_player.h"
+#include <Arduino.h>
+#include <FlexCAN_T4.h>
 
-static TonePlayer g_tone;
+// Teensy 4.0 CAN1: TX=22, RX=23
+FlexCAN_T4<CAN1, RX_SIZE_256, TX_SIZE_16> Can1;
 
-static constexpr uint32_t PB_BEEP_HZ = 2000;
-static constexpr uint32_t PB_BEEP_MS = 150;
-static constexpr uint32_t PB_GAP_MS  = 100;
+// POSVEL extended CAN ID from ESC
+const uint32_t CAN_ID_POSVEL = 0x02D00000;
 
-static PBHandle g_button;
-PBState pb_state;
-
-// ---------- Control tick via hardware timer ----------
-IntervalTimer g_ctrlTimer;
-volatile bool g_control_due = false;
-volatile uint32_t g_control_now_us = 0;
-
-static void control_isr() {
-  g_control_now_us = micros();
-  g_control_due = true;  // run control_step()
-}
-
-// ---------- CAN stuff using FlexCAN_T4 ----------
-FlexCAN_T4<CAN_CONTROLLER, RX_SIZE_256, TX_SIZE_16> Can;
-
-static constexpr uint16_t CAN_RX_RING_LEN = 64;
-static CanFrame  g_can_rx[CAN_RX_RING_LEN];
-static volatile uint16_t  g_can_w = 0, g_can_r = 0;
-
-static inline void can_rx_push(const CAN_message_t &m) {
-  uint16_t w = g_can_w;
-  uint16_t n = (uint16_t)((w + 1) % CAN_RX_RING_LEN);
-  if (n == g_can_r) {                      // ring full -> drop oldest
-    g_can_r = (uint16_t)((g_can_r + 1) % CAN_RX_RING_LEN);
-  }
-  g_can_rx[w].id  = m.id;
-  g_can_rx[w].len = m.len;
-  for (uint8_t i = 0; i < m.len && i < 8; ++i) g_can_rx[w].buf[i] = m.buf[i];
-  g_can_rx[w].t_us = micros();
-  g_can_w = n;
-}
-
-// Called from Can.events() context; keep it tiny
-static void can_rx_cb(const CAN_message_t &msg) {
-  can_rx_push(msg);
-}
-
-// Drain & parse in the main loop (non-blocking)
-static void can_drain_and_parse() {
-  while (g_can_r != g_can_w) {
-    CanFrame f = g_can_rx[g_can_r];       // plain copy
-    g_can_r = (uint16_t)((g_can_r + 1) % CAN_RX_RING_LEN);
-    (void)f; // TODO decode IDs/payloads
-  }
-}
-
-// ---- LED instances ----
-static LEDCtrl g_led_red;
-static LEDCtrl g_led_green;
-
-void control_step(uint32_t now_us) {
-
-  // TODO: estimator + controller; prepare CAN command frames and send quickly.
-}
-
-bool g_pb_armed = false;
+uint32_t posvelCount = 0;
+uint32_t lastPrint = 0;
+float lastPosition = NAN;
+float lastVelocity = NAN;
 
 void setup() {
   Serial.begin(115200);
-  while (!Serial && millis() < 1500) {}
+  while (!Serial && millis() < 2000) {}
+  Serial.println("Listening for POSVEL (0x02D00000 EXT) frames...");
 
-  // LEDs
-  led_init(&g_led_red,   LED1_PIN, LED_BLINK_SLOW);
-  led_init(&g_led_green, LED2_PIN, LED_BLINK_FAST);
-  pb_init(&g_button, PUSHBUTTON_PIN, true, 50000u);
-  tone_init(&g_tone, SPEAKER_PIN);
-  
-  // ---- CAN init ----
-  Can.begin();                           // REQUIRED first
-  Can.setBaudRate(CAN_BITRATE);          // e.g., 1M for CAN 2.0
-  Can.onReceive(can_rx_cb);              // catch-all callback
-  Can.enableMBInterrupts();
+  Can1.begin();
 
-  // ---- Control tick ISR ----
-  //   set 1000 µs for 1 kHz
-  g_ctrlTimer.priority(16);
-  g_ctrlTimer.begin(control_isr, CONTROL_PERIOD_US); 
+  // Silent mode so Teensy never drives TX
+  FLEXCAN1_CTRL1 |= FLEXCAN_CTRL_LOM;
+
+  Can1.setBaudRate(500000);
+  Can1.enableFIFO();
 }
 
 void loop() {
-  // Pump FlexCAN callbacks, then drain/parse quickly
-  Can.events();
-  can_drain_and_parse();
+  Can1.events();
 
-  // Run control step exactly when due
-  if (g_control_due) {
-    g_control_due = false;
-    control_step(g_control_now_us);
-  }
-
-
-
-  // ---------- LOW PRIORITY CHORES ----------
-  //   Everything here must be non-blocking
-  //
-  // LED stuff
-
-  uint32_t now = micros();
-  tone_update(&g_tone, now);
-  led_update(&g_led_red, now);
-  led_update(&g_led_green, now);
-
-  // Polling examples
-  if (tone_is_playing(&g_tone)) {
-    // currently sounding
-  } else if (tone_is_silence(&g_tone)) {
-    // in post-tone quiet period
-  } else if (tone_is_idle(&g_tone)) {
-    // all done; could schedule another tone
-  }
-
-  // pushbutton stuff
-  pb_update(&g_button, now);
-
-  while (pb_consume_change(&g_button, &pb_state)) {
-    if (pb_state == PB_PRESSED) {
-      // Beep immediately on press (non-blocking)
-      tone_start(&g_tone, PB_BEEP_HZ, PB_BEEP_MS, PB_GAP_MS);
-      g_pb_armed = true;   // remember there was a press
-    } else { // PB_RELEASED
-      if (g_pb_armed) {
-	// Toggle red LED speed on release (your existing behavior)
-	LEDState cur  = g_led_red.state;
-	LEDState next = (cur == LED_BLINK_FAST) ? LED_BLINK_SLOW : LED_BLINK_FAST;
-	if (cur != LED_BLINK_FAST && cur != LED_BLINK_SLOW) next = LED_BLINK_FAST;
-	led_set_state(&g_led_red, next);
-	g_pb_armed = false;
-      }
+  CAN_message_t msg;
+  while (Can1.read(msg)) {
+    if (msg.id == CAN_ID_POSVEL && msg.flags.extended && msg.len >= 8) {
+      posvelCount++;
+      memcpy(&lastPosition, msg.buf, sizeof(float));          // bytes 0-3
+      memcpy(&lastVelocity, msg.buf + 4, sizeof(float));      // bytes 4-7
     }
+  }
+
+  uint32_t now = millis();
+  if (now - lastPrint >= 1000) {   // once per second
+    Serial.printf("POSVEL frames: %lu/s, pos=%.3f, vel=%.3f\r\n",
+                  posvelCount, lastPosition, lastVelocity);
+    posvelCount = 0;
+    lastPrint = now;
   }
 }
