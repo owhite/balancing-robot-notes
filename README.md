@@ -46,7 +46,7 @@
 ## Chapters to my story
 * Hardware considerations [[LINK](DOCS/hardware.md)]
 * FreeRTOS considerations [[LINK](DOCS/free_rtos.md)]
-* Telemetry considerations [[LINK](DOCS/telemetry_checklist.md)]
+* Balancing checklist [[LINK](DOCS/balancing_checklist.md)]
 * Brain board firmware specs [[LINK](DOCS/software_specs.md)]
 * Using the MT6701 [[LINK](DOCS/MT6701.md)]
 * Implementing CAN on MESC [[LINK](DOCS/CAN.md)]
