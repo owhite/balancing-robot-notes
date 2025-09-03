@@ -43,7 +43,7 @@
 * Reserved 2 GPIO pins on Teensy for emergency shutoff to MESC
 * CAN connector (for MESC motor control)
 
-## Chapters to my story
+## Specs and testing
 * Hardware considerations [[LINK](DOCS/hardware.md)]
 * Control loop considerations [[LINK](DOCS/control_loop.md)]
 * Balancing checklist [[LINK](DOCS/balancing_checklist.md)]

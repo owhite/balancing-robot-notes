@@ -170,11 +170,11 @@ void TASK_CAN_telemetry_posvel(TASK_CAN_handle *handle) {
 
 ## CAN Framing & Decoding
 - MESC ID Scheme (Extended 29-bit)
-  - ESC packs {msg_id, sender, receiver} into the extended ID.
+  - ESC packs {msg_id, receiver, sender} into the extended ID.
   - Working assumption:
 
 ```c
-msg_id: bits 28..16 (13 b), sender: 15..8 (8 b), receiver: 7..0 (8 b; 0=broadcast).
+msg_id: bits 28..16 (13 b), receiver: 15..8 (8 b), sender: 7..0 (8 b; 0=broadcast).
 
 static inline uint32_t mesc_pack_id(uint16_t msg, uint8_t snd, uint8_t rcv) {
   return ((uint32_t)(msg & 0x1FFF) << 16) | ((uint32_t)snd << 8) | rcv;
