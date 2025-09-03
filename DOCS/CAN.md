@@ -237,7 +237,9 @@ void handle_mesc(const CAN_message_t &m) {
   - Position: based on MT6816 14-bit encoder (≈0.022° per step, normalized to radians).  
   - Velocity: computed in FOC ISR → reported in **rad/s**.  
 - **CAN ID packing:**  
-- Extended CAN frame (29-bit ID)  
+- [28..16] = 0x010 (message ID)
+- [15..8] = receiver node ID (ESC)
+- [7..0] = sender node ID (Teensy)
 - 8-byte payload:  
   - Bytes 0–3 → float32 `pos_rad` (mechanical angle, radians)  
   - Bytes 4–7 → float32 `vel_rad_s` (mechanical velocity, rad/s)  
@@ -251,7 +253,9 @@ void handle_mesc(const CAN_message_t &m) {
   - Second float is unused (`0.0f` placeholder).  
 - **Resolution:** Derived from MT6816 encoder → ~14-bit effective precision (≈16,384 steps across -1 … +1).  
 - **CAN ID packing:**  
-- Extended CAN frame (29-bit ID)  
+- [28..16] = 0x010 (message ID)
+- [15..8] = receiver node ID (ESC)
+- [7..0] = sender node ID (Teensy)
 - 8-byte payload:  
   - Bytes 0–3 → float32 `throttle_mapped`  
   - Bytes 4–7 → float32 (currently 0.0)  
@@ -265,11 +269,10 @@ void handle_mesc(const CAN_message_t &m) {
 - **Update Rate:** Expected at **500–1000 Hz** from the brain board (Teensy), synchronized with control loop ticks.  
 - **Resolution:** Full 32-bit float precision (no loss on CAN side). Effective resolution determined by ESC’s internal FOC current loop.  
 - **CAN ID packing:**  
-- Extended CAN frame (29-bit ID)  
+- [28..16] = 0x010 (message ID)
+- [15..8] = receiver node ID (ESC)
+- [7..0] = sender node ID (Teensy)
 - 8-byte payload:  
   - Bytes 0–3 → float32 `Iq_req` (torque request)  
   - Bytes 4–7 → float32 (unused / padding = 0.0f)   
 
-### NOTE TO SELF
-
-Ask David if I should use CAN_ID_ADC1_2_REQ or CAN_ID_IQREQ
