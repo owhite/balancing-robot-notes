@@ -246,7 +246,9 @@ void handle_mesc(const CAN_message_t &m) {
 
 
 ### Sending data to MESC
-- **CAN_ID_ADC1_2_REQ** `0x010` base ID (13-bit message ID, packed into extended 29-bit CAN ID).
+
+**CAN_ID_ADC1_2_REQ**
+- `0x010` base ID (13-bit message ID, packed into extended 29-bit CAN ID).
 - **Purpose (original MESC):** Transmit ADC1/ADC2 values, typically throttle or analog request channels.
 - **Current Use (in this firmware):**  
   - Sends `axis_vars.throttle_mapped` (normalized throttle in range **-1.0 … +1.0**).  
@@ -260,9 +262,8 @@ void handle_mesc(const CAN_message_t &m) {
   - Bytes 0–3 → float32 `throttle_mapped`  
   - Bytes 4–7 → float32 (currently 0.0)  
   
-### CAN_ID_IQREQ (0x020)
-
-- **Base ID:** `0x020` (13-bit message ID, packed into extended 29-bit CAN ID).
+**CAN_ID_IQREQ** 
+- `0x020` base ID (13-bit message ID, packed into extended 29-bit CAN ID).
 - **Purpose:** Control-plane command — send **q-axis current request (torque command)** to the ESC.  
   - ESC maps received float to `_motor->FOC.Idq_req.q`.  
   - Positive values = forward torque, negative = reverse torque.
