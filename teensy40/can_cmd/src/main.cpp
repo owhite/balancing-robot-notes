@@ -13,7 +13,9 @@ FlexCAN_T4<CAN1, RX_SIZE_256, TX_SIZE_16> Can1;
 
 // Build full 29-bit CAN extended ID
 uint32_t make_ext_id(uint16_t msg_id, uint8_t sender, uint8_t receiver) {
-  return ((uint32_t)msg_id << 16) | ((uint32_t)sender << 8) | receiver;
+    return ((uint32_t)msg_id << 16) |
+           ((uint32_t)receiver << 8) |
+           sender;
 }
 
 // Encode float into buffer
@@ -47,7 +49,7 @@ void loop() {
     // Build CAN frame
     CAN_message_t msg;
 
-    msg.id = make_ext_id(CAN_ID_ADC1_2_REQ, ESC_NODE_ID, TEENSY_NODE_ID);
+    msg.id = make_ext_id(CAN_ID_ADC1_2_REQ, TEENSY_NODE_ID, ESC_NODE_ID);
     msg.flags.extended = 1;
     msg.len = 8;
 
