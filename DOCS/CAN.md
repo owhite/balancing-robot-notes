@@ -229,7 +229,7 @@ void handle_mesc(const CAN_message_t &m) {
 ---
 ## IMPORTANT CAN CODES:
 
-### Gathering position data
+### Position data sent from ESC
 - **CAN_ID_POSVEL** `0x2D0` base id, (13-bit message ID, packed into extended 29-bit CAN ID).
 - **Purpose:** High-rate telemetry of **mechanical position** and **velocity** from the ESC to the brain board.
 - **Update Rate:** Typically scheduled at **500–1000 Hz** in a FreeRTOS task (`TASK_CAN_posvel`), decoupled from the 20 kHz FOC ISR to avoid jitter.
@@ -238,15 +238,14 @@ void handle_mesc(const CAN_message_t &m) {
   - Velocity: computed in FOC ISR → reported in **rad/s**.  
 - **CAN ID packing:**  
 - [28..16] = 0x010 (message ID)
-- [15..8] = receiver node ID (ESC)
-- [7..0] = sender node ID (Teensy)
+- [15..8] = receiver node ID (Teensy)
+- [7..0] = sender node ID (ESC)
 - 8-byte payload:  
   - Bytes 0–3 → float32 `pos_rad` (mechanical angle, radians)  
   - Bytes 4–7 → float32 `vel_rad_s` (mechanical velocity, rad/s)  
 
 
 ### Sending data to MESC
-
 **CAN_ID_ADC1_2_REQ**
 - `0x010` base ID (13-bit message ID, packed into extended 29-bit CAN ID).
 - **Purpose (original MESC):** Transmit ADC1/ADC2 values, typically throttle or analog request channels.
