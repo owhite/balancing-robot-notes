@@ -276,3 +276,40 @@ void handle_mesc(const CAN_message_t &m) {
   - Bytes 0–3 → float32 `Iq_req` (torque request)  
   - Bytes 4–7 → float32 (unused / padding = 0.0f)   
 
+---
+
+As of now CAN_ID_IQREQ seems kind of broken
+
+this gets set if user passes in a variable by CAN using CAN_ID_IQREQ
+
+   see: TASK_CAN_packet_cb() in `MESCinterface.c`
+
+```c
+float req = PACK_buf_to_float(data);
+case CAN_ID_IQREQ:{
+    if(req > 0){
+      motor_curr->input_vars.UART_req = req * motor_curr->input_vars.max_request_Idq.q;
+    }else{
+      motor_curr->input_vars.UART_req = req * motor_curr->input_vars.min_request_Idq.q * -1.0;
+    }
+    break;
+
+case CAN_ID_ADC1_2_REQ:{
+    if(sender == motor_curr->input_vars.remote_ADC_can_id && 
+                 motor_curr->input_vars.remote_ADC_can_id > 0){
+	     motor_curr->input_vars.remote_ADC_timeout = REMOTE_ADC_TIMEOUT;
+	     motor_curr->input_vars.remote_ADC1_req = PACK_buf_to_float(data);
+	     motor_curr->input_vars.remote_ADC2_req = PACK_buf_to_float(data+4);
+    }
+    break;
+```
+
+the only way to do that is if input_option is set to 32
+
+but this code zeros out UART_req when input_option is 32
+in `MESCinput.c`
+```c
+	  if(0 == (_motor->input_vars.input_options & 0b1000)){
+		 _motor->input_vars.UART_req = 0.0f;
+	  }
+```

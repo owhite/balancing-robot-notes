@@ -4,8 +4,8 @@
 // === Teensy CAN setup ===
 FlexCAN_T4<CAN1, RX_SIZE_256, TX_SIZE_16> Can1;
 
-// MESC CAN ID for ADC1/2 request
-#define CAN_ID_ADC1_2_REQ  0x010
+// MESC CAN ID for Iq request
+#define CAN_ID_IQREQ  0x001
 
 // IDs
 #define TEENSY_NODE_ID  0x03   // sender (this Teensy)
@@ -27,7 +27,7 @@ void setup() {
   Serial.begin(115200);
   while (!Serial && millis() < 2000) {}
 
-  Serial.println("Type a float value between -1.0 and 1.0 to send throttle...");
+  Serial.println("Type a float value (in Amps) to send as Iq request...");
 
   Can1.begin();
   Can1.setBaudRate(500000);
@@ -42,18 +42,18 @@ void loop() {
 
     float cmd = input.toFloat();
 
-    // Clamp for safety
-    if (cmd > 1.0f) cmd = 1.0f;
-    if (cmd < -1.0f) cmd = -1.0f;
+    // Optional clamp for sanity (adjust to your motor/ESC limits)
+    if (cmd > 20.0f) cmd = 20.0f;
+    if (cmd < -20.0f) cmd = -20.0f;
 
     // Build CAN frame
     CAN_message_t msg;
+    msg.id = make_ext_id(CAN_ID_IQREQ, TEENSY_NODE_ID, ESC_NODE_ID);
 
-    msg.id = make_ext_id(CAN_ID_ADC1_2_REQ, TEENSY_NODE_ID, ESC_NODE_ID);
     msg.flags.extended = 1;
     msg.len = 8;
 
-    // Payload = {cmd, 0.0f}
+    // Payload = {Iq_req, 0.0f}
     pack_float(cmd, msg.buf);
     float zero = 0.0f;
     pack_float(zero, msg.buf + 4);
@@ -61,7 +61,9 @@ void loop() {
     // Send
     Can1.write(msg);
 
-    Serial.printf("Sent throttle=%.3f to ESC node_id=%u (CAN ID=0x%08X)\n",
+    Serial.printf("Sent Iq_req=%.3f A to ESC node_id=%u (CAN ID=0x%08X)\n",
                   cmd, ESC_NODE_ID, msg.id);
   }
 }
+
+
