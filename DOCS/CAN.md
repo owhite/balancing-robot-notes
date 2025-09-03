@@ -171,18 +171,23 @@ void TASK_CAN_telemetry_posvel(TASK_CAN_handle *handle) {
 ## CAN Framing & Decoding
 - MESC ID Scheme (Extended 29-bit)
   - ESC packs {msg_id, receiver, sender} into the extended ID.
-  - Working assumption:
+  - Correct order:
 
 ```c
-msg_id: bits 28..16 (13 b), receiver: 15..8 (8 b), sender: 7..0 (8 b; 0=broadcast).
+msg_id:  bits 28..16 (13 b)
+receiver: bits 15..8 (8 b)
+sender:   bits 7..0  (8 b; 0=broadcast)
 
 static inline uint32_t mesc_pack_id(uint16_t msg, uint8_t snd, uint8_t rcv) {
-  return ((uint32_t)(msg & 0x1FFF) << 16) | ((uint32_t)snd << 8) | rcv;
+  return ((uint32_t)(msg & 0x1FFF) << 16) |
+         ((uint32_t)rcv << 8) |
+         snd;
 }
-static inline void mesc_unpack_id(uint32_t id, uint16_t &msg, uint8_t &snd, uint8_t &rcv) {
-  msg = (id >> 16) & 0x1FFF; snd = (id >> 8) & 0xFF; rcv = id & 0xFF;
+static inline void mesc_unpack_id(uint32_t id, uint16_t &msg, uint8_t &rcv, uint8_t &snd) {
+  msg = (id >> 16) & 0x1FFF;
+  rcv = (id >> 8) & 0xFF;
+  snd = id & 0xFF;
 }
-```
 
 ### Important CAN Key IDs
 - Existing telemetry (slow): **CAN_ID_SPEED**, **CAN_ID_BUS_VOLT_CURR**, **CAN_ID_MOTOR_CURRENT**, **CAN_ID_MOTOR_VOLTAGE**, **CAN_ID_ADC1_2_REQ**, **CAN_ID_STATUS**.
