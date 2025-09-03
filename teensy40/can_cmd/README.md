@@ -1,10 +1,11 @@
 ## Teensy CAN Test Programs
 
-You now have **two Teensy sketches** that can be loaded to send commands over CAN to your MESC-based ESC. Each one uses a different control channel built into the firmware.  
+**Teensy sketches** that can be loaded to send commands over CAN to the MESC-based ESC. Each one uses a different control channel built into the firmware.  
 
 ---
 
 ### 1. `can_id_adc1_2_req.cpp`
+- Use **`can_id_adc1_2_req.cpp`** for simple normalized throttle testing.  
 - **CAN ID:** `CAN_ID_ADC1_2_REQ (0x010)`  
 - **Payload:**  
   - Bytes 0–3 = `throttle_mapped` (float, normalized between **-1.0 and +1.0**)  
@@ -22,6 +23,7 @@ You now have **two Teensy sketches** that can be loaded to send commands over CA
 ---
 
 ### 2. `can_id_iqreq.cpp`
+- Use **`can_id_iqreq.cpp`** for direct current/torque control.  
 - **CAN ID:** `CAN_ID_IQREQ (0x001)`  
 - **Payload:**  
   - Bytes 0–3 = `Iq_req` (float, in **amperes of q-axis current**)  
@@ -44,8 +46,3 @@ If you want to trace the command as it flows through the ESC firmware, good debu
 - **`TASK_CAN_packet_cb()`** → Confirms the packet was dispatched to the right handler (ADC1_2_REQ or IQREQ).  
 - **`MESCinput_Collect()`** → Confirms the chosen input value (CAN vs UART vs ADC) is being forwarded into the motor control loop.  
 
----
-
-✅ With these two sketches, you can:  
-- Use **`can_id_adc1_2_req.cpp`** for simple normalized throttle testing.  
-- Use **`can_id_iqreq.cpp`** for direct current/torque control.  
