@@ -82,8 +82,8 @@ This example shows virtually no change after increasing CAN messages to 500kz:
 ---
 
 ### Outcome
-- Confirmed ESC `fastLoop()` executes at ~20 kHz.
 - Jitter measured in **sub-µs range**, with only rare small spikes.
 - Demonstrates loop timing is stable enough for deterministic FOC.
 - Workflow (ESC pin toggle → Teensy capture → Python plots) provides a **portable jitter analyzer** for real-time firmware validation.
 - This will be useful to test if other changes to MESC code have a negative impact
+- CAN running at 500hz doesnt seemt to impact anything
