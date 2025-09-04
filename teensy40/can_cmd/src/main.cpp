@@ -43,8 +43,8 @@ void loop() {
     float cmd = input.toFloat();
 
     // Optional clamp for sanity (adjust to your motor/ESC limits)
-    if (cmd > 20.0f) cmd = 20.0f;
-    if (cmd < -20.0f) cmd = -20.0f;
+    if (cmd > 1.0f) cmd = 1.0f;
+    if (cmd < -1.0f) cmd = -1.0f;
 
     // Build CAN frame
     CAN_message_t msg;
@@ -65,5 +65,3 @@ void loop() {
                   cmd, ESC_NODE_ID, msg.id);
   }
 }
-
-

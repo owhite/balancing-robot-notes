@@ -49,7 +49,7 @@ void loop() {
     // Build CAN frame
     CAN_message_t msg;
 
-    msg.id = make_ext_id(CAN_ID_ADC1_2_REQ, ESC_NODE_ID, TEENSY_NODE_ID);
+    msg.id = make_ext_id(CAN_ID_ADC1_2_REQ, TEENSY_NODE_ID, ESC_NODE_ID);
     msg.flags.extended = 1;
     msg.len = 8;
 
