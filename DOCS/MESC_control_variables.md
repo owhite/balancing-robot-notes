@@ -42,7 +42,7 @@
   - `CNT` → current quadrature count (mechanical position since last Z).
      - → This provides the absolute reference point per revolution.
   - Relative count
-      - (`CNT` - `CCR3`) = ticks since last Z-index pulse.
+      - (`CNT` - `CCR3`) → ticks since last Z-index pulse.
   - `enc_ratio` converts raw encoder ticks → fixed-point [0…65536] mechanical rev.
   - Then multiplied by `pole_pairs` → converts to electrical cycles.
   - If `encoder_polarity_invert` is set, it flips the direction by subtracting from 65536.
@@ -51,10 +51,10 @@
 - **`mtr[0]->FOC.abs_position`** (Created for this project)
 
   - the raw mechanical encoder position (0–4096) adjusted to an absolute reference using the Z-pulse (CCR3)
-  - `FOC.abs_position = ( (uint16_t)(CNT) - (uint16_t)(CCR3) ) & 0x0FFF;` // for 12-bit encoder
-  - `CNT` = current encoder count (0–4095).
-  - `CCR3` = latched value of CNT when the Z-pulse occurred.
-  - `(CNT - CCR3)` = ticks since the last index (Z-pulse).
+  - `FOC.abs_position → ( (uint16_t)(CNT) - (uint16_t)(CCR3) ) & 0x0FFF;` // for 12-bit encoder
+  - `CNT` → current encoder count (0–4095).
+  - `CCR3` → latched value of CNT when the Z-pulse occurred.
+  - `(CNT - CCR3)` → ticks since the last index (Z-pulse).
   - Note: if it wasnt obvious already 4095 is hardcoded all over the place. 
 
 Notice this code addition:
