@@ -49,6 +49,7 @@
   - `enc_offset` allows calibration of zero-angle alignment (phase alignment between encoder mechanical zero and motor electrical zero).
 
 - **`mtr[0]->FOC.abs_position`**
+
     Created for this project. Notice this code addition:
     ```c
 	#ifdef POSVEL_PLANE
