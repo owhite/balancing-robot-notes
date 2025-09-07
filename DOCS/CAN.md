@@ -136,15 +136,34 @@ Add to one of these headers:
 #ifdef POSVEL_PLANE
 void TASK_CAN_telemetry_posvel(TASK_CAN_handle *handle) {
     MESC_motor_typedef *motor_curr = &mtr[0];
-    // Mechanical position: undo pole_pairs scaling and wrap
+    static int16_t last_pos = 0;
 
-    float mech_ticks = (float)motor_curr->FOC.enc_angle; // already scaled
-    mech_ticks = fmodf(mech_ticks, 65536.0f);
-    float pos_rad = mech_ticks * (2.0f * M_PI / 65536.0f);
+    // Snapshot absolute position (0–4095, Z-synced)
+    uint16_t abs_pos = motor_curr->FOC.abs_position;
 
-    // Mechanical velocity: mechRPM → rad/s
-    float vel_rad_s = motor_curr->FOC.mechRPM * (2.0f * M_PI / 60.0f);
+    // Convert to radians (0–2π mechanical)
+    float pos_rad = ((float)abs_pos / 4096.0f) * (2.0f * M_PI);
 
+    // Compute delta ticks since last call
+    int16_t delta = (int16_t)(abs_pos - last_pos);
+
+    // Wrap-around correction
+    if (delta > 2048) delta -= 4096;
+    if (delta < -2048) delta += 4096;
+
+    last_pos = abs_pos;
+
+    // Convert ticks → revolutions
+    float delta_rev = (float)delta / 4096.0f;
+
+    // dt from POSVEL_HZ
+    float dt = 1.0f / (float)POSVEL_HZ;
+
+    // Velocity in rev/s → rad/s
+    float vel_rev_s = delta_rev / dt;
+    float vel_rad_s = vel_rev_s * 2.0f * M_PI;
+
+    // Send over CAN: [pos_rad, vel_rad_s, reserved]
     TASK_CAN_add_float(handle, CAN_ID_POSVEL, CAN_BROADCAST,
                        pos_rad,
                        vel_rad_s,
@@ -279,7 +298,7 @@ void handle_mesc(const CAN_message_t &m) {
 
 ---
 
-Note: xCAN_ID_IQREQ seems kind of broken
+Note: `CAN_ID_IQREQ` seems kind of broken
 
 this gets set if user passes in a variable by CAN using CAN_ID_IQREQ
 
