@@ -42,25 +42,20 @@ void loop() {
 
     float cmd = input.toFloat();
 
-    // Optional clamp for sanity (adjust to your motor/ESC limits)
     if (cmd > 1.0f) cmd = 1.0f;
     if (cmd < -1.0f) cmd = -1.0f;
 
-    // Build CAN frame
     CAN_message_t msg;
     msg.id = make_ext_id(CAN_ID_IQREQ, TEENSY_NODE_ID, ESC_NODE_ID);
 
     msg.flags.extended = 1;
     msg.len = 8;
 
-    // Payload = {Iq_req, 0.0f}
     pack_float(cmd, msg.buf);
     float zero = 0.0f;
     pack_float(zero, msg.buf + 4);
 
-    // Send
     Can1.write(msg);
-
     Serial.printf("Sent Iq_req=%.3f A to ESC node_id=%u (CAN ID=0x%08X)\n",
                   cmd, ESC_NODE_ID, msg.id);
   }
