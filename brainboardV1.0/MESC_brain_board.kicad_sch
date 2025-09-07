@@ -4793,6 +4793,16 @@
 		)
 		(uuid "3a8d2f55-1443-4969-9540-bca7f1e63a0c")
 	)
+	(text "3.3V CAN transcievers only"
+		(exclude_from_sim no)
+		(at 52.07 73.66 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+		)
+		(uuid "77d3017e-88bd-442a-81c2-c8e046ade8ce")
+	)
 	(text "Not great design w/ DC-DC conversion from high voltage VBat "
 		(exclude_from_sim no)
 		(at 184.404 144.526 0)

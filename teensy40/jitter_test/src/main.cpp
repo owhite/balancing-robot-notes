@@ -5,6 +5,8 @@
 //  On teensy, connect your square wave to PIN_IN 
 //    program outputs NDJSON lines: seq, t_us, period_us, err_us (period - target).
 // 
+//  At present the square wave is coming from PB5 on the MESC
+// 
 //  use: python3 plot_teensy_jitter.py port_name to view results at computer
 
 #include <Arduino.h>
