@@ -1,0 +1,317 @@
+# Intro
+## CAN POS/VEL, Telemetry, and Scheduling — System Goals
+- System Goals (Teensy 4.0 “brain” + ESCs over CAN)
+- Note: the ESC in this case uses firmware called "MESC"
+- Deterministic control at 1 kHz on Teensy.
+- Low-jitter I/O: CAN setpoints and fast encoder feedback for balancing.
+- Separation of concerns: control-plane (fast) vs telemetry-plane (slow).
+- Goal: (Teensy 4.0 “brain board” & ESCs over CAN)
+- Deterministic control at 1 kHz on Teensy.
+- Low-jitter I/O: CAN setpoints and fast encoder feedback for balancing.
+
+## Control plane
+- Control-plane (fast, 500–1000 Hz).
+- Runs on Teensy: IMU + estimator + LQR/PID at 1 kHz.
+- Sends setpoints (torque/velocity/position) to ESCs each tick.
+- Reads high-rate encoder pos/vel from ESCs (new fast stream; see below).
+
+## Why 500 Hz (or 1 kHz) Makes Sense
+- 2 kHz sampling in a classic LQR balancing system ([Park et al.](https://link.springer.com/article/10.1007/s10015-011-0897-9?utm_source=chatgpt.com)) establishes an upper benchmark—suggesting that balance control benefits from high-frequency updates.
+  - See also: [Ref 1](https://indusedu.org/pdfs/IJREISS/IJREISS_3094_97729.pdf?utm_source=chatgpt.com) and [Ref 2](https://www.mdpi.com/1424-8220/25/4/1056?utm_source=chatgpt.com)
+- Running at 500–1000 Hz provides plenty of bandwidth to implement LQR-based stabilization effectively—while being manageable for embedded systems like Teensy + ESCs.
+- For now let's settle on 500Hz
+
+## MESC has telemetry-plane (slow, ~10–50 Hz)
+- Useful for monitoring/logging: Vbus, Ibus, eHz, Idq/Vdq, state, etc.
+- Will not be used for balancing
+- MESC “fast” telemetry is actually ~10 Hz (every 100 ms)
+- Not for stabilization; too slow for 500 Hz balancing.
+
+## MESC receives CAN commands
+- MESC already spawns `TASK_CAN_rx` at high priority (`osPriorityAboveNormal`) to process incoming frames.
+- Torque setpoint commands are mapped to CAN_ID_IQREQ, which updates `_motor->FOC.Idq_req.q`.
+- `_motor->FOC.Idq_req.q` is a signed float:
+  - Positive → forward torque
+  - Negative → reverse torque
+- FOC loop (20 kHz) consumes this value each cycle; if no new frame arrives, it reuses the last command.
+- Teensy should send a new command per 500 Hz control tick, ensuring ESC always has a fresh reference.
+
+## Priorities: Commands vs Telemetry
+- **Commands:** highest priority, periodic/event-driven; send right after compute.
+  - Coalesce (latest-wins) if back-pressured; never block.
+- **Telemetry:** lower priority, best-effort; okay to drop when bus busy.
+- **Fast POS/VEL:** separate tiny task on ESC; independent of slow telemetry.
+
+## Bus Load Reality Check (CAN 2.0 @ 1 Mb/s)
+- 2 ESCs × 1 kHz commands (~128 b per frame) ≈ 256 kb/s.
+- 2 ESCs × 1 kHz POS/VEL ≈ 256 kb/s.
+- Total ≈ 50% bus load (before additional telemetry). At 500 Hz POS/VEL, ≈ 25%.
+
+# Inserting control-plane CAN code into MESC
+## From looking at `MESC_F405RG/MESC_F405RG.ioc`:
+- PWM frequency = ~41 kHz
+- MESC_ADC_IRQ_handler() execution rate = ~20 kHz
+- `fastLoop()` runs at ~20 kHz
+
+## Sending encoder position and motor velocity over CAN
+- Putting it inside `fastLoop()` (20 kHz ISR) is not appropriate.
+- It risks jitter in a time-critical ISR.
+- The correct place is a separate FreeRTOS task.
+- Schedule the task at 500–1000 Hz.
+- Use `vTaskDelayUntil()` for cadence.
+- Enqueue one frame each tick.
+- TX handled by `TASK_CAN_tx`.
+- This ensures no extra jitter in FOC timing.
+
+## MESC code reads encoder counts (TIMx->CNT) every ISR
+- It computes difference in counts (`diff`) from the previous sample.
+- Scales that by encoder resolution and sampling period to estimate velocity.
+- The logic looks like this (simplified):
+
+```c
+diff = new_count - last_count;
+_motor->FOC.mechanical_angle += diff * (2π / encoder_ticks_per_rev);
+_motor->FOC.mechanical_omega = diff * (2π / encoder_ticks_per_rev) * sample_rate;
+```
+
+- MESC normalizes by encoder CPR (counts per revolution) and multiplies by the loop rate (20 kHz ISR).
+  - As a result:
+    - `mechanical_angle` → radians (can wrap or accumulate).
+    - `mechanical_omega` → radians/second (rad/s).
+  - Therefore `_motor->FOC.mechanical_omega` reflects angular velocity of the rotor/wheel in physical units.
+
+## Implementation plan
+
+### 1. Current CAN tasks (in `task_can.c`)
+```c
+xTaskCreate(TASK_CAN_rx,        "task_rx_can", 256, (void*)port, osPriorityAboveNormal, &handle->rx_task_handle);
+xTaskCreate(TASK_CAN_tx,        "task_tx_can", 256, (void*)port, osPriorityAboveNormal, &handle->tx_task_handle);
+xTaskCreate(TASK_CAN_telemetry, "can_metry",   256, (void*)port, osPriorityAboveNormal, NULL);
+```
+
+### 2. New FreeRTOS Task (in `task_can.c`)
+```c
+#ifdef POSVEL_PLANE
+static void TASK_CAN_posvel(void *argument) {
+    port_str *port = argument;                  // same as telemetry
+    TASK_CAN_handle *handle = port->hw;         // resolve handle
+
+    const TickType_t period = pdMS_TO_TICKS(1000 / POSVEL_HZ);
+    TickType_t last = xTaskGetTickCount();
+
+    for (;;) {
+        TASK_CAN_telemetry_posvel(handle);      // enqueue pos/vel frame
+        vTaskDelayUntil(&last, period ? period : 1);
+    }
+}
+#endif
+```
+
+Add alongside the other tasks:
+```c
+#ifdef POSVEL_PLANE
+xTaskCreate(TASK_CAN_posvel, "can_posvel", 256, (void*)port, osPriorityAboveNormal, NULL);
+#endif
+```
+
+### 3. New CAN ID (in `can_ids.h`)
+```c
+#ifdef POSVEL_PLANE
+#define CAN_ID_POSVEL            0x2D0   // new high-rate position/velocity ID
+#endif
+```
+
+### 4. Feature Toggle (in project header)
+Add to one of these headers:
+- `MESC_F405RG/Core/Inc/main.h`
+- `MESC_F405RG/Core/Inc/MP2_V0_1.h`
+- `MESC_F405RG/Core/Inc/MESC_F405.h`
+
+```c
+#define POSVEL_PLANE 1
+```
+
+### 5. Telemetry Function (in `MESCinterface.c`)
+```c
+#ifdef POSVEL_PLANE
+void TASK_CAN_telemetry_posvel(TASK_CAN_handle *handle) {
+    MESC_motor_typedef *motor_curr = &mtr[0];
+    // Mechanical position: undo pole_pairs scaling and wrap
+
+    float mech_ticks = (float)motor_curr->FOC.enc_angle; // already scaled
+    mech_ticks = fmodf(mech_ticks, 65536.0f);
+    float pos_rad = mech_ticks * (2.0f * M_PI / 65536.0f);
+
+    // Mechanical velocity: mechRPM → rad/s
+    float vel_rad_s = motor_curr->FOC.mechRPM * (2.0f * M_PI / 60.0f);
+
+    TASK_CAN_add_float(handle, CAN_ID_POSVEL, CAN_BROADCAST,
+                       pos_rad,
+                       vel_rad_s,
+                       0.0f);
+}
+#endif
+```
+
+# Teensy side considerations
+## Teensy Architecture (not using RTOS)
+- Timing & Priority
+  - IntervalTimer ISR: sets `control_due` + timestamp; no math in ISR.
+  - Superloop priority order:
+    - If `control_due` → run `control_step()` (compute + enqueue CAN command).
+    - `Can.events()` → RX callback → drain/parse ring.
+    - Low-priority chores: LEDs (state machine), pushbutton debounce, serial pump.
+
+- CAN on Teensy (FlexCAN_T4)
+  - Use `onReceive()` + tiny RX callback that copies frames into a ring buffer.
+  - Parse in loop (non-blocking), update snapshots for control to read.
+  - Commands: enqueue and send immediately (or via a small TX pump).
+  - Do not block or print inside `control_step()`.
+
+## CAN Framing & Decoding
+- MESC ID Scheme (Extended 29-bit)
+  - ESC packs {msg_id, receiver, sender} into the extended ID.
+  - Correct order:
+
+```c
+msg_id:  bits 28..16 (13 b)
+receiver: bits 15..8 (8 b)
+sender:   bits 7..0  (8 b; 0=broadcast)
+
+static inline uint32_t mesc_pack_id(uint16_t msg, uint8_t snd, uint8_t rcv) {
+  return ((uint32_t)(msg & 0x1FFF) << 16) |
+         ((uint32_t)rcv << 8) |
+         snd;
+}
+static inline void mesc_unpack_id(uint32_t id, uint16_t &msg, uint8_t &rcv, uint8_t &snd) {
+  msg = (id >> 16) & 0x1FFF;
+  rcv = (id >> 8) & 0xFF;
+  snd = id & 0xFF;
+}
+
+### Important CAN Key IDs
+- Existing telemetry (slow): **CAN_ID_SPEED**, **CAN_ID_BUS_VOLT_CURR**, **CAN_ID_MOTOR_CURRENT**, **CAN_ID_MOTOR_VOLTAGE**, **CAN_ID_ADC1_2_REQ**, **CAN_ID_STATUS**.
+- Control/utility: **CAN_ID_PING** (8-byte ASCII name, ~1 Hz), **CAN_ID_CONNECT**, **CAN_ID_TERMINAL**.
+- New (proposed): **CAN_ID_POSVEL** (8 bytes) → pos, vel at 500–1000 Hz.
+
+### Payloads
+- Helpers in ESC send 8-byte payloads as 2×float32 or 2×uint32.
+- Likely little-endian (STM32 default). Teensy decodes with memcpy.
+
+```c
+static inline void parse_two_floats(const uint8_t *b, float &a, float &c) {
+  uint32_t u0 = b[0]|(b[1]<<8)|(b[2]<<16)|(b[3]<<24);
+  uint32_t u1 = b[4]|(b[5]<<8)|(b[6]<<16)|(b[7]<<24);
+  memcpy(&a,&u0,4); memcpy(&c,&u1,4);
+}
+```
+
+### Teensy handling of POS/VEL
+RX path:
+- FlexCAN RX callback → ring push → main loop parse → pos/vel snapshot (per ESC) with timestamp/seq.
+
+```c
+struct PosVel { float pos_rad, vel_rad_s; uint32_t t_us, seq; };
+volatile PosVel esc_posvel[2];
+
+void handle_mesc(const CAN_message_t &m) {
+  uint16_t id; uint8_t snd, rcv; mesc_unpack_id(m.id, id, snd, rcv);
+  if (rcv != 0 && rcv != MY_NODE) return;
+  if (id == CAN_ID_POSVEL && m.len == 8) {
+    float p,v; parse_two_floats(m.buf, p, v);
+    uint8_t i = (snd == LEFT_ESC_ID) ? 0 : 1;
+    esc_posvel[i].pos_rad = p; esc_posvel[i].vel_rad_s = v;
+    esc_posvel[i].t_us = micros(); esc_posvel[i].seq++;
+  }
+}
+```
+
+---
+## IMPORTANT CAN CODES:
+
+### Position data sent from ESC
+- **CAN_ID_POSVEL** `0x2D0` base id, (13-bit message ID, packed into extended 29-bit CAN ID).
+- **Purpose:** High-rate telemetry of **mechanical position** and **velocity** from the ESC to the brain board.
+- **Update Rate:** Typically scheduled at **500–1000 Hz** in a FreeRTOS task (`TASK_CAN_posvel`), decoupled from the 20 kHz FOC ISR to avoid jitter.
+- **Resolution:**  
+  - Position: based on MT6816 14-bit encoder (≈0.022° per step, normalized to radians).  
+  - Velocity: computed in FOC ISR → reported in **rad/s**.  
+- **CAN ID packing:**  
+- [28..16] = 0x010 (message ID)
+- [15..8] = receiver node ID (Teensy)
+- [7..0] = sender node ID (ESC)
+- 8-byte payload:  
+  - Bytes 0–3 → float32 `pos_rad` (mechanical angle, radians)  
+  - Bytes 4–7 → float32 `vel_rad_s` (mechanical velocity, rad/s)  
+
+
+### Sending data to MESC
+**CAN_ID_ADC1_2_REQ**
+- `0x010` base ID (13-bit message ID, packed into extended 29-bit CAN ID).
+- **Purpose (original MESC):** Transmit ADC1/ADC2 values, typically throttle or analog request channels.
+- **Current Use (in this firmware):**  
+  - Sends `axis_vars.throttle_mapped` (normalized throttle in range **-1.0 … +1.0**).  
+  - Second float is unused (`0.0f` placeholder).  
+- **Resolution:** Derived from MT6816 encoder → ~14-bit effective precision (≈16,384 steps across -1 … +1).  
+- **CAN ID packing:**  
+- [28..16] = 0x010 (message ID)
+- [15..8] = receiver node ID (ESC)
+- [7..0] = sender node ID (Teensy)
+- 8-byte payload:  
+  - Bytes 0–3 → float32 `throttle_mapped`  
+  - Bytes 4–7 → float32 (currently 0.0)  
+  
+**CAN_ID_IQREQ** 
+- `0x020` base ID (13-bit message ID, packed into extended 29-bit CAN ID).
+- **Purpose:** Control-plane command — send **q-axis current request (torque command)** to the ESC.  
+  - ESC maps received float to `_motor->FOC.Idq_req.q`.  
+  - Positive values = forward torque, negative = reverse torque.
+- **Update Rate:** Expected at **500–1000 Hz** from the brain board (Teensy), synchronized with control loop ticks.  
+- **Resolution:** Full 32-bit float precision (no loss on CAN side). Effective resolution determined by ESC’s internal FOC current loop.  
+- **CAN ID packing:**  
+- [28..16] = 0x010 (message ID)
+- [15..8] = receiver node ID (ESC)
+- [7..0] = sender node ID (Teensy)
+- 8-byte payload:  
+  - Bytes 0–3 → float32 `Iq_req` (torque request)  
+  - Bytes 4–7 → float32 (unused / padding = 0.0f)   
+
+---
+
+Note: xCAN_ID_IQREQ seems kind of broken
+
+this gets set if user passes in a variable by CAN using CAN_ID_IQREQ
+
+   see: TASK_CAN_packet_cb() in `MESCinterface.c`
+
+```c
+float req = PACK_buf_to_float(data);
+case CAN_ID_IQREQ:{
+    if(req > 0){
+      motor_curr->input_vars.UART_req = req * motor_curr->input_vars.max_request_Idq.q;
+    }else{
+      motor_curr->input_vars.UART_req = req * motor_curr->input_vars.min_request_Idq.q * -1.0;
+    }
+    break;
+
+case CAN_ID_ADC1_2_REQ:{
+    if(sender == motor_curr->input_vars.remote_ADC_can_id && 
+                 motor_curr->input_vars.remote_ADC_can_id > 0){
+	     motor_curr->input_vars.remote_ADC_timeout = REMOTE_ADC_TIMEOUT;
+	     motor_curr->input_vars.remote_ADC1_req = PACK_buf_to_float(data);
+	     motor_curr->input_vars.remote_ADC2_req = PACK_buf_to_float(data+4);
+    }
+    break;
+```
+
+the only way to do that is if input_option is set to 32
+
+but this code zeros out UART_req when input_option is 32
+in `MESCinput.c`
+```c
+	  if(0 == (_motor->input_vars.input_options & 0b1000)){
+		 _motor->input_vars.UART_req = 0.0f;
+	  }
+```
+
+Fine -- as of now use **CAN_ID_ADC1_2_REQ** to control motor. 
