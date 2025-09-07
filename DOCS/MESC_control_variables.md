@@ -35,27 +35,18 @@
 
 - **`mtr[0]->FOC.enc_angle`**  
 
-A 16-bit fixed-point electrical angle, derived from the encoder timer’s CNT, scaled so that it runs 0–65536 per electrical cycle, and resynchronized by the encoder’s Z-pulse via CCR1. 
-`mtr[0]->FOC.enc_angle` is calculated as:
-
-enc_angle=pole_pairs×enc_ratio×(CNT−CCR3)+offset
-
-`CNT` gives the live position, while `CCR3` (index pulse latch) ensures the angle resets to a known reference once per mechanical revolution.
-
-`CNT` → current quadrature count (mechanical position since last Z).
-`CCR3` → captured counter value at the last Z-pulse (index pulse).
-→ This provides the absolute reference point per revolution.
-
-Relative count
-(`CNT` - `CCR3`) = ticks since last Z-index pulse.
-
-`enc_ratio` converts raw encoder ticks → fixed-point [0…65536] mechanical rev.
-
-Then multiplied by `pole_pairs` → converts to electrical cycles.
-
-If `encoder_polarity_invert` is set, it flips the direction by subtracting from 65536.
-
-`enc_offset` allows calibration of zero-angle alignment (phase alignment between encoder mechanical zero and motor electrical zero).
+  - A 16-bit fixed-point electrical angle, derived from the encoder timer’s CNT, scaled so that it runs 0–65536 per electrical cycle, and resynchronized by the encoder’s Z-pulse via CCR1. 
+  - `mtr[0]->FOC.enc_angle` is calculated as:
+  - enc_angle=pole_pairs×enc_ratio×(CNT−CCR3)+offset
+  - `CNT` gives the live position, while `CCR3` (index pulse latch) ensures the angle resets to a known reference once per mechanical revolution.
+  - `CNT` → current quadrature count (mechanical position since last Z).
+     - → This provides the absolute reference point per revolution.
+  - Relative count
+      - (`CNT` - `CCR3`) = ticks since last Z-index pulse.
+  - `enc_ratio` converts raw encoder ticks → fixed-point [0…65536] mechanical rev.
+  - Then multiplied by `pole_pairs` → converts to electrical cycles.
+  - If `encoder_polarity_invert` is set, it flips the direction by subtracting from 65536.
+  - `enc_offset` allows calibration of zero-angle alignment (phase alignment between encoder mechanical zero and motor electrical zero).
 
 - **`mtr[0]->FOC.abs_position`**  
 
