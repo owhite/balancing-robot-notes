@@ -188,6 +188,7 @@ static inline void mesc_unpack_id(uint32_t id, uint16_t &msg, uint8_t &rcv, uint
   rcv = (id >> 8) & 0xFF;
   snd = id & 0xFF;
 }
+```
 
 ### Important CAN Key IDs
 - Existing telemetry (slow): **CAN_ID_SPEED**, **CAN_ID_BUS_VOLT_CURR**, **CAN_ID_MOTOR_CURRENT**, **CAN_ID_MOTOR_VOLTAGE**, **CAN_ID_ADC1_2_REQ**, **CAN_ID_STATUS**.
@@ -324,7 +325,7 @@ Fine -- as of now use **CAN_ID_ADC1_2_REQ** to control motor.
 - Type in a value ranging `-1 to 1`
 - The motor should spin
 
-Important terminal settings
+** Important terminal settings: **
  Name              | Value | Comment
 -------------------|-------|--------
  node_id           | 11    | ID of receiver (ESC)
