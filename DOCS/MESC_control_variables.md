@@ -49,12 +49,12 @@
   - `enc_offset` allows calibration of zero-angle alignment (phase alignment between encoder mechanical zero and motor electrical zero).
 
 - **`mtr[0]->FOC.abs_position`**
-Created for this project. Notice this code addition:
-```c
-#ifdef POSVEL_PLANE
+    Created for this project. Notice this code addition:
+    ```c
+	#ifdef POSVEL_PLANE
 	_motor->FOC.abs_position = ( (uint16_t)(_motor->enctimer->Instance->CNT) - (uint16_t)(_motor->enctimer->Instance->CCR3) ) & 0x0FFF; // for 12-bit encoder
 #endif
-```
+    ```
   - The raw mechanical encoder position (0–4096) adjusted to an absolute reference using the Z-pulse (CCR3)
   - `FOC.abs_position → ( (uint16_t)(CNT) - (uint16_t)(CCR3) ) & 0x0FFF;` // for 12-bit encoder
   - `CNT` → current encoder count (0–4095).
