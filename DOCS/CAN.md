@@ -313,3 +313,5 @@ in `MESCinput.c`
 		 _motor->input_vars.UART_req = 0.0f;
 	  }
 ```
+
+Fine -- as of now use **CAN_ID_ADC1_2_REQ** to control motor. 

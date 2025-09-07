@@ -92,72 +92,74 @@ This example shows virtually no change after increasing CAN messages to 500kz:
 
 In addition to the external pin toggle + Teensy capture, we will also measure jitter directly inside the STM32F405 using the Cortex-M4 DWT cycle counter. We’ll aggregate min/max/average error over ~100 ms and export a small CAN telemetry frame at 10 Hz so the Teensy/PC can monitor loop health.
 
-**4.1 Enable the DWT cycle counter (once at startup)**
+**4.1 Create a new struct in MESCfoc.h** 
 
 ```c
-// Call during early init (before starting control loops)
-CoreDebug->DEMCR |= CoreDebug_DEMCR_TRCENA_Msk; // enable DWT/ITM
-DWT->CYCCNT = 0;                                // reset counter
-DWT->CTRL |= DWT_CTRL_CYCCNTENA_Msk;            // start cycle counter
+#ifdef POSVEL_PLANE
+// Jitter metrics for fastLoop() entry-to-entry period, measured via DWT->CYCCNT
+typedef struct {
+    int32_t  min_cyc, max_cyc;
+    int64_t  sum_cyc;
+    uint32_t samples;
+    uint32_t last_entry_cyc;
+    int32_t  expected_cyc;
+    float    avg_us; // average jitter over all samples, in microseconds
+    float    p2p_us; // peak-to-peak jitter over all samples, in microseconds
+    volatile uint8_t clear_req;
+} MESCjitter_s;
+#endif
+```
+
+and add this to the big motor typedef:
+
+```c
+typedef struct{
+	TIM_HandleTypeDef *mtimer; //3 phase PWM timer
+.
+.
+.
+	input_vars_t input_vars;
+	MESClrobs_s lrobs;
+	MESCoptionFlags_s options;
+	bool conf_is_valid;
+#ifdef POSVEL_PLANE
+    MESCjitter_s jitter;     // fastLoop() timing jitter metrics
+#endif
+}MESC_motor_typedef;
 ```
 
 **4.2 Measure timing at the top of fastLoop()**
 
-Adjust EXPECTED_HZ to your actual FOC/fastLoop rate (e.g., 20 kHz).
-Uses SystemCoreClock for portability (168 MHz on STM32F405 by default).
-
 ```c
-// ---- at file scope in MESCfoc.c ----
-#include <limits.h>
+void fastLoop(MESC_motor_typedef *_motor) {
+	uint32_t cycles = CPU_CYCLES;
 
-#ifndef EXPECTED_HZ
-#define EXPECTED_HZ 20000u // fastLoop() expected call rate (Hz)
+#ifdef JITTER_TEST
+	//
+	// god forgive the idiot that puts something at the top of fastLoop()
+	//
+	uint32_t period = cycles - _motor->jitter.last_entry_cyc;   // wrap-safe
+	_motor->jitter.last_entry_cyc = cycles;
+
+	if (period != 0u) { // skip first sample
+	    int32_t jitter_cyc = (int32_t)period - _motor->jitter.expected_cyc;
+
+	    if (jitter_cyc < _motor->jitter.min_cyc) _motor->jitter.min_cyc = jitter_cyc;
+	    if (jitter_cyc > _motor->jitter.max_cyc) _motor->jitter.max_cyc = jitter_cyc;
+	    _motor->jitter.sum_cyc += jitter_cyc;
+	    _motor->jitter.samples++;
+	}
+
+	// Resets after request from the task
+	if (_motor->jitter.clear_req) {
+	    _motor->jitter.min_cyc = INT32_MAX;
+	    _motor->jitter.max_cyc = INT32_MIN;
+	    _motor->jitter.sum_cyc = 0;
+	    _motor->jitter.samples = 0;
+	    _motor->jitter.clear_req = 0;
+	}
+
 #endif
-
-static uint32_t fl_last_cycles = 0;
-static int32_t  fl_jitter_min  = INT32_MAX;  // cycles error
-static int32_t  fl_jitter_max  = INT32_MIN;  // cycles error
-static int64_t  fl_jitter_sum  = 0;          // sum of cycles error
-static uint32_t fl_jitter_cnt  = 0;
-
-static inline float cycles_to_us(float cycles) {
-  return cycles / ((float)SystemCoreClock / 1e6f);
-}
-
-// ---- at the very beginning of fastLoop() ----
-{
-  const int32_t expected_cycles = (int32_t)(SystemCoreClock / EXPECTED_HZ);
-
-  uint32_t now  = DWT->CYCCNT;
-  uint32_t diff = now - fl_last_cycles;  // handles wrap-around safely
-  fl_last_cycles = now;
-
-  // error vs expected in *cycles*
-  int32_t err_cyc = (int32_t)diff - expected_cycles;
-
-  if (err_cyc < fl_jitter_min) fl_jitter_min = err_cyc;
-  if (err_cyc > fl_jitter_max) fl_jitter_max = err_cyc;
-  fl_jitter_sum += err_cyc;
-  fl_jitter_cnt++;
-
-  // Every ~100 ms at EXPECTED_HZ (e.g. 2000 samples @ 20 kHz)
-  if (fl_jitter_cnt >= (EXPECTED_HZ / 10u)) {
-    const float avg_cyc = (float)fl_jitter_sum / (float)fl_jitter_cnt;
-
-    // Convert to microseconds for reporting
-    const int16_t min_us_i16 = (int16_t)cycles_to_us((float)fl_jitter_min);
-    const int16_t max_us_i16 = (int16_t)cycles_to_us((float)fl_jitter_max);
-    const float   avg_us     = cycles_to_us(avg_cyc);
-
-    CAN_send_jitter(min_us_i16, max_us_i16, avg_us);
-
-    // reset window
-    fl_jitter_min = INT32_MAX;
-    fl_jitter_max = INT32_MIN;
-    fl_jitter_sum = 0;
-    fl_jitter_cnt = 0;
-  }
-}
 ```
 **4.3 Define a telemetry CAN ID**
 ```c
@@ -165,63 +167,45 @@ static inline float cycles_to_us(float cycles) {
 #define CAN_ID_JITTER  0x350  // pick any unused base ID in your scheme
 ```
 
-**4.4 Send a compact 8-byte CAN frame (10 Hz)**
+**4.4 Send a compact 8-byte CAN frame using the current helper**
 - Payload layout (8 bytes total):
-- bytes 0–1: int16_t min_jitter_us
-- bytes 2–3: int16_t max_jitter_us
-- bytes 4–7: float avg_jitter_us
-
-Use whichever CAN helper you already have (HAL or your TASK_CAN_* wrapper). Below are two examples; use one that matches your codebase.
-
-**(A) Using HAL directly (adjust can1.hw, IDs as needed):**
+- bytes 0–3: float jitter.avg_us
+- bytes 4–7: float jitter.p2p_us
 
 ```c
-#include "stm32f4xx_hal.h"
+void TASK_CAN_telemetry_fast(TASK_CAN_handle * handle){
 
-extern CAN_HandleTypeDef *can1_hw; // e.g., can1.hw in your code
-extern uint8_t ESC_NODE_ID;        // sender
-extern uint8_t BRAIN_NODE_ID;      // receiver (or 0 for broadcast)
+	MESC_motor_typedef * motor_curr = &mtr[0];
 
-static inline uint32_t make_ext_id(uint16_t msg_id, uint8_t receiver, uint8_t sender) {
-  return ((uint32_t)msg_id << 16) | ((uint32_t)receiver << 8) | sender;
+	TASK_CAN_add_float(handle	, CAN_ID_ADC1_2_REQ	  	, CAN_BROADCAST, motor_curr->input_vars.ADC1_req		, motor_curr->input_vars.ADC2_req	, 0);
+	TASK_CAN_add_float(handle	, CAN_ID_SPEED		  	, CAN_BROADCAST, motor_curr->FOC.eHz		, 0.0f					, 0);
+	TASK_CAN_add_float(handle	, CAN_ID_BUS_VOLT_CURR 	, CAN_BROADCAST, motor_curr->Conv.Vbus		, motor_curr->FOC.Ibus	, 0);
+	TASK_CAN_add_uint32(handle	, CAN_ID_STATUS	  		, CAN_BROADCAST, motor_curr->MotorState		, 0						, 0);
+	TASK_CAN_add_float(handle	, CAN_ID_MOTOR_CURRENT 	, CAN_BROADCAST, motor_curr->FOC.Idq.q		, motor_curr->FOC.Idq.d	, 0);
+	TASK_CAN_add_float(handle	, CAN_ID_MOTOR_VOLTAGE 	, CAN_BROADCAST, motor_curr->FOC.Vdq.q		, motor_curr->FOC.Vdq.d	, 0);
+
+#ifdef POSVEL_PLANE
+	// these values are somewhat untested in that I've
+	//  never been able to make fastLoop() slow down
+	uint32_t n       = motor_curr->jitter.samples;
+    int32_t  min_cyc = motor_curr->jitter.min_cyc;
+    int32_t  max_cyc = motor_curr->jitter.max_cyc;
+    int64_t  sum_cyc = motor_curr->jitter.sum_cyc;
+
+    if (n > 0 && min_cyc != INT32_MAX && max_cyc != INT32_MIN) {
+        const float cyc2us = 1.0f / ((float)SystemCoreClock / 1e6f);
+        motor_curr->jitter.avg_us = ((float)sum_cyc / (float)n) * cyc2us;
+        motor_curr->jitter.p2p_us = (float)(max_cyc - min_cyc) * cyc2us;
+
+        TASK_CAN_add_float(handle, CAN_ID_JITTER, CAN_BROADCAST, motor_curr->jitter.avg_us, motor_curr->jitter.p2p_us, 0);
+
+        motor_curr->jitter.clear_req = 1; // ask ISR to reset window
+    }
+#endif
+
 }
 
-void CAN_send_jitter(int16_t min_us, int16_t max_us, float avg_us) {
-  uint8_t data[8];
-  memcpy(&data[0], &min_us, 2);
-  memcpy(&data[2], &max_us, 2);
-  memcpy(&data[4], &avg_us, 4);
-
-  CAN_TxHeaderTypeDef tx = {0};
-  tx.IDE   = CAN_ID_EXT;
-  tx.RTR   = CAN_RTR_DATA;
-  tx.DLC   = 8;
-  tx.ExtId = make_ext_id(CAN_ID_JITTER, BRAIN_NODE_ID, ESC_NODE_ID);
-
-  uint32_t mailbox;
-  HAL_CAN_AddTxMessage(can1_hw, &tx, data, &mailbox);
-}
-```
-**(B) Using your existing MESC CAN task helper:**
-```c
-void CAN_send_jitter(int16_t min_us, int16_t max_us, float avg_us) {
-  uint8_t payload[8];
-  memcpy(&payload[0], &min_us, 2);
-  memcpy(&payload[2], &max_us, 2);
-  memcpy(&payload[4], &avg_us, 4);
-
-  // Example wrapper you may have:
-  // TASK_CAN_tx_ext(CAN_ID_JITTER, /*receiver*/BRAIN_NODE_ID, /*sender*/can1.node_id, payload, 8);
-}
-```
-**4.5 What the Teensy/PC sees**
-At 10 Hz, you’ll receive a compact summary of fastLoop() timing variation in microseconds:
-
-- min_jitter_us: most negative deviation in the last 0.1 s
-- max_jitter_us: most positive deviation in the last 0.1 s
-- avg_jitter_us: average deviation over the window
-
-You can print or plot these alongside your other telemetry to confirm that added bus traffic or firmware changes do not degrade control-loop determinism.
+Print or plot these alongside other telemetry to confirm that added bus traffic or firmware changes do not degrade control-loop determinism.
 
 **Notes & Tips**
 - If your fastLoop() frequency isn’t 20 kHz, just set EXPECTED_HZ accordingly.
