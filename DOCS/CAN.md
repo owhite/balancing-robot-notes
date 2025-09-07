@@ -321,11 +321,12 @@ Fine -- as of now use **CAN_ID_ADC1_2_REQ** to control motor.
 ## Driving the controller CAN with the teensy
 
 - To test use the [code](../teensy40/can_send_adc_req/src/main.cpp) in teensy40/can_send_adc_req
-- Open a serial terminal
+- Open a serial terminal to the teensy
 - Type in a value ranging `-1 to 1`
 - The motor should spin
 
-** Important terminal settings: **
+**Important terminal settings:**
+
  Name              | Value | Comment
 -------------------|-------|--------
  node_id           | 11    | ID of receiver (ESC)
@@ -438,3 +439,14 @@ while (bufferPop(msg)) canHandler(msg);
 
 ### Key takeaway:
 On Teensy 4.0, always use polling with Can1.read() for reliability. If callback-style structure is needed, implement a ring buffer and dispatcher in the main loop. FlexCAN_T4 callbacks are not dependable across library/core versions.
+
+---
+## Reading the controller CAN with the teensy, displaying on desktop
+
+- To test use the [code](../teensy40/can_posvel_read/src/main.cpp) in teensy40/can_posvel_read
+- On your desktop run 
+  - `./can_posvel_read.py /dev/tty.usbmodem178888901`
+  - turn the motor by hand, watch values change
+- Open a serial terminal to the MESC controller
+- Change values using `set uart_req 1` to spin the motor
+- Watch values change

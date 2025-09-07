@@ -36,9 +36,9 @@ def serial_reader():
             continue
         try:
             data = json.loads(line)
-            pos = data.get("pos", None)
-            vel = data.get("vel", None)
-            print(pos, vel)
+            pos = data.get("pos", None)  # radians (0–2π)
+            vel = data.get("vel", None)  # rad/s
+
             with lock:
                 time_buf.append(sample_idx)
                 pos_buf.append(pos)
@@ -53,29 +53,53 @@ t.start()
 
 # === Plot setup ===
 plt.ion()
-fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(12, 8))
-fig.subplots_adjust(hspace=0.4)
+fig = plt.figure(figsize=(10, 8))
 
-ln1, = ax1.plot([], [], lw=1, label="Position (rad)")
-ax1.set_ylim(0, 2 * np.pi)
-ax1.set_title("Position (0 – 2π)")
-ax1.set_xlabel("Sample")
-ax1.set_ylabel("rad")
-ax1.legend(loc="upper right")
+# --- Circular (polar) position plot ---
+ax1 = fig.add_subplot(2, 1, 1, polar=True)
+ax1.set_title("Position (circular)", va="bottom")
 
-ln2, = ax2.plot([], [], lw=1, color="orange", label="Velocity (rad/s)")
-ax2.set_title("Velocity")
+# Needle line (from center outwards)
+pos_line, = ax1.plot([0, 0], [0, 1], lw=2)
+
+# Configure angular ticks (radians)
+ax1.set_xticks([0, np.pi/2, np.pi, 3*np.pi/2])
+ax1.set_xticklabels(["0", "π/2", "π", "3π/2"])
+
+# Hide radial (concentric) labels and grid
+ax1.set_yticklabels([])
+ax1.yaxis.grid(False)
+
+# --- Scrolling position plot (time series) ---
+ax2 = fig.add_subplot(2, 1, 2)
+ln2, = ax2.plot([], [], lw=1, color="blue", label="Position (rad)")
+ax2.set_title("Position (scrolling)")
 ax2.set_xlabel("Sample")
-ax2.set_ylabel("rad/s")
+ax2.set_ylabel("rad")
+ax2.set_ylim(0, 2 * np.pi)  # fixed range 0–2π
 ax2.legend(loc="upper right")
+
+# --- Shared labels (top-right of entire figure) ---
+pos_text = fig.text(0.75, 0.95, "", ha="left", va="top",
+                    fontsize=16, weight="bold")
+vel_text = fig.text(0.75, 0.90, "", ha="left", va="top",
+                    fontsize=16, weight="bold")
 
 # === Plot update loop ===
 while True:
     with lock:
         if time_buf:
-            ln1.set_data(time_buf, pos_buf)
-            ln2.set_data(time_buf, vel_buf)
-            ax1.set_xlim(max(0, time_buf[-1] - WINDOW), time_buf[-1])
+            # --- Position update (circular plot) ---
+            pos = pos_buf[-1] if pos_buf else 0.0
+            pos_line.set_data([0, pos], [0, 1])  # angle=pos, radius=1
+            pos_text.set_text(f"Position: {pos:.2f} rad")
+
+            # --- Position update (scrolling plot) ---
+            ln2.set_data(time_buf, pos_buf)
             ax2.set_xlim(max(0, time_buf[-1] - WINDOW), time_buf[-1])
+
+            # --- Velocity label ---
+            vel = vel_buf[-1] if vel_buf else 0.0
+            vel_text.set_text(f"Velocity: {vel:.1f} rad/s")
 
     plt.pause(0.05)
