@@ -9,6 +9,7 @@
 * Great for real-time control, sensor fusion, and behavior modeling
 
 ## MESC motor controller
+* DIY and commercially available boards
 * Handles current, velocity, or position control
 * Built-in support for encoders, FOC, and torque estimation
 * UART/CAN interface
@@ -19,7 +20,7 @@
 * CAN interface (RX + TX)	Real-time communication with the Teensy
 * PWM / FOC commutation w/ efficient, smooth motor operation
 
-## Why This Combo Works So Well for a Walking or Balancing Robot
+## Approach: a separation of concerns
 * Teensy: Runs the high-level brain → gait generator, balance estimator, RC inputs
 * MESC: Handles the low-level muscle control → torque or velocity loops per joint
 * ESP32: Easy to log and analyze later, pumps UDP to the computer
@@ -28,7 +29,7 @@
   * helps with modeling
   * keyboards are useful for input
 
-## BRAIN BOARD FEATURES
+## Brain board features
 * Teensy 4.0
 * ESP32
 * RC receiver connector (for PWM/PPM/SBUS input)
@@ -44,13 +45,14 @@
 * CAN connector (for MESC motor control)
 
 ## Specs and testing
-* Hardware considerations [[LINK](DOCS/hardware.md)]
-* Control loop considerations [[LINK](DOCS/control_loop.md)]
-* Balancing checklist [[LINK](DOCS/balancing_checklist.md)]
-* Brain board firmware specs [[LINK](DOCS/software_specs.md)]
 * Using the MT6701 [[LINK](DOCS/MT6701.md)]
-* Implementing CAN on MESC [[LINK](DOCS/CAN.md)]
+* Implementing CAN [[LINK](DOCS/CAN.md)]
 * Measuring jitter on the MESC [[LINK](DOCS/jitter_testing.md)]
+* Hardware, preliminary specs [[LINK](DOCS/hardware.md)]
+* Control loop, preliminary specs [[LINK](DOCS/control_loop.md)]
+* Brain board firmware, preliminary specs [[LINK](DOCS/software_specs.md)]
+* Balancing checklist [[LINK](DOCS/balancing_checklist.md)]
+
 
 ## NOT IMPLEMENTED
 * Optional I²C header (for sensors like INA219 or IMU)
