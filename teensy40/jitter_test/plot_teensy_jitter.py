@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 import sys
 import serial
 import json
@@ -12,94 +13,60 @@ if len(sys.argv) < 2:
 
 PORT = sys.argv[1]
 BAUD = int(sys.argv[2]) if len(sys.argv) > 2 else 115200
-WINDOW = 2000  # rolling window length for time series
+WINDOW = 1000  # rolling window length
 
 # === Set up serial ===
 ser = serial.Serial(PORT, BAUD, timeout=1)
 
 # === Rolling buffers ===
-period_buf = deque(maxlen=WINDOW)
-err_buf    = deque(maxlen=WINDOW)
+time_buf = deque(maxlen=WINDOW)
+pos_buf  = deque(maxlen=WINDOW)
+vel_buf  = deque(maxlen=WINDOW)
 
 plt.ion()
-fig, (ax1, ax2, ax3) = plt.subplots(3, 1, figsize=(12, 10))
-# Leave room on the right for sidebar, and add vertical spacing for titles
-fig.subplots_adjust(right=0.75, hspace=0.6, top=0.92, bottom=0.08)
+fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(12, 8))
+fig.subplots_adjust(hspace=0.4)
 
-# --- Time series plots ---
-ln1, = ax1.plot([], [], lw=1)
-ax1.set_title("Period (µs)", fontsize=12, pad=12)
+# --- Position plot ---
+ln1, = ax1.plot([], [], lw=1, label="Position (rad)")
+ax1.set_ylim(0, 2 * np.pi)
+ax1.set_title("Position (0 – 2π)", fontsize=12, pad=12)
 ax1.set_xlabel("Sample")
-ax1.set_ylabel("Period [µs]")
+ax1.set_ylabel("rad")
+ax1.legend(loc="upper right")
 
-ln2, = ax2.plot([], [], lw=1, color="red")
-ax2.set_title("Jitter (Error vs Target)", fontsize=12, pad=12)
+# --- Velocity plot ---
+ln2, = ax2.plot([], [], lw=1, color="orange", label="Velocity (rad/s)")
+ax2.set_title("Velocity", fontsize=12, pad=12)
 ax2.set_xlabel("Sample")
-ax2.set_ylabel("Error [µs]")
+ax2.set_ylabel("rad/s")
+ax2.legend(loc="upper right")
 
-# --- Violin plot ---
-ax3.set_title("Jitter Distribution (Violin Plot)", fontsize=12, pad=12)
-ax3.set_ylabel("Error [µs]")
+# === Main loop ===
+sample_idx = 0
+while True:
+    line = ser.readline().decode(errors="ignore").strip()
+    if not line:
+        continue
 
-# --- Sidebar stats text ---
-stats_text = fig.text(0.8, 0.5, "", va="center", ha="left", fontsize=10,
-                      family="monospace")
+    try:
+        data = json.loads(line)
+        pos = data.get("pos", 0.0)
+        vel = data.get("vel", 0.0)
 
-def update_stats():
-    if not err_buf:
-        return ""
+        time_buf.append(sample_idx)
+        pos_buf.append(pos)
+        vel_buf.append(vel)
+        sample_idx += 1
 
-    arr = np.array(err_buf)
-    mean = np.mean(arr)
-    std = np.std(arr)
-    p99 = np.percentile(arr, 99)
-    mn, mx = np.min(arr), np.max(arr)
+        # update plots
+        ln1.set_data(time_buf, pos_buf)
+        ln2.set_data(time_buf, vel_buf)
 
-    return (f"Samples: {len(arr):>6}\n"
-            f"Mean:    {mean:8.2f} µs\n"
-            f"StdDev:  {std:8.2f} µs\n"
-            f"99%ile:  {p99:8.2f} µs\n"
-            f"Min:     {mn:8.2f} µs\n"
-            f"Max:     {mx:8.2f} µs")
+        ax1.set_xlim(max(0, sample_idx - WINDOW), sample_idx)
+        ax2.set_xlim(max(0, sample_idx - WINDOW), sample_idx)
 
-def update_plot():
-    # update time series
-    ln1.set_data(range(len(period_buf)), period_buf)
-    ln2.set_data(range(len(err_buf)), err_buf)
+        plt.pause(0.01)
 
-    ax1.relim(); ax1.autoscale_view()
-    ax2.relim(); ax2.autoscale_view()
-
-    # update violin plot
-    ax3.cla()
-    if len(err_buf) > 10:  # need enough points
-        ax3.violinplot(err_buf, showmeans=True, showextrema=True, showmedians=True)
-        ax3.set_title("Jitter Distribution (Violin Plot)", fontsize=12, pad=12)
-        ax3.set_ylabel("Error [µs]")
-
-    # update stats sidebar
-    stats_text.set_text(update_stats())
-
-    plt.pause(0.01)
-
-print(f"Listening on {PORT} at {BAUD} baud...")
-try:
-    while True:
-        line = ser.readline().decode("utf-8").strip()
-        if not line:
-            continue
-        try:
-            data = json.loads(line)
-        except json.JSONDecodeError:
-            continue
-
-        if "period_us" in data:
-            period_buf.append(data["period_us"])
-            err_buf.append(data["err_us"])
-            update_plot()
-
-        elif "warn" in data:
-            print("Warning:", data)
-except KeyboardInterrupt:
-    print("Exiting...")
-    ser.close()
+    except json.JSONDecodeError:
+        continue

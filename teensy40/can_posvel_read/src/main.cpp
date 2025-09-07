@@ -1,87 +1,73 @@
 #include <Arduino.h>
 #include <FlexCAN_T4.h>
 
-// === Teensy CAN setup ===
 FlexCAN_T4<CAN1, RX_SIZE_256, TX_SIZE_16> Can1;
 
-// MESC CAN ID for POS/VEL (base message ID)
-#define CAN_ID_POSVEL   0x2D0
+// --- Constants ---
+#define CAN_ID_POSVEL 0x2D0   // MESC POS/VEL ID
 
-// Node IDs
-#define TEENSY_NODE_ID  0x03   // sender (this Teensy)
-#define ESC_NODE_ID     0x0B   // receiver (your ESC node_id = 11)
+// --- Ring buffer for safe message passing ---
+const int BUF_SIZE = 32;
+CAN_message_t rxBuf[BUF_SIZE];
+volatile int head = 0, tail = 0;
 
-// Helper: unpack extended CAN ID (MESC style)
-static inline void mesc_unpack_id(uint32_t id, uint16_t &msg, uint8_t &rcv, uint8_t &snd) {
-  msg = (id >> 16) & 0x1FFF;
-  rcv = (id >> 8) & 0xFF;
-  snd = id & 0xFF;
+bool bufferPush(const CAN_message_t &msg) {
+  int next = (head + 1) % BUF_SIZE;
+  if (next == tail) return false; // buffer full, drop
+  rxBuf[head] = msg;
+  head = next;
+  return true;
 }
 
-// Helper: parse two float32 values from CAN payload
-static inline void parse_two_floats(const uint8_t *b, float &a, float &c) {
-  uint32_t u0 = b[0] | (b[1] << 8) | (b[2] << 16) | (b[3] << 24);
-  uint32_t u1 = b[4] | (b[5] << 8) | (b[6] << 16) | (b[7] << 24);
-  memcpy(&a, &u0, sizeof(float));
-  memcpy(&c, &u1, sizeof(float));
+bool bufferPop(CAN_message_t &msg) {
+  if (head == tail) return false; // empty
+  msg = rxBuf[tail];
+  tail = (tail + 1) % BUF_SIZE;
+  return true;
 }
 
-// Struct to hold the latest pos/vel snapshot
-struct PosVel {
-  float pos_rad;
-  float vel_rad_s;
-  uint32_t t_us;
-  uint32_t seq;
-};
-volatile PosVel esc_posvel;   // single ESC for testing
-
-// RX callback — runs in interrupt context
-void canSniff(const CAN_message_t &msg) {
-  uint16_t id;
-  uint8_t snd, rcv;
-  mesc_unpack_id(msg.id, id, rcv, snd);
-
-  // Only accept messages from our ESC
-  if (id == CAN_ID_POSVEL && msg.len == 8 && snd == ESC_NODE_ID) {
+// --- POSVEL handler ---
+void handlePosVel(const CAN_message_t &msg) {
+  if (msg.len == 8) {
     float pos, vel;
-    parse_two_floats(msg.buf, pos, vel);
+    uint32_t u0 = msg.buf[0] | (msg.buf[1] << 8) | (msg.buf[2] << 16) | (msg.buf[3] << 24);
+    uint32_t u1 = msg.buf[4] | (msg.buf[5] << 8) | (msg.buf[6] << 16) | (msg.buf[7] << 24);
+    memcpy(&pos, &u0, sizeof(float));
+    memcpy(&vel, &u1, sizeof(float));
 
-    esc_posvel.pos_rad   = pos;
-    esc_posvel.vel_rad_s = vel;
-    esc_posvel.t_us      = micros();
-    esc_posvel.seq++;
+    // Print as JSON
+    Serial.printf("{\"t_us\":%lu,\"pos\":%.6f,\"vel\":%.6f}\r\n",
+                  micros(), pos, vel);
+  }
+}
+
+// --- General CAN handler ---
+void canHandler(const CAN_message_t &msg) {
+  uint16_t mid = (msg.id >> 16) & 0x1FFF;  // unpack MESC message ID
+  if (mid == CAN_ID_POSVEL) {
+    handlePosVel(msg);
   }
 }
 
 void setup() {
   Serial.begin(115200);
   while (!Serial && millis() < 2000) {}
-
-  Serial.println("{\"status\":\"Teensy started\"}");
+  Serial.println("{\"status\":\"POSVEL reader started}\r\n");
 
   Can1.begin();
-  Can1.setBaudRate(500000);  // change to 1000000 if needed
+  Can1.setBaudRate(500000);  // or 1000000 if ESC runs at 1 Mbps
   Can1.enableFIFO();
-  Can1.onReceive(canSniff);
 }
 
 void loop() {
-  static uint32_t last_seq = 0;
+  // Collector: move frames into buffer
+  CAN_message_t msg;
+  while (Can1.read(msg)) {
+    bufferPush(msg);
+  }
 
-  // Snapshot volatile safely
-  noInterrupts();
-  PosVel snap;
-  snap.pos_rad   = esc_posvel.pos_rad;
-  snap.vel_rad_s = esc_posvel.vel_rad_s;
-  snap.t_us      = esc_posvel.t_us;
-  snap.seq       = esc_posvel.seq;
-  interrupts();
-
-  // Only print if a new payload was received
-  if (snap.seq != last_seq) {
-    last_seq = snap.seq;
-    Serial.printf("{\"t_us\":%lu,", snap.t_us);
-    Serial.printf("\"esc\":{\"pos\":%.6f,\"vel\":%.6f,\"seq\":%lu}}\n",
-                  snap.pos_rad, snap.vel_rad_s, snap.seq);
+  // Dispatcher: process buffered frames
+  while (bufferPop(msg)) {
+    canHandler(msg);
   }
 }

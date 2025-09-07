@@ -402,9 +402,9 @@ void loop() {
 ```
 
 ---
-## Lesson Learned: Teensy + FlexCAN_T4 (Callbacks vs Polling)
+## A Lesson Learned: Teensy + FlexCAN_T4 (Callbacks vs Polling)
 
-### What Works Reliably✅ 
+### What Works Reliably  ✅ 
 - **Polling with `Can1.read(msg)`** works consistently on Teensy 4.0 with the `FlexCAN_T4` library.  
 - By draining the receive FIFO in the main loop, you see every CAN frame the ESC sends.  
 - Wrapping polling in a **software callback layer** (ring buffer + dispatcher) gives you the same structure as a hardware callback, but without the library’s quirks.
@@ -424,6 +424,7 @@ void loop() {
 4. So fuck you, teensy developers
 
 ### Solution
+- Do NOT use **library callbacks** when developing code. Instead..
 - Use **polling (`while (Can1.read(msg))`)** as the base receive method.  
 - Add a **ring buffer + dispatcher** in the main loop to emulate callbacks.  
 - Define a `canHandler(const CAN_message_t &msg)` that acts like a callback, keeping the logic clean.
