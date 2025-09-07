@@ -53,7 +53,7 @@
     ```c
 	#ifdef POSVEL_PLANE
 	_motor->FOC.abs_position = ( (uint16_t)(_motor->enctimer->Instance->CNT) - (uint16_t)(_motor->enctimer->Instance->CCR3) ) & 0x0FFF; // for 12-bit encoder
-#endif
+    #endif
     ```
   - The raw mechanical encoder position (0–4096) adjusted to an absolute reference using the Z-pulse (CCR3)
   - `FOC.abs_position → ( (uint16_t)(CNT) - (uint16_t)(CCR3) ) & 0x0FFF;` // for 12-bit encoder
