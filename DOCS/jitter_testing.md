@@ -32,7 +32,7 @@ static inline void jit_toggle(void) {  GPIOB->ODR ^= (1U << 5); }
 
 Put a scope on PB5 and get this:
 
-<img src="scope1.png" alt="Block diagram" width="400"/>
+<img src="IMAGES/scope1.png" alt="Block diagram" width="400"/>
 
 ### Result:
 - **Each toggle = one call to `fastLoop()`**, so:
@@ -73,11 +73,11 @@ python3 ./plot_teensy_jitter.py /dev/cu.usbmodem178888901
 
 Typical result showing there is a very small amount of fastLoop() delays:
 
-<img src="plot1.png" alt="Plot result" width="600"/>
+<img src="IMAGES/plot1.png" alt="Plot result" width="600"/>
 
 This example shows virtually no change after increasing CAN messages to 500kz:
 
-<img src="plot2.png" alt="Plot result" width="600"/>
+<img src="IMAGES/plot2.png" alt="Plot result" width="600"/>
 
 
 ### Outcome

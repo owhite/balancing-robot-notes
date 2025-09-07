@@ -56,12 +56,12 @@
 	_motor->FOC.abs_position = ( (uint16_t)(_motor->enctimer->Instance->CNT) - (uint16_t)(_motor->enctimer->Instance->CCR3) ) & 0x0FFF; // for 12-bit encoder
     #endif
     ```
-  - The raw mechanical encoder position (0–4096) adjusted to an absolute reference using the Z-pulse (CCR3)
+  - The raw mechanical encoder position (0–4096) adjusted to an absolute reference using the Z-pulse (`CCR3`)
   - `FOC.abs_position → ( (uint16_t)(CNT) - (uint16_t)(CCR3) ) & 0x0FFF;` // for 12-bit encoder
   - `CNT` → current encoder count (0–4095).
   - `CCR3` → latched value of CNT when the Z-pulse occurred.
   - `(CNT - CCR3)` → ticks since the last index (Z-pulse).
-  - Note: if it wasnt obvious already 4095 is hardcoded all over the place. 
+  - Note: if it wasnt obvious already 4095 is hardcoded all over the place in MESC.
 
 ---
 
