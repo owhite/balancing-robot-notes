@@ -325,12 +325,12 @@ Fine -- as of now use **CAN_ID_ADC1_2_REQ** to control motor.
 - The motor should spin
 
 Important terminal settings
- Name              | Value
--------------------|------
- node_id           | 11
- can_adc           | 3 
- input_opt         | 8 
- par_motor_sensor  | 4 
+ Name              | Value | Comment
+-------------------|-------|--------
+ node_id           | 11    | ID of receiver (ESC)
+ can_adc           | 3     | ID of sender (teensy)
+ input_opt         | 32    | For CAN input
+ par_motor_sensor  | 4     | Optional
 
 
 
