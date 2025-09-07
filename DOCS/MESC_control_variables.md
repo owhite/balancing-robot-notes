@@ -31,11 +31,11 @@
 - **`max_request_Idq.q` / `min_request_Idq.q`**  
   - Configured current limits (positive/negative).  
   - Define the maximum torque the ESC will ever command.  
-  - All normalized requests (`UART_req`, remote_ADC) are scaled by these bounds.
+  - All normalized requests (`UART_req`, `remote_ADC`) are scaled by these bounds.
 
 - **`mtr[0]->FOC.enc_angle`**  
 
-  - A 16-bit fixed-point electrical angle, derived from the encoder timer’s CNT, scaled so that it runs 0–65536 per electrical cycle, and resynchronized by the encoder’s Z-pulse via CCR1. 
+  - A 16-bit fixed-point mechanical angle, derived from the encoder timer’s CNT, scaled so that it runs 0–65536 per cycle, and resynchronized by the encoder’s Z-pulse via CCR1. 
   - `mtr[0]->FOC.enc_angle` is calculated as:
   - enc_angle=pole_pairs×enc_ratio×(CNT−CCR3)+offset
   - `CNT` gives the live position, while `CCR3` (index pulse latch) ensures the angle resets to a known reference once per mechanical revolution.
@@ -44,24 +44,23 @@
   - Relative count
       - (`CNT` - `CCR3`) → ticks since last Z-index pulse.
   - `enc_ratio` converts raw encoder ticks → fixed-point [0…65536] mechanical rev.
-  - Then multiplied by `pole_pairs` → converts to electrical cycles.
+  - Then multiplied by `pole_pairs` → converts to magnetic motor position.
   - If `encoder_polarity_invert` is set, it flips the direction by subtracting from 65536.
   - `enc_offset` allows calibration of zero-angle alignment (phase alignment between encoder mechanical zero and motor electrical zero).
 
-- **`mtr[0]->FOC.abs_position`** (Created for this project)
-
-  - the raw mechanical encoder position (0–4096) adjusted to an absolute reference using the Z-pulse (CCR3)
+- **`mtr[0]->FOC.abs_position`**
+Created for this project. Notice this code addition:
+```c
+#ifdef POSVEL_PLANE
+	_motor->FOC.abs_position = ( (uint16_t)(_motor->enctimer->Instance->CNT) - (uint16_t)(_motor->enctimer->Instance->CCR3) ) & 0x0FFF; // for 12-bit encoder
+#endif
+```
+  - The raw mechanical encoder position (0–4096) adjusted to an absolute reference using the Z-pulse (CCR3)
   - `FOC.abs_position → ( (uint16_t)(CNT) - (uint16_t)(CCR3) ) & 0x0FFF;` // for 12-bit encoder
   - `CNT` → current encoder count (0–4095).
   - `CCR3` → latched value of CNT when the Z-pulse occurred.
   - `(CNT - CCR3)` → ticks since the last index (Z-pulse).
   - Note: if it wasnt obvious already 4095 is hardcoded all over the place. 
 
-Notice this code addition:
-```c
-#ifdef POSVEL_PLANE
-	_motor->FOC.abs_position = ( (uint16_t)(_motor->enctimer->Instance->CNT) - (uint16_t)(_motor->enctimer->Instance->CCR3) ) & 0x0FFF; // for 12-bit encoder
-#endif
-```
 ---
 
