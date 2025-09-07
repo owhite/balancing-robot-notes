@@ -400,3 +400,39 @@ void loop() {
 }
 
 ```
+
+---
+## Lesson Learned: Teensy + FlexCAN_T4 (Callbacks vs Polling)
+
+### ✅ What Works Reliably
+- **Polling with `Can1.read(msg)`** works consistently on Teensy 4.0 with the `FlexCAN_T4` library.  
+- By draining the receive FIFO in the main loop, you see every CAN frame the ESC sends.  
+- Wrapping polling in a **software callback layer** (ring buffer + dispatcher) gives you the same structure as a hardware callback, but without the library’s quirks.
+
+### ❌ What Did Not Work
+- **Library callbacks (`onReceive()`)** never fired, despite trying all known setups:  
+  - `enableFIFO()` + `onReceive()`  
+  - `enableFIFOInterrupt()` + `onReceive(FIFO, …)`  
+  - `enableMBInterrupts()` + `onReceive(MB0, …)`  
+  - Adding `Can1.events()` in the loop  
+- This matches known issues: on Teensy 4.0 with some Teensyduino versions, **callbacks are unreliable or non-functional**, while polling always works.
+
+### 🔎 Why
+1. `FlexCAN_T4`’s callback layer is not a pure ISR — it relies on extra plumbing (`events()`) and interrupt dispatch that is brittle.  
+2. Different Teensyduino versions break or change callback behavior.  
+3. Printing (`Serial.printf`) inside a real ISR would block anyway, making polling safer.
+
+### 🛠️ Solution
+- Use **polling (`while (Can1.read(msg))`)** as the base receive method.  
+- Add a **ring buffer + dispatcher** in the main loop to emulate callbacks.  
+- Define a `canHandler(const CAN_message_t &msg)` that acts like a callback, keeping your logic clean.  
+
+Example dispatcher pattern:
+
+```cpp
+while (Can1.read(msg)) bufferPush(msg);
+while (bufferPop(msg)) canHandler(msg);
+```
+
+### Key takeaway:
+On Teensy 4.0, always use polling with Can1.read() for reliability. If callback-style structure is needed, implement a ring buffer and dispatcher in the main loop. FlexCAN_T4 callbacks are not dependable across library/core versions.

@@ -1,0 +1,63 @@
+#include <Arduino.h>
+#include <FlexCAN_T4.h>
+
+FlexCAN_T4<CAN1, RX_SIZE_256, TX_SIZE_16> Can1;
+
+// MESC POS/VEL message ID
+#define CAN_ID_POSVEL  0x2D0
+
+// Helper: unpack extended CAN ID (MESC style)
+static inline void mesc_unpack_id(uint32_t id, uint16_t &msg, uint8_t &rcv, uint8_t &snd) {
+  msg = (id >> 16) & 0x1FFF;
+  rcv = (id >> 8) & 0xFF;
+  snd = id & 0xFF;
+}
+
+void setup() {
+  Serial.begin(115200);
+  while (!Serial && millis() < 2000) {}
+
+  Serial.println("{\"status\":\"CAN sniffer started\"}");
+
+  Can1.begin();
+  Can1.setBaudRate(500000);  // change to 1000000 if your ESC runs at 1 Mbps
+  Can1.enableFIFO();
+}
+
+void loop() {
+  Can1.events();
+
+  CAN_message_t msg;
+  while (Can1.read(msg)) {
+    uint16_t mid;
+    uint8_t rcv, snd;
+    mesc_unpack_id(msg.id, mid, rcv, snd);
+
+    Serial.printf("{\"t_us\":%lu,", micros());
+    Serial.printf("\"id\":%lu,", msg.id);
+    Serial.printf("\"msg\":%u,\"rcv\":%u,\"snd\":%u,", mid, rcv, snd);
+    Serial.printf("\"ext\":%u,", msg.flags.extended);
+    Serial.printf("\"len\":%u,", msg.len);
+    Serial.print("\"data\":[");
+    for (int i = 0; i < msg.len; i++) {
+      Serial.printf("%u", msg.buf[i]);
+      if (i < msg.len - 1) Serial.print(",");
+    }
+    Serial.print("]");
+
+    // Special flag for CAN_ID_POSVEL
+    if (mid == CAN_ID_POSVEL) {
+      Serial.print(",\"note\":\"CAN_ID_POSVEL\"");
+      if (msg.len == 8) {
+        float pos, vel;
+        uint32_t u0 = msg.buf[0] | (msg.buf[1] << 8) | (msg.buf[2] << 16) | (msg.buf[3] << 24);
+        uint32_t u1 = msg.buf[4] | (msg.buf[5] << 8) | (msg.buf[6] << 16) | (msg.buf[7] << 24);
+        memcpy(&pos, &u0, sizeof(float));
+        memcpy(&vel, &u1, sizeof(float));
+        Serial.printf(",\"pos\":%.6f,\"vel\":%.6f", pos, vel);
+      }
+    }
+
+    Serial.println("}");
+  }
+}
