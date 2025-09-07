@@ -48,7 +48,7 @@
   - If `encoder_polarity_invert` is set, it flips the direction by subtracting from 65536.
   - `enc_offset` allows calibration of zero-angle alignment (phase alignment between encoder mechanical zero and motor electrical zero).
 
-- **`mtr[0]->FOC.abs_position`**  
+- **`mtr[0]->FOC.abs_position`** (Created for this project)
 
   - the raw mechanical encoder position (0–4096) adjusted to an absolute reference using the Z-pulse (CCR3)
   - FOC.abs_position = ( (uint16_t)(CNT) - (uint16_t)(CCR3) ) & 0x0FFF; // for 12-bit encoder
