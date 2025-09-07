@@ -23,11 +23,8 @@
 ## Approach: a separation of concerns
 * Teensy: Runs the high-level brain → gait generator, balance estimator, RC inputs
 * MESC: Handles the low-level muscle control → torque or velocity loops per joint
-* ESP32: Easy to log and analyze later, pumps UDP to the computer
-* Desktop computer
-  * perfectly adequate way of viewing high speed data with UDP
-  * helps with modeling
-  * keyboards are useful for input
+* ESP32: Easy to log and analyze later → pumps UDP to the computer
+* Desktop computer → perfectly adequate way of viewing high speed data with UDP
 
 ## Brain board features
 * Teensy 4.0
