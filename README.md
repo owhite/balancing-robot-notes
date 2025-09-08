@@ -2,6 +2,15 @@
 
 [Chatgpt discussion](https://chatgpt.com/c/68653d84-b634-8011-b055-3476bfa95f52)
 
+## Project plan:
+
+Gonna try to use my open source motor controller, the [MP2-DFN](https://github.com/owhite/MP2-DFN), and this circuit for a [brain board](https://github.com/owhite/MESC_brain_board/blob/main/brainboardV1.0/MESC_brain_board.pdf), a teensy 4.0, and an ESP-32, in combination with [MESC firmware](https://github.com/davidmolony/MESC_Firmware).
+
+## This project would never happen without
+* [MP2](https://github.com/badgineer/MP2-ESC), an open source motor controller from badgineer. 
+* [MESC firmware](https://github.com/davidmolony/MESC_Firmware). 
+* [Netzpfuscher's](https://github.com/Netzpfuscher/TTerm) incredible TTerm work
+
 ## Teensy 4.0
 * 600+ MHz ARM Cortex-M7 — plenty of headroom for filtering, control loops, gait logic, telemetry
 * Tons of I/O for IMU, encoders, RC input, WiFi (via ESP add-on), etc.
@@ -50,6 +59,32 @@
 * Brain board firmware, preliminary specs [[LINK](DOCS/software_specs.md)]
 * Balancing checklist [[LINK](DOCS/balancing_checklist.md)]
 
+### CAN Bus
+* Full-duplex communication between Teensy and motor controllers
+* Carries:
+  * Commands: set_torque, set_velocity, enable_motor, zero_encoder, etc.
+  * Telemetry: encoder position, estimated torque, velocity, fault codes
+* Real-time performance with minimal latency
+* Can support multiple motor controllers on the same bus
+
+### Motor Controller (with custom firmware)
+* Executes low-level motor control (Field-Oriented Control)
+* Supports:
+  * Torque mode
+  * Velocity mode
+  * Position mode
+* Reads angular position from the MT6701 encoder via SPI or PWM
+* Computes:
+  * Electrical angle for FOC
+  * Velocity (from encoder delta over time)
+  * Torque (via current sensing or estimation)
+* Sends back telemetry via CAN (e.g., torque estimate, velocity, encoder angle)
+
+### MT6701 Encoder
+* High-resolution magnetic rotary encoder (up to 14-bit)
+* Measures rotor position for the BLDC
+* Output via SPI, PWM, or ABI 
+* Provides absolute angle, ideal for FOC and position tracking
 
 ## NOT IMPLEMENTED
 * Optional I²C header (for sensors like INA219 or IMU)
