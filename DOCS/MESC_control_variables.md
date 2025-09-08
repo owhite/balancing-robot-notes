@@ -1,4 +1,5 @@
-## MESC Motor Control Variables
+# MESC Motor Control Variables
+A listing of variables in the [MESC firmware](https://github.com/davidmolony/MESC_Firmware) that are particularly relevant to balancing. 
 
 ### 🔹 Input & Control Variables
 

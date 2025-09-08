@@ -7,6 +7,10 @@
 extern "C" {
 #endif
 
+static constexpr uint32_t PB_BEEP_HZ = 2000;
+static constexpr uint32_t PB_BEEP_MS = 150;
+static constexpr uint32_t PB_GAP_MS  = 100;
+
 typedef enum {
   TONE_IDLE = 0,     // nothing happening
   TONE_PLAYING,      // toggling pin at frequency

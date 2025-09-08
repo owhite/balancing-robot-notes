@@ -30,22 +30,6 @@ static void tp_start_osc(uint32_t freq_hz) {
   }
 }
 
-static void tp_start_osc_old(uint32_t freq_hz) {
-  if (freq_hz == 0 || s_tpPin == 255) {
-    s_tpTimer.end();
-    digitalWriteFast(s_tpPin, LOW);
-    s_level = false;
-    return;
-  }
-  // half period (us) = 1e6 / (2 * f)
-  uint32_t half_us = (500000UL / (freq_hz ? freq_hz : 1));
-  if (half_us == 0) half_us = 1; // guard
-  s_level = false;
-  digitalWriteFast(s_tpPin, LOW);
-  // begin returns bool; ignore failure here (rare)
-  s_tpTimer.begin(tp_isr_toggle, half_us);
-}
-
 static void tp_stop_osc() {
   s_tpTimer.end();
   digitalWriteFast(s_tpPin, LOW);

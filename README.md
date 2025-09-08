@@ -78,7 +78,9 @@ This project would never happen without:
 
 ## STILL NEEDS WORK
 * Not great design w/ DC-DC conversion from high voltage VBat
-* replace out the IMU for a ICM-42688-P
+* Replace out the IMU for a ICM-42688-P
+* Order / revise pushbuttons for programming the ESP32
+* Ensure 3.3V CAN transciever
 
 ## VERSIONS
 * See github tag [pcb-v1](https://github.com/owhite/MESC_brain_board/releases/tag/pcb-v1) for V1.0
