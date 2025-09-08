@@ -1,39 +1,40 @@
-# MESC Brain Board
+# MESC BRAIN BOARD
 
-## Approach: a separation of concerns
-* Teensy: Runs the high-level brain → gait generator, balance estimator, RC inputs
-* MESC: Handles the low-level muscle control → torque or velocity loops per joint
-* ESP32: Easy to log and analyze later → pumps UDP to the computer
-* Desktop computer → perfectly adequate way of viewing high speed data with UDP
+A PCB and software development repo for a balancing robot. 
 
-## Project plan:
-Gonna try to use my open source motor controller, the [MP2-DFN](https://github.com/owhite/MP2-DFN), and this circuit for a [brain board](https://github.com/owhite/MESC_brain_board/blob/main/brainboardV1.0/MESC_brain_board.pdf), a teensy 4.0, and an ESP-32, in combination with [MESC firmware](https://github.com/davidmolony/MESC_Firmware).
+The goal is to use open source motor controller, the [MP2-DFN](https://github.com/owhite/MP2-DFN), and this circuit for a [brain board](https://github.com/owhite/MESC_brain_board/blob/main/brainboardV1.0/MESC_brain_board.pdf), a teensy 4.0, and an ESP-32, in combination with [MESC firmware](https://github.com/davidmolony/MESC_Firmware).
 
-## Many thanks
+## GENERAL APPROACH
+
+A separation of concerns is divided across these architectures:
+
+* **Teensy:** Runs the high-level brain → gait generator, balance estimator, RC inputs
+* **MESC:** Handles the low-level muscle control → torque or velocity loops per joint
+* **ESP32:** Easy to log and analyze later → pumps UDP to the computer
+* **Desktop computer** → perfectly adequate way of viewing high speed data with UDP
+
+## MANY THANKS
 This project would never happen without:
 * [MESC firmware](https://github.com/davidmolony/MESC_Firmware). 
-* [Netzpfuscher's](https://github.com/Netzpfuscher/TTerm) incredible TTerm and CN work
-* [MP2](https://github.com/badgineer/MP2-ESC), an open source motor controller from badgineer. 
+* [Netzpfuscher's](https://github.com/Netzpfuscher/TTerm) incredible TTerm and CAN work.
+* [MP2](https://github.com/badgineer/MP2-ESC) an open source motor controller from badgineer. 
 
-## Teensy 4.0
+## TEENSY 4.0
 * 600+ MHz ARM Cortex-M7 — plenty of headroom for filtering, control loops, gait logic, telemetry
 * Tons of I/O for IMU, encoders, RC input, WiFi (via ESP add-on), etc.
 * Precise timing with elapsedMicros or interrupts for deterministic control
 * Great for real-time control, sensor fusion, and behavior modeling
 
-## MESC motor controller
-* Executes low-level motor control (Field-Oriented Control)
+## MESC MOTOR CONTROLLER
+* Executes low-level Field-Oriented Control (FOC) motor control 
 * DIY and commercially available boards
-* Handles current, velocity, or position control
 * Built-in support for encoders, FOC, and torque estimation
 * Accurate low-level motor control using current sensing
 * Reads angular position from the MT6701 encoder via SPI or PWM
 * UART/CAN interface (RX + TX)	Real-time communication with the Teensy
 * PWM / FOC commutation w/ efficient, smooth motor operation
 
-## Brain board features
-* Teensy 4.0
-* ESP32
+## OTHER BRAIN BOARD FEATURES
 * RC receiver connector (for PWM/PPM/SBUS input)
 * ESP32 UART serial programmer
 * Power input connector
@@ -46,7 +47,7 @@ This project would never happen without:
 * Reserved 2 GPIO pins on Teensy for emergency shutoff to MESC
 * CAN connector (for MESC motor control)
 
-## Specs and testing
+## SPECS AND TESTING
 * Using the MT6701 [[LINK](DOCS/MT6701.md)]
 * Implementing CAN [[LINK](DOCS/CAN.md)]
 * Measuring jitter on the MESC [[LINK](DOCS/jitter_testing.md)]
@@ -54,7 +55,7 @@ This project would never happen without:
 * **PRELIMINARY:** Brain board firmware [[LINK](DOCS/software_specs.md)]
 * Balancing checklist [[LINK](DOCS/balancing_checklist.md)]
 
-### CAN Bus
+## CAN BUS
 * Full-duplex communication between Teensy and motor controllers
 * Carries:
   * Commands: set_torque, set_velocity, enable_motor, zero_encoder, etc.
@@ -62,7 +63,7 @@ This project would never happen without:
 * Real-time performance with minimal latency
 * Can support multiple motor controllers on the same bus
 
-### MT6701 Encoder
+## MT6701 ENCODER
 * High-resolution magnetic rotary encoder (up to 14-bit)
 * Measures rotor position for the BLDC
 * Output via SPI, PWM, or ABI 
