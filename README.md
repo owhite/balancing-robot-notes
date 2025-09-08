@@ -1,15 +1,19 @@
 # MESC Brain Board
 
-[Chatgpt discussion](https://chatgpt.com/c/68653d84-b634-8011-b055-3476bfa95f52)
+## Approach: a separation of concerns
+* Teensy: Runs the high-level brain → gait generator, balance estimator, RC inputs
+* MESC: Handles the low-level muscle control → torque or velocity loops per joint
+* ESP32: Easy to log and analyze later → pumps UDP to the computer
+* Desktop computer → perfectly adequate way of viewing high speed data with UDP
 
 ## Project plan:
-
 Gonna try to use my open source motor controller, the [MP2-DFN](https://github.com/owhite/MP2-DFN), and this circuit for a [brain board](https://github.com/owhite/MESC_brain_board/blob/main/brainboardV1.0/MESC_brain_board.pdf), a teensy 4.0, and an ESP-32, in combination with [MESC firmware](https://github.com/davidmolony/MESC_Firmware).
 
-## This project would never happen without
-* [MP2](https://github.com/badgineer/MP2-ESC), an open source motor controller from badgineer. 
+## Many thanks
+This project would never happen without:
 * [MESC firmware](https://github.com/davidmolony/MESC_Firmware). 
-* [Netzpfuscher's](https://github.com/Netzpfuscher/TTerm) incredible TTerm work
+* [Netzpfuscher's](https://github.com/Netzpfuscher/TTerm) incredible TTerm and CN work
+* [MP2](https://github.com/badgineer/MP2-ESC), an open source motor controller from badgineer. 
 
 ## Teensy 4.0
 * 600+ MHz ARM Cortex-M7 — plenty of headroom for filtering, control loops, gait logic, telemetry
@@ -18,22 +22,14 @@ Gonna try to use my open source motor controller, the [MP2-DFN](https://github.c
 * Great for real-time control, sensor fusion, and behavior modeling
 
 ## MESC motor controller
+* Executes low-level motor control (Field-Oriented Control)
 * DIY and commercially available boards
 * Handles current, velocity, or position control
 * Built-in support for encoders, FOC, and torque estimation
-* UART/CAN interface
-* Closed-loop torque control
 * Accurate low-level motor control using current sensing
-* Velocity control for trajectory and balance-level control
-* Encoder support (AB, ABI, SPI), position feedback
-* CAN interface (RX + TX)	Real-time communication with the Teensy
+* Reads angular position from the MT6701 encoder via SPI or PWM
+* UART/CAN interface (RX + TX)	Real-time communication with the Teensy
 * PWM / FOC commutation w/ efficient, smooth motor operation
-
-## Approach: a separation of concerns
-* Teensy: Runs the high-level brain → gait generator, balance estimator, RC inputs
-* MESC: Handles the low-level muscle control → torque or velocity loops per joint
-* ESP32: Easy to log and analyze later → pumps UDP to the computer
-* Desktop computer → perfectly adequate way of viewing high speed data with UDP
 
 ## Brain board features
 * Teensy 4.0
@@ -54,9 +50,8 @@ Gonna try to use my open source motor controller, the [MP2-DFN](https://github.c
 * Using the MT6701 [[LINK](DOCS/MT6701.md)]
 * Implementing CAN [[LINK](DOCS/CAN.md)]
 * Measuring jitter on the MESC [[LINK](DOCS/jitter_testing.md)]
-* Hardware, preliminary specs [[LINK](DOCS/hardware.md)]
-* Control loop, preliminary specs [[LINK](DOCS/control_loop.md)]
-* Brain board firmware, preliminary specs [[LINK](DOCS/software_specs.md)]
+* **PRELIMINARY:** Control loop [[LINK](DOCS/control_loop.md)]
+* **PRELIMINARY:** Brain board firmware [[LINK](DOCS/software_specs.md)]
 * Balancing checklist [[LINK](DOCS/balancing_checklist.md)]
 
 ### CAN Bus
@@ -66,19 +61,6 @@ Gonna try to use my open source motor controller, the [MP2-DFN](https://github.c
   * Telemetry: encoder position, estimated torque, velocity, fault codes
 * Real-time performance with minimal latency
 * Can support multiple motor controllers on the same bus
-
-### Motor Controller (with custom firmware)
-* Executes low-level motor control (Field-Oriented Control)
-* Supports:
-  * Torque mode
-  * Velocity mode
-  * Position mode
-* Reads angular position from the MT6701 encoder via SPI or PWM
-* Computes:
-  * Electrical angle for FOC
-  * Velocity (from encoder delta over time)
-  * Torque (via current sensing or estimation)
-* Sends back telemetry via CAN (e.g., torque estimate, velocity, encoder angle)
 
 ### MT6701 Encoder
 * High-resolution magnetic rotary encoder (up to 14-bit)
@@ -102,7 +84,7 @@ Gonna try to use my open source motor controller, the [MP2-DFN](https://github.c
 * Retreive with this command: "git checkout pcb-v1"
 
 ## NOTES
-ever wanted to change all the names of kicad files at once?
+Ever wanted to change all the names of kicad files at once?
 
 use this:
 ```
