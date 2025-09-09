@@ -1,7 +1,6 @@
 #include "CAN_helper.h"
+#include "ESC.h"
 
-// Global lookup table
-ESC* esc_lookup[MAX_NODE_ID] = {nullptr};
 
 uint8_t extractNodeID(uint32_t can_id) {
     // Example: last byte encodes node ID
@@ -39,9 +38,7 @@ void handleCANMessage(const CAN_message_t &msg) {
           esc->state.vel_rad_s = vel;
           esc->status.last_update_us = micros();
           esc->status.alive = true;
-
-	  Serial.printf("{\"roll\":%.2f}\r\n",  esc->state.pos_rad);
-
+	  Serial.printf("{\"pos\":%.4f}\r\n",  esc->state.pos_rad);
         }
         break;
       }

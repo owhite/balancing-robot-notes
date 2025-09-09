@@ -4,6 +4,10 @@
 #include <Arduino.h>
 #include <stdint.h>
 
+#define ESC_LOOKUP_SIZE 16  // max node_id supported
+
+extern class ESC* esc_lookup[ESC_LOOKUP_SIZE];
+
 // ---------------- ESC Error Flags ----------------
 enum class ESCError : uint32_t {
     NONE        = 0x00,

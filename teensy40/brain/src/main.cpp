@@ -7,6 +7,7 @@
 #include "MPU6050.h"
 #include "ESC.h"
 #include "CAN_helper.h"
+#include "supervisor.h"
 
 // ---------------------- Setup / Loop -----------------------
 IntervalTimer g_ctrlTimer;
@@ -15,7 +16,11 @@ IntervalTimer g_ctrlTimer;
 MPU6050 imu;
 
 // ----------------------     ESCs     -----------------------
-ESC esc1("left", 11);
+Supervisor_typedef supervisor;
+
+const char* esc_names[]   = {"left", "right"};
+const uint16_t esc_ids[]  = {11, 12};
+const uint8_t rc_pins[]   = {9, 8, 7, 6};
 
 // -------------------- Tone / Pushbutton --------------------
 static TonePlayer g_tone;
@@ -64,10 +69,13 @@ void setup() {
   Wire.setClock(400000);
   imu.begin();
 
-  esc1.init();
+  init_supervisor(&supervisor,
+                  2,           // esc_count
+                  esc_names,   // ESC names
+                  esc_ids,     // ESC node IDs
+                  rc_pins,     // RC pins
+                  4);          // RC count
 
-  // Register ESCs in lookup table
-  esc_lookup[esc1.config.node_id]  = &esc1;
 
   // LEDs / Pushbutton / Tone
   led_init(&g_led_red,   LED1_PIN, LED_BLINK_SLOW);
@@ -89,10 +97,12 @@ void loop() {
   // -------- HIGH PRIORITY --------
   if (g_control_due) {
     controlLoop(imu);
+    // controlLoop() will call a helper like updateSupervisorRC(supervisor) to normalize + timeout-check)
     g_control_due = false;
   }
 
   // -------- CAN Polling --------
+  // is CAN recording a can_alive?
   CAN_message_t msg;
   while (Can1.read(msg)) {
     bufferPush(msg);
@@ -107,11 +117,16 @@ void loop() {
   led_update(&g_led_red, now);
   led_update(&g_led_green, now);
 
-  CAN_link_ok = esc1.status.alive;
   static uint32_t last_health_set_ms = 0;
   if (millis() - last_health_set_ms > 50) {
     led_set_state(&g_led_green, CAN_link_ok ? LED_ON_CONTINUOUS : LED_BLINK_SLOW);
     last_health_set_ms = millis();
+
+    for (int i = 0; i < supervisor.rc_count; i++) {
+      uint16_t pw = getRCRaw(i);
+      // Serial.printf("CH%d: %u us\r\n", i + 1, pw);
+    }
+
   }
 
   pb_update(&g_button, now);

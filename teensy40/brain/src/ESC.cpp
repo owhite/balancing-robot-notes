@@ -1,5 +1,7 @@
 #include "ESC.h"
 
+ESC* esc_lookup[ESC_LOOKUP_SIZE] = { nullptr };
+
 ESC::ESC(const char* n, uint8_t id) {
     config.name = n;
     config.node_id = id;
