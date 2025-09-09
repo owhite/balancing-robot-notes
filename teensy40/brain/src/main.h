@@ -21,12 +21,6 @@
 #define CAN_TX          24
 #define CAN_RX          25
 
-// ================= Control loop timing =================
-#ifndef CONTROL_HZ
-#define CONTROL_HZ      1000u                 // 1 kHz control loop
-#endif
-#define CONTROL_PERIOD_US (1000000u / CONTROL_HZ)
-
 // ================= CAN config =================
 // NOTE: Verify which CAN controller maps to your 24/25 pins on Teensy 4.0.
 // Many shields use CAN2 for that pair. Change CAN_CONTROLLER to CAN1/CAN3 if needed.

@@ -38,7 +38,7 @@ void handleCANMessage(const CAN_message_t &msg) {
           esc->state.vel_rad_s = vel;
           esc->status.last_update_us = micros();
           esc->status.alive = true;
-	  Serial.printf("{\"pos\":%.4f}\r\n",  esc->state.pos_rad);
+	  // Serial.printf("{\"pos\":%.4f}\r\n",  esc->state.pos_rad);
         }
         break;
       }

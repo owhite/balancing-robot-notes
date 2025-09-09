@@ -3,7 +3,6 @@
 #include "LED.h"
 #include "pushbutton.h"
 #include "tone_player.h"
-#include "controlLoop.h"
 #include "MPU6050.h"
 #include "ESC.h"
 #include "CAN_helper.h"
@@ -11,16 +10,19 @@
 
 // ---------------------- Setup / Loop -----------------------
 IntervalTimer g_ctrlTimer;
-
-// ----------------------     IMU      -----------------------
 MPU6050 imu;
-
-// ----------------------     ESCs     -----------------------
 Supervisor_typedef supervisor;
 
 const char* esc_names[]   = {"left", "right"};
 const uint16_t esc_ids[]  = {11, 12};
 const uint8_t rc_pins[]   = {9, 8, 7, 6};
+
+// -------------------- CAN Communication --------------------
+FlexCAN_T4<CAN1, RX_SIZE_256, TX_SIZE_16> Can1;
+bool CAN_link_ok = false;
+const int BUF_SIZE = 32;
+CAN_message_t rxBuf[BUF_SIZE]; // Ring buffer for safe message passing 
+volatile int head = 0, tail = 0;
 
 // -------------------- Tone / Pushbutton --------------------
 static TonePlayer g_tone;
@@ -31,15 +33,6 @@ bool g_pb_armed = false;
 // --------------------- LED instances -----------------------
 static LEDCtrl g_led_red;
 LEDCtrl g_led_green;
-
-// -------------------- CAN Communication --------------------
-FlexCAN_T4<CAN1, RX_SIZE_256, TX_SIZE_16> Can1;
-bool CAN_link_ok = false;
-
-// --- Ring buffer for safe message passing ---
-const int BUF_SIZE = 32;
-CAN_message_t rxBuf[BUF_SIZE];
-volatile int head = 0, tail = 0;
 
 bool bufferPush(const CAN_message_t &msg) {
   int next = (head + 1) % BUF_SIZE;
@@ -94,15 +87,14 @@ void setup() {
 }
 
 void loop() {
+
   // -------- HIGH PRIORITY --------
   if (g_control_due) {
-    controlLoop(imu);
-    // controlLoop() will call a helper like updateSupervisorRC(supervisor) to normalize + timeout-check)
+    controlLoop(imu, &supervisor);
     g_control_due = false;
   }
 
-  // -------- CAN Polling --------
-  // is CAN recording a can_alive?
+  // -------- CAN POLLING --------
   CAN_message_t msg;
   while (Can1.read(msg)) {
     bufferPush(msg);
@@ -112,6 +104,7 @@ void loop() {
   }
 
   // -------- LOW PRIORITY --------
+  // LED control
   uint32_t now = micros();
   tone_update(&g_tone, now);
   led_update(&g_led_red, now);
@@ -123,12 +116,23 @@ void loop() {
     last_health_set_ms = millis();
 
     for (int i = 0; i < supervisor.rc_count; i++) {
-      uint16_t pw = getRCRaw(i);
-      // Serial.printf("CH%d: %u us\r\n", i + 1, pw);
-    }
+      // REPORT STATS HERE
+      if (supervisor.timing.count > 0) {
+        float avg_dt = (float)supervisor.timing.sum_dt_us / supervisor.timing.count;
+        Serial.printf(
+          "{\"dt_min\":%u,\"dt_max\":%u,\"dt_avg\":%.2f,\"overruns\":%u}\r\n",
+          supervisor.timing.min_dt_us,
+          supervisor.timing.max_dt_us,
+          avg_dt,
+          supervisor.timing.overruns
+        );
 
+        resetLoopTimingStats(&supervisor);
+      }
+    }
   }
 
+  // Pushbutton monitoring, tweeting the speaker
   pb_update(&g_button, now);
   while (pb_consume_change(&g_button, &pb_state)) {
     if (pb_state == PB_PRESSED) {
