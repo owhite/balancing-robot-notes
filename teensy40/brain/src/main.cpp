@@ -5,6 +5,7 @@
 #include "tone_player.h"
 #include "MPU6050.h"
 #include "ESC.h"
+#include "ESP_comm.h"
 #include "CAN_helper.h"
 #include "supervisor.h"
 
@@ -19,10 +20,7 @@ const uint8_t rc_pins[]   = {9, 8, 7, 6};
 
 // -------------------- CAN Communication --------------------
 FlexCAN_T4<CAN1, RX_SIZE_256, TX_SIZE_16> Can1;
-bool CAN_link_ok = false;
-const int BUF_SIZE = 32;
-CAN_message_t rxBuf[BUF_SIZE]; // Ring buffer for safe message passing 
-volatile int head = 0, tail = 0;
+CANBuffer canRxBuf;  // ✅ holds buffer + link_ok
 
 // -------------------- Tone / Pushbutton --------------------
 static TonePlayer g_tone;
@@ -34,28 +32,9 @@ bool g_pb_armed = false;
 static LEDCtrl g_led_red;
 LEDCtrl g_led_green;
 
-bool bufferPush(const CAN_message_t &msg) {
-  int next = (head + 1) % BUF_SIZE;
-  if (next == tail) return false; // buffer full, drop
-  rxBuf[head] = msg;
-  head = next;
-  return true;
-}
-
-bool bufferPop(CAN_message_t &msg) {
-  if (head == tail) return false; // empty
-  msg = rxBuf[tail];
-  tail = (tail + 1) % BUF_SIZE;
-  return true;
-}
-
-// Dispatcher
-void canHandler(const CAN_message_t &msg) {
-  handleCANMessage(msg);  // call into CAN_helper
-}
-
 void setup() {
   Serial.begin(115200);
+  Serial1.begin(115200);
   while (!Serial && millis() < 1500) {}
 
   Wire.begin();
@@ -94,13 +73,18 @@ void loop() {
     g_control_due = false;
   }
 
+  // --------- TELEMETRY EXPORT -------
+  TelemetryPacket pkt;
+  loadTelemetryPacket(pkt, &supervisor);
+  sendTelemetryPacket(Serial1, pkt);
+
   // -------- CAN POLLING --------
   CAN_message_t msg;
   while (Can1.read(msg)) {
-    bufferPush(msg);
+    canBufferPush(canRxBuf, msg);
   }
-  while (bufferPop(msg)) {
-    canHandler(msg);
+  while (canBufferPop(canRxBuf, msg)) {
+    handleCANMessage(msg);
   }
 
   // -------- LOW PRIORITY --------
@@ -112,20 +96,22 @@ void loop() {
 
   static uint32_t last_health_set_ms = 0;
   if (millis() - last_health_set_ms > 50) {
-    led_set_state(&g_led_green, CAN_link_ok ? LED_ON_CONTINUOUS : LED_BLINK_SLOW);
+
+    led_set_state(&g_led_green, canRxBuf.link_ok ? LED_ON_CONTINUOUS : LED_BLINK_SLOW);
+
     last_health_set_ms = millis();
 
     for (int i = 0; i < supervisor.rc_count; i++) {
       // REPORT STATS HERE
       if (supervisor.timing.count > 0) {
         float avg_dt = (float)supervisor.timing.sum_dt_us / supervisor.timing.count;
-        Serial.printf(
-          "{\"dt_min\":%u,\"dt_max\":%u,\"dt_avg\":%.2f,\"overruns\":%u}\r\n",
-          supervisor.timing.min_dt_us,
-          supervisor.timing.max_dt_us,
-          avg_dt,
-          supervisor.timing.overruns
-        );
+        //Serial.printf(
+	//"{\"dt_min\":%u,\"dt_max\":%u,\"dt_avg\":%.2f,\"overruns\":%u}\r\n",
+	//supervisor.timing.min_dt_us,
+	//supervisor.timing.max_dt_us,
+	//avg_dt,
+	//supervisor.timing.overruns
+        //);
 
         resetLoopTimingStats(&supervisor);
       }

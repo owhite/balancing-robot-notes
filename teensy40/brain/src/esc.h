@@ -18,7 +18,9 @@ enum class ESCError : uint32_t {
 };
 
 inline ESCError operator|(ESCError a, ESCError b) {
-    return static_cast<ESCError>(static_cast<uint32_t>(a) | static_cast<uint32_t>(b));
+    return static_cast<ESCError>(
+        static_cast<uint32_t>(a) | static_cast<uint32_t>(b)
+    );
 }
 inline bool operator&(ESCError a, ESCError b) {
     return (static_cast<uint32_t>(a) & static_cast<uint32_t>(b)) != 0;
@@ -39,7 +41,7 @@ public:
         int8_t direction = 1;
     };
 
-    // ---- State (dynamic variables) ----
+    // ---- State (dynamic telemetry) ----
     struct State {
         float pos_rad = 0.0f;
         float vel_rad_s = 0.0f;
@@ -51,9 +53,10 @@ public:
         float temp_mos = 0.0f;
         float temp_mot = 0.0f;
         uint32_t error_code = 0;
+      bool alive;
     };
 
-    // ---- Command (desired output) ----
+    // ---- Command (desired outputs) ----
     struct Command {
         float amps_req = 0.0f;
         int8_t direction = 1;

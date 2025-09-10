@@ -15,7 +15,7 @@
 #define CONTROL_PERIOD_US     1000   // 1 kHz
 
 // ---------------- Loop Timing Stats ----------------
-typedef struct {
+struct LoopTimingStats {
     uint32_t last_tick_us;
     uint32_t dt_us;
     uint32_t exec_time_us;
@@ -26,42 +26,42 @@ typedef struct {
     uint32_t count;
 
     uint32_t overruns;
-} LoopTimingStats;
+};
 
 // ---------------- RC Input ----------------
-typedef struct {
+struct RCInputRaw {
     volatile uint16_t raw_us;
     volatile uint32_t last_update;
-} RCInputRaw;
+};
 
-typedef struct {
+struct RCChannel {
     float norm;
     uint16_t raw_us;
     bool valid;
-} RCChannel;
+};
 
 // ---------------- IMU ----------------
-typedef struct {
+struct IMU_typedef {
     bool valid;
     float roll, pitch, yaw;
     uint32_t last_update_us;
-} IMU_typedef;
+};
 
 // ---------------- Supervisor Modes ----------------
-typedef enum {
+enum SupervisorMode {
     SUP_MODE_IDLE = 0,
     SUP_MODE_ACTIVE,
     SUP_MODE_FAULT
-} SupervisorMode;
+};
 
-typedef enum {
+enum GaitMode {
     GAIT_IDLE = 0,
     GAIT_WALK,
     GAIT_RUN
-} GaitMode;
+};
 
 // ---------------- Supervisor ----------------
-typedef struct {
+struct Supervisor_typedef {
     uint16_t       esc_count;
     ESC            esc[SUPERVISOR_MAX_ESCS];
     uint32_t       last_esc_heartbeat_us[SUPERVISOR_MAX_ESCS];
@@ -76,8 +76,9 @@ typedef struct {
     RCInputRaw rc_raw[RC_INPUT_MAX_PINS];
     RCChannel  rc[RC_INPUT_MAX_PINS];
     uint8_t    rc_count;
-} Supervisor_typedef;
+};
 
+// ---------------- Globals / Prototypes ----------------
 extern volatile bool g_control_due;
 extern volatile uint32_t g_control_now_us;
 

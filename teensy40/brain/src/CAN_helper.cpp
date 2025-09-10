@@ -1,58 +1,81 @@
 #include "CAN_helper.h"
-#include "ESC.h"
 
+bool canBufferPush(CANBuffer &cb, const CAN_message_t &msg) {
+    int next = (cb.head + 1) % CAN_BUF_SIZE;
+    if (next == cb.tail) return false;
+    cb.buf[cb.head] = msg;
+    cb.head = next;
+    cb.link_ok = true;
+    return true;
+}
 
-uint8_t extractNodeID(uint32_t can_id) {
-    // Example: last byte encodes node ID
+bool canBufferPop(CANBuffer &cb, CAN_message_t &msg) {
+    if (cb.head == cb.tail) return false;
+    msg = cb.buf[cb.tail];
+    cb.tail = (cb.tail + 1) % CAN_BUF_SIZE;
+    return true;
+}
+
+// Extract message type (bits 28..16)
+uint16_t extractMsgType(uint32_t can_id) {
+    return (can_id >> 16) & 0x1FFF;  // 13-bit field
+}
+
+// Extract receiver node (bits 15..8)
+uint8_t extractReceiver(uint32_t can_id) {
+    return (can_id >> 8) & 0xFF;
+}
+
+// Extract sender node (bits 7..0)
+uint8_t extractSender(uint32_t can_id) {
     return can_id & 0xFF;
 }
 
-uint16_t extractMsgType(uint32_t can_id) {
-    // Example: upper bits encode message type
-    return (can_id >> 16) & 0x1FFF;
-}
-
 float extractFloat(const uint8_t *buf) {
-    float f;
-    uint32_t u = buf[0] | (buf[1] << 8) | (buf[2] << 16) | (buf[3] << 24);
-    memcpy(&f, &u, sizeof(float));
-    return f;
+    float val;
+    memcpy(&val, buf, sizeof(float));
+    return val;
 }
 
 void handleCANMessage(const CAN_message_t &msg) {
-    uint8_t node_id = extractNodeID(msg.id);
-
-    if (node_id >= MAX_NODE_ID) return; // out of range
-
-    ESC* esc = esc_lookup[node_id];
-    if (!esc) return; // not mapped
-
     uint16_t msg_type = extractMsgType(msg.id);
+    uint8_t sender_id = extractSender(msg.id);   // ESC ID
+    uint8_t receiver  = extractReceiver(msg.id); // should be 0 or Teensy node
+
+
+    // Serial.printf("[CAN RX] raw_id=0x%08X msg_type=0x%X sender=%u receiver=%u\r\n", msg.id, msg_type, sender_id, receiver);
+
+    if (sender_id >= ESC_LOOKUP_SIZE || !esc_lookup[sender_id]) {
+        Serial.printf("[CAN RX] sender_id %u not mapped\r\n", sender_id);
+        return;
+    }
+    ESC* esc = esc_lookup[sender_id];
 
     switch (msg_type) {
-      case CAN_ID_POSVEL: {
-        if (msg.len == 8) {
-          float pos = extractFloat(&msg.buf[0]);
-          float vel = extractFloat(&msg.buf[4]);
-          esc->state.pos_rad   = pos;
-          esc->state.vel_rad_s = vel;
-          esc->status.last_update_us = micros();
-          esc->status.alive = true;
-	  // Serial.printf("{\"pos\":%.4f}\r\n",  esc->state.pos_rad);
+        case CAN_ID_POSVEL: {
+	    float pos, vel;
+	    memcpy(&pos, &msg.buf[0], sizeof(float));
+	    memcpy(&vel, &msg.buf[4], sizeof(float));
+	    esc->state.pos_rad   = pos;
+	    esc->state.vel_rad_s = vel;
+	    esc->state.alive     = true;
+	    Serial.printf(
+			  "[CAN RX] POSVEL sender=%u pos=%.3f rad vel=%.3f rad/s\r\n",
+			  sender_id, pos, vel
+			  );
+
+            break;
         }
-        break;
-      }
-      case CAN_ID_TEMPS: {
-        if (msg.len == 8) {
-          float tmos = extractFloat(&msg.buf[0]);
-          float tmot = extractFloat(&msg.buf[4]);
-          esc->state.temp_mos = tmos;
-          esc->state.temp_mot = tmot;
-          esc->status.last_update_us = micros();
-          esc->status.alive = true;
+        case CAN_ID_TEMPS: {
+            float mos, mot;
+            memcpy(&mos, &msg.buf[0], sizeof(float));
+            memcpy(&mot, &msg.buf[4], sizeof(float));
+            esc->state.temp_mos = mos;
+            esc->state.temp_mot = mot;
+            esc->state.alive    = true;   // ✅ also valid here
+            break;
         }
-        break;
-      }
-      // add more message types here
+        default:
+            break;
     }
 }

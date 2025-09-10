@@ -8,10 +8,9 @@ ESC::ESC(const char* n, uint8_t id) {
 }
 
 void ESC::init() {
-    state = State{};
+    state   = State{};
     command = Command{};
-    status = Status{};
-    status.alive = false;
+    status  = Status{};
 }
 
 void ESC::updateState(const State& s) {
@@ -36,5 +35,5 @@ void ESC::clearError(ESCError err) {
 }
 
 bool ESC::hasError(ESCError err) const {
-    return status.errors & err;
+    return (status.errors & err);
 }
