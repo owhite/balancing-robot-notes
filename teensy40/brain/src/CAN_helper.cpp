@@ -2,7 +2,11 @@
 
 bool canBufferPush(CANBuffer &cb, const CAN_message_t &msg) {
     int next = (cb.head + 1) % CAN_BUF_SIZE;
-    if (next == cb.tail) return false;
+    if (next == cb.tail) {
+      cb.overflow_count++; // nothing reads this at this point
+      return false;
+    }
+
     cb.buf[cb.head] = msg;
     cb.head = next;
     cb.link_ok = true;
@@ -40,10 +44,11 @@ float extractFloat(const uint8_t *buf) {
 void handleCANMessage(const CAN_message_t &msg) {
     uint16_t msg_type = extractMsgType(msg.id);
     uint8_t sender_id = extractSender(msg.id);   // ESC ID
-    uint8_t receiver  = extractReceiver(msg.id); // should be 0 or Teensy node
+    uint8_t receiver  = extractReceiver(msg.id); // so far we never test this
 
 
-    // Serial.printf("[CAN RX] raw_id=0x%08X msg_type=0x%X sender=%u receiver=%u\r\n", msg.id, msg_type, sender_id, receiver);
+    // Serial.printf("[CAN RX] raw_id=0x%08X msg_type=0x%X sender=%u receiver=%u\r\n",
+    //    msg.id, msg_type, sender_id, receiver);
 
     if (sender_id >= ESC_LOOKUP_SIZE || !esc_lookup[sender_id]) {
         Serial.printf("[CAN RX] sender_id %u not mapped\r\n", sender_id);

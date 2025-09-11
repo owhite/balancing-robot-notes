@@ -24,8 +24,7 @@ CANBuffer canRxBuf;  // ✅ holds buffer + link_ok
 
 // -------------------- Tone / Pushbutton --------------------
 static TonePlayer g_tone;
-static PBHandle g_button;
-PBState pb_state;
+PushButton g_button(PUSHBUTTON_PIN, true, 50000u);
 bool g_pb_armed = false;
 
 // --------------------- LED instances -----------------------
@@ -48,11 +47,9 @@ void setup() {
                   rc_pins,     // RC pins
                   4);          // RC count
 
-
   // LEDs / Pushbutton / Tone
   led_init(&g_led_red,   LED1_PIN, LED_BLINK_SLOW);
   led_init(&g_led_green, LED2_PIN, LED_BLINK_FAST);
-  pb_init(&g_button, PUSHBUTTON_PIN, true, 50000u);
   tone_init(&g_tone, SPEAKER_PIN);
 
   // ---- Control tick ISR ----
@@ -73,11 +70,6 @@ void loop() {
     g_control_due = false;
   }
 
-  // --------- TELEMETRY EXPORT -------
-  TelemetryPacket pkt;
-  loadTelemetryPacket(pkt, &supervisor);
-  sendTelemetryPacket(Serial1, pkt);
-
   // -------- CAN POLLING --------
   CAN_message_t msg;
   while (Can1.read(msg)) {
@@ -88,48 +80,59 @@ void loop() {
   }
 
   // -------- LOW PRIORITY --------
-  // LED control
-  uint32_t now = micros();
-  tone_update(&g_tone, now);
-  led_update(&g_led_red, now);
-  led_update(&g_led_green, now);
+  static uint32_t last_lowprio_us = 0;
+  uint32_t now_us = micros();
 
-  static uint32_t last_health_set_ms = 0;
-  if (millis() - last_health_set_ms > 50) {
+  if (now_us - last_lowprio_us >= (CONTROL_PERIOD_US * 10)) {
+    last_lowprio_us = now_us;
 
-    led_set_state(&g_led_green, canRxBuf.link_ok ? LED_ON_CONTINUOUS : LED_BLINK_SLOW);
+    // TELEMETRY EXPORT
+    TelemetryPacket pkt;
+    loadTelemetryPacket(pkt, &supervisor);
 
-    last_health_set_ms = millis();
+    elapsedMicros t;  // start timer
+    sendTelemetryPacket(Serial1, pkt);
+    uint32_t elapsed = t;
 
-    for (int i = 0; i < supervisor.rc_count; i++) {
-      // REPORT STATS HERE
-      if (supervisor.timing.count > 0) {
-        float avg_dt = (float)supervisor.timing.sum_dt_us / supervisor.timing.count;
-        //Serial.printf(
-	//"{\"dt_min\":%u,\"dt_max\":%u,\"dt_avg\":%.2f,\"overruns\":%u}\r\n",
-	//supervisor.timing.min_dt_us,
-	//supervisor.timing.max_dt_us,
-	//avg_dt,
-	//supervisor.timing.overruns
-        //);
-
-        resetLoopTimingStats(&supervisor);
-      }
+    supervisor.serial1_stats.last_block_us = elapsed;
+    if (elapsed > supervisor.serial1_stats.max_block_us) {
+      supervisor.serial1_stats.max_block_us = elapsed;
     }
-  }
+    supervisor.serial1_stats.sum_block_us += elapsed;
+    supervisor.serial1_stats.count++;
 
-  // Pushbutton monitoring, tweeting the speaker
-  pb_update(&g_button, now);
-  while (pb_consume_change(&g_button, &pb_state)) {
-    if (pb_state == PB_PRESSED) {
-      tone_start(&g_tone, PB_BEEP_HZ, PB_BEEP_MS, PB_GAP_MS);
-      g_pb_armed = true;
-    } else if (pb_state == PB_RELEASED && g_pb_armed) {
-      LEDState cur  = g_led_red.state;
-      LEDState next = (cur == LED_BLINK_FAST) ? LED_BLINK_SLOW : LED_BLINK_FAST;
-      if (cur != LED_BLINK_FAST && cur != LED_BLINK_SLOW) next = LED_BLINK_FAST;
-      led_set_state(&g_led_red, next);
-      g_pb_armed = false;
+    if (supervisor.timing.count > 0) {
+      resetLoopTimingStats(&supervisor); // Reset timing stats
+    }
+
+    // LED CONTROL
+    tone_update(&g_tone, now_us);
+    led_update(&g_led_red, now_us);
+    led_update(&g_led_green, now_us);
+
+    // 1 Hz HEALTH CHECK
+    if (millis() - supervisor.last_health_ms > 1000) {
+      supervisor.last_health_ms = millis();
+      led_set_state(&g_led_green, canRxBuf.link_ok ? LED_ON_CONTINUOUS : LED_BLINK_SLOW);
+    }
+
+    // PUSHBUTTON
+    g_button.update(now_us);
+    if (g_button.hasChanged()) {
+      PBState pb_state = g_button.getState();
+
+      if (pb_state == PB_PRESSED) {
+        tone_start(&g_tone, PB_BEEP_HZ, PB_BEEP_MS, PB_GAP_MS);
+        g_pb_armed = true;
+      } else if (pb_state == PB_RELEASED && g_pb_armed) {
+        LEDState cur  = g_led_red.state;
+        LEDState next = (cur == LED_BLINK_FAST) ? LED_BLINK_SLOW : LED_BLINK_FAST;
+        if (cur != LED_BLINK_FAST && cur != LED_BLINK_SLOW) next = LED_BLINK_FAST;
+        led_set_state(&g_led_red, next);
+        g_pb_armed = false;
+      }
+
+      g_button.clearChanged();
     }
   }
 }

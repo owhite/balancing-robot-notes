@@ -13,6 +13,7 @@ struct CANBuffer {
     CAN_message_t buf[CAN_BUF_SIZE];
     volatile int head = 0;
     volatile int tail = 0;
+    volatile int overflow_count = 0;
     bool link_ok = false;
 };
 

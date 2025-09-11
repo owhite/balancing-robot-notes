@@ -28,6 +28,14 @@ struct LoopTimingStats {
     uint32_t overruns;
 };
 
+// ---------------- Telemetry Stats ----------------
+struct SerialStats {
+    uint32_t last_block_us;   // most recent blocking time
+    uint32_t max_block_us;    // longest observed
+    uint64_t sum_block_us;    // total accumulated
+    uint32_t count;           // number of writes measured
+};
+
 // ---------------- RC Input ----------------
 struct RCInputRaw {
     volatile uint16_t raw_us;
@@ -71,7 +79,10 @@ struct Supervisor_typedef {
     GaitMode       gait_mode;
     uint32_t       last_imu_update_us;
 
+    SerialStats serial1_stats; 
+
     LoopTimingStats timing;
+    uint32_t last_health_ms; 
 
     RCInputRaw rc_raw[RC_INPUT_MAX_PINS];
     RCChannel  rc[RC_INPUT_MAX_PINS];
@@ -92,5 +103,6 @@ void init_supervisor(Supervisor_typedef *sup,
                      uint16_t rc_count);
 void updateSupervisorRC(Supervisor_typedef *sup);
 void resetLoopTimingStats(Supervisor_typedef *sup);
+void resetTelemetryStats(Supervisor_typedef *sup);
 
 #endif

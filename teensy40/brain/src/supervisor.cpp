@@ -5,18 +5,21 @@
 volatile bool g_control_due = false;
 volatile uint32_t g_control_now_us = 0;
 
+// Note there are multiple ISRS, some for the controlLoop(),
+//   some for RC transmitter
+
 // Local supervisor reference for RC ISRs
 static Supervisor_typedef *g_sup = nullptr;
 static uint8_t g_rc_pins[RC_INPUT_MAX_PINS];
 static volatile uint32_t g_rise_time[RC_INPUT_MAX_PINS];
 
-// ---------------- RC ISRs ----------------
+// --------- RC transmitter ISRs ----------------
 static void rc_isr0() { uint8_t i=0; if(digitalReadFast(g_rc_pins[i])) g_rise_time[i]=micros(); else {g_sup->rc_raw[i].raw_us=micros()-g_rise_time[i]; g_sup->rc_raw[i].last_update=micros();}}
 static void rc_isr1() { uint8_t i=1; if(digitalReadFast(g_rc_pins[i])) g_rise_time[i]=micros(); else {g_sup->rc_raw[i].raw_us=micros()-g_rise_time[i]; g_sup->rc_raw[i].last_update=micros();}}
 static void rc_isr2() { uint8_t i=2; if(digitalReadFast(g_rc_pins[i])) g_rise_time[i]=micros(); else {g_sup->rc_raw[i].raw_us=micros()-g_rise_time[i]; g_sup->rc_raw[i].last_update=micros();}}
 static void rc_isr3() { uint8_t i=3; if(digitalReadFast(g_rc_pins[i])) g_rise_time[i]=micros(); else {g_sup->rc_raw[i].raw_us=micros()-g_rise_time[i]; g_sup->rc_raw[i].last_update=micros();}}
 
-// ISR lookup table
+// lookup table for the RC ISRs
 static void (*rc_isrs[RC_INPUT_MAX_PINS])() = {rc_isr0, rc_isr1, rc_isr2, rc_isr3};
 
 // ---------------- ISR for control timer ----------------
@@ -63,19 +66,19 @@ void init_supervisor(Supervisor_typedef *sup,
     sup->imu.valid = false;
     sup->imu.roll = sup->imu.pitch = sup->imu.yaw = 0.0f;
     sup->imu.last_update_us = now;
+
+    // State
     sup->mode = SUP_MODE_IDLE;
     sup->gait_mode = GAIT_IDLE;
     sup->last_imu_update_us = now;
 
-    // Timing stats init
+    // Timing 
     sup->timing.last_tick_us = now;
     sup->timing.dt_us = 0;
     sup->timing.exec_time_us = 0;
-    sup->timing.min_dt_us = UINT32_MAX;
-    sup->timing.max_dt_us = 0;
-    sup->timing.sum_dt_us = 0;
-    sup->timing.count = 0;
-    sup->timing.overruns = 0;
+    resetLoopTimingStats(sup);
+
+    sup->last_health_ms = 0;
 
     // RC setup
     if (rc_count > RC_INPUT_MAX_PINS) rc_count = RC_INPUT_MAX_PINS;
@@ -89,10 +92,13 @@ void init_supervisor(Supervisor_typedef *sup,
         sup->rc[i].valid = false;
         attachInterrupt(digitalPinToInterrupt(g_rc_pins[i]), rc_isrs[i], CHANGE);
     }
+
+    // Telemtry
+    resetTelemetryStats(sup);
 }
 
 // ---------------- RC Normalization ----------------
-void updateSupervisorRC(Supervisor_typedef *sup) {
+void updateRC(Supervisor_typedef *sup) {
     if (!sup) return;
 
     for (uint8_t i = 0; i < sup->rc_count; i++) {
@@ -120,14 +126,14 @@ void updateSupervisorRC(Supervisor_typedef *sup) {
 
 // ---------------- Main Control Loop ----------------
 // Strategy to preserve determinism. 
-// Get this outside of controlLoop():
-//   - drain the CAN queue from the ESCs
-//   - obtain RC transmitter PWM values updateSupervisorRC(sup);
-//   - load values on to the ESP32
+// Do these things outside of controlLoop():
+//   - Drain the CAN queue from the ESCs
+//   - Obtain RC transmitter PWM values updateRC(sup);
+//   - Load values on to the ESP32
 // Inside the loop:
-//   - IMU: poll I²C, drain FIFO, update state
-//   - All balance control calculations
+//   - Poll the I²C on IMU, drain IMU FIFO, update state
 //   - Update timing stats to track jitter
+//   - Perform the important balance control calculations
 //
 void controlLoop(MPU6050 &imu, Supervisor_typedef *sup) {
 
@@ -164,7 +170,7 @@ void controlLoop(MPU6050 &imu, Supervisor_typedef *sup) {
     sup->imu.last_update_us = start_us;
 
     // ---- Update RC PWM input ----
-    updateSupervisorRC(sup);
+    updateRC(sup);
 
     // ---- Core control loop body ----
     // TODO: add ESC updates and control law
@@ -181,4 +187,13 @@ void resetLoopTimingStats(Supervisor_typedef *sup) {
     sup->timing.sum_dt_us = 0;
     sup->timing.count = 0;
     sup->timing.overruns = 0;
+}
+
+// ---------------- Reset telemtry stats ----------------
+void resetTelemetryStats(Supervisor_typedef *sup) {
+    sup->serial1_stats.last_block_us = 0;
+    sup->serial1_stats.max_block_us = 0;
+    sup->serial1_stats.sum_block_us = 0;
+    sup->serial1_stats.count = 0;
+    sup->last_health_ms = 0; 
 }
