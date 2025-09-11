@@ -51,6 +51,7 @@ This project would never happen without:
 * Using the MT6701 [[LINK](DOCS/MT6701.md)]
 * Implementing CAN [[LINK](DOCS/CAN.md)]
 * Measuring jitter on the MESC [[LINK](DOCS/jitter_testing.md)]
+* Determinism discussion [[LINK](DOCS/determinism_design.md)]
 * **PRELIMINARY:** Control loop [[LINK](DOCS/control_loop.md)]
 * **PRELIMINARY:** Brain board firmware [[LINK](DOCS/software_specs.md)]
 * Balancing checklist [[LINK](DOCS/balancing_checklist.md)]
