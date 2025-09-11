@@ -16,7 +16,7 @@ Supervisor_typedef supervisor;
 
 const char* esc_names[]   = {"left", "right"};
 const uint16_t esc_ids[]  = {11, 12};
-const uint8_t rc_pins[]   = {9, 8, 7, 6};
+const uint8_t rc_pins[]   = {RC_INPUT1, RC_INPUT2, RC_INPUT3, RC_INPUT4};
 
 // -------------------- CAN Communication --------------------
 FlexCAN_T4<CAN1, RX_SIZE_256, TX_SIZE_16> Can1;
@@ -25,7 +25,6 @@ CANBuffer canRxBuf;  // ✅ holds buffer + link_ok
 // -------------------- Tone / Pushbutton --------------------
 static TonePlayer g_tone;
 PushButton g_button(PUSHBUTTON_PIN, true, 50000u);
-bool g_pb_armed = false;
 
 // --------------------- LED instances -----------------------
 static LEDCtrl g_led_red;
@@ -41,11 +40,11 @@ void setup() {
   imu.begin();
 
   init_supervisor(&supervisor,
-                  2,           // esc_count
+                  2,           // esc_count -- FIX: dont hard code this number
                   esc_names,   // ESC names
                   esc_ids,     // ESC node IDs
                   rc_pins,     // RC pins
-                  4);          // RC count
+                  4);          // RC count -- FIX: dont hard code this number
 
   // LEDs / Pushbutton / Tone
   led_init(&g_led_red,   LED1_PIN, LED_BLINK_SLOW);
@@ -65,12 +64,16 @@ void setup() {
 void loop() {
 
   // -------- HIGH PRIORITY --------
+  // Set to CONTROL_PERIOD_US = 1000 µs (1 kHz).
+  // ---
   if (g_control_due) {
     controlLoop(imu, &supervisor);
     g_control_due = false;
   }
 
   // -------- CAN POLLING --------
+  // Non-blocking and not based on an ISR because FLEXCAN_T4 did seem to work. 
+  // ---
   CAN_message_t msg;
   while (Can1.read(msg)) {
     canBufferPush(canRxBuf, msg);
@@ -80,6 +83,8 @@ void loop() {
   }
 
   // -------- LOW PRIORITY --------
+  // These functions are intentionally throttled using a x10 time divider
+  // ---
   static uint32_t last_lowprio_us = 0;
   uint32_t now_us = micros();
 
@@ -91,7 +96,7 @@ void loop() {
     loadTelemetryPacket(pkt, &supervisor);
 
     elapsedMicros t;  // start timer
-    sendTelemetryPacket(Serial1, pkt);
+    sendTelemetryPacket(Serial1, pkt, &supervisor);
     uint32_t elapsed = t;
 
     supervisor.serial1_stats.last_block_us = elapsed;
@@ -102,7 +107,8 @@ void loop() {
     supervisor.serial1_stats.count++;
 
     if (supervisor.timing.count > 0) {
-      resetLoopTimingStats(&supervisor); // Reset timing stats
+      // This resets timing stats
+      resetLoopTimingStats(&supervisor); 
     }
 
     // LED CONTROL
@@ -122,16 +128,16 @@ void loop() {
       PBState pb_state = g_button.getState();
 
       if (pb_state == PB_PRESSED) {
-        tone_start(&g_tone, PB_BEEP_HZ, PB_BEEP_MS, PB_GAP_MS);
-        g_pb_armed = true;
-      } else if (pb_state == PB_RELEASED && g_pb_armed) {
-        LEDState cur  = g_led_red.state;
-        LEDState next = (cur == LED_BLINK_FAST) ? LED_BLINK_SLOW : LED_BLINK_FAST;
-        if (cur != LED_BLINK_FAST && cur != LED_BLINK_SLOW) next = LED_BLINK_FAST;
-        led_set_state(&g_led_red, next);
-        g_pb_armed = false;
+	// SPEAKER
+	tone_start(&g_tone, PB_BEEP_HZ, PB_BEEP_MS, PB_GAP_MS);
       }
-
+      else if (pb_state == PB_RELEASED && g_button.isArmed()) {
+	LEDState cur  = g_led_red.state;
+	LEDState next = (cur == LED_BLINK_FAST) ? LED_BLINK_SLOW : LED_BLINK_FAST;
+	if (cur != LED_BLINK_FAST && cur != LED_BLINK_SLOW) next = LED_BLINK_FAST;
+	led_set_state(&g_led_red, next);
+	g_button.clearArmed();
+      }
       g_button.clearChanged();
     }
   }

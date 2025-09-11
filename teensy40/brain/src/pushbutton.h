@@ -19,6 +19,8 @@ public:
     PBState getState() const { return state; }
     bool hasChanged() const { return changed; }
     void clearChanged() { changed = false; }
+    bool isArmed() const { return armed; }
+    void clearArmed() { armed = false; }
 
 private:
     PBState samplePressed() const;
@@ -30,6 +32,7 @@ private:
     PBState last_sampled;
     uint32_t t_change_us;
     bool changed;
+    bool armed = false; 
 };
 
 #endif // PUSHBUTTON_H

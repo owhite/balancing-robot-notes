@@ -37,6 +37,9 @@ void PushButton::update(uint32_t now_us) {
             state = inst;
             changed = true;
         }
+        if (state == PB_PRESSED) {
+            armed = true;   // mark as armed on press
+        }
     }
 }
 
