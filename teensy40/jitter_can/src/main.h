@@ -5,13 +5,6 @@
 #include <IntervalTimer.h>
 #include <FlexCAN_T4.h>
 
-// MESC CAN ID for Iq request
-#define CAN_ID_IQREQ  0x001
-
-// IDs
-#define TEENSY_NODE_ID  0x03   // sender (this Teensy)
-#define ESC_NODE_ID     0x0B 
-
 // ================= Pins from your board =================
 #define LED1_PIN        2
 #define LED2_PIN        3

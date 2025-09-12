@@ -3,10 +3,7 @@
 
 #include <Arduino.h>
 #include "ESC.h"
-#include <FlexCAN_T4.h>
 #include "MPU6050.h"
-#include "CAN_helper.h"
-#include "main.h"
 
 #define SUPERVISOR_MAX_ESCS   4
 #define RC_INPUT_MAX_PINS     8
@@ -106,10 +103,7 @@ extern volatile bool g_control_due;       // Flag set by ISR to trigger control 
 extern volatile uint32_t g_control_now_us;// Timestamp of control loop trigger (µs)
 
 void controlLoop_isr(void); // ISR triggered at CONTROL_PERIOD_US
-
-void controlLoop(MPU6050 &imu, Supervisor_typedef *sup, // Core control loop logic
-                 FlexCAN_T4<CAN1, RX_SIZE_256, TX_SIZE_16> &can);
-
+void controlLoop(MPU6050 &imu, Supervisor_typedef *sup); // Core control loop logic
 void init_supervisor(Supervisor_typedef *sup,
                      uint16_t esc_count,
                      const char *esc_names[],

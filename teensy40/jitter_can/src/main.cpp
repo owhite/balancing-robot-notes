@@ -1,3 +1,45 @@
+/* 
+
+Program is receiving PWM and data by CAN and also sending CAN values back to the ESC
+
+Use the USB serial to view data in a VT100 terminal.
+
+This monitors jitter in the control loop using timing statistics collected in the Supervisor. 
+Each loop tick records:
+ - dt_us: the actual period between ISR calls (loop timing).
+ - exec_time_us: the time spent inside the control loop (workload).
+ - min_dt_us, max_dt_us, and sum_dt_us track the minimum, maximum, and cumulative periods.
+ - from sum_dt_us and count, we compute avg_dt_us.
+
+These values are displayed over USB (for debugging) or sent in telemetry packets.
+By comparing exec_time_us against dt_us, we can distinguish between long loop 
+executions vs. ISR scheduling delays. This lets us see real-time jitter, diagnose 
+sources (e.g., Serial blocking, I²C delays), and confirm when the loop is 
+running deterministically at ~1 kHz.
+
+Right now the ESP32 on the brain board is not receiving data, so blocks
+function of the teensy. Change the value of:
+
+#define TELEMETRY_WRITE 0
+
+to show this telemetry is the cause of slowing max_dt
+
+However, the good news is exec_time_us is still reasonable. 
+
+When everything is working well, we get numbers like this in the VT100 term: 
+
+         PWM: 1517
+         pos: 2.92
+         vel: 0.00
+
+         min_dt: 992
+         max_dt: 1007
+         avg_dt: 1000.02
+         exec: 467 dt: 100
+
+*/
+
+
 #include "main.h"
 #include <FlexCAN_T4.h>
 #include "LED.h"
@@ -11,6 +53,13 @@
 
 #define TELEMETRY_WRITE 0
 #define SERIAL_WRITE 1
+
+// MESC CAN ID for Iq request
+#define CAN_ID_IQREQ  0x001
+
+// IDs
+#define TEENSY_NODE_ID  0x03   // sender (this Teensy)
+#define ESC_NODE_ID     0x0B 
 
 // ---------------------- Setup / Loop -----------------------
 IntervalTimer g_ctrlTimer;
@@ -74,7 +123,7 @@ void loop() {
   // Set to CONTROL_PERIOD_US = 1000 µs (1 kHz).
   // ---
   if (g_control_due) {
-    controlLoop(imu, &supervisor, Can1);
+    controlLoop(imu, &supervisor);
     g_control_due = false;
   }
 
@@ -120,6 +169,37 @@ void loop() {
 #endif
 
     // PRINT DATA ON VT100
+    if (supervisor.rc_raw[0].raw_us > 1500 + 100) {
+
+      CAN_message_t msg;
+      msg.id = canMakeExtId(CAN_ID_IQREQ, TEENSY_NODE_ID, ESC_NODE_ID);
+      msg.len = 8;
+      msg.flags.extended = 1;
+
+      canPackFloat(0.2f, msg.buf); // hard code the forward / backward IQREQ
+      canPackFloat(0.0f, msg.buf + 4);
+      Can1.write(msg);
+    }
+    else if (supervisor.rc_raw[0].raw_us < 1500 - 100) {
+      CAN_message_t msg;
+      msg.id = canMakeExtId(CAN_ID_IQREQ, TEENSY_NODE_ID, ESC_NODE_ID);
+      msg.len = 8;
+      msg.flags.extended = 1;
+
+      canPackFloat(-0.2f, msg.buf);
+      canPackFloat(0.0f, msg.buf + 4);
+      Can1.write(msg);
+    }
+    else {
+      CAN_message_t msg;
+      msg.id = canMakeExtId(CAN_ID_IQREQ, TEENSY_NODE_ID, ESC_NODE_ID);
+      msg.len = 8;
+      msg.flags.extended = 1;
+
+      canPackFloat(0.0, msg.buf);
+      canPackFloat(0.0, msg.buf + 4);
+      Can1.write(msg);
+    }
 
 #if SERIAL_WRITE
     Serial.print("\033[3;10H\033[K");
