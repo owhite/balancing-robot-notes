@@ -41,18 +41,30 @@ float extractFloat(const uint8_t *buf) {
     return val;
 }
 
+// Build full 29-bit CAN extended ID
+uint32_t canMakeExtId(uint16_t msg_id, uint8_t sender, uint8_t receiver) {
+    return ((uint32_t)msg_id << 16) |
+           ((uint32_t)receiver << 8) |
+           sender;
+}
+
+// Encode float into buffer
+void canPackFloat(float val, uint8_t *buf) {
+  memcpy(buf, &val, sizeof(float));
+}
+
 void handleCANMessage(const CAN_message_t &msg) {
     uint16_t msg_type = extractMsgType(msg.id);
     uint8_t sender_id = extractSender(msg.id);   // ESC ID
-    uint8_t receiver  = extractReceiver(msg.id); // so far we never test this
+    // uint8_t receiver  = extractReceiver(msg.id); // so far we never test this
 
 
     // Serial.printf("[CAN RX] raw_id=0x%08X msg_type=0x%X sender=%u receiver=%u\r\n",
     //    msg.id, msg_type, sender_id, receiver);
 
     if (sender_id >= ESC_LOOKUP_SIZE || !esc_lookup[sender_id]) {
-        Serial.printf("[CAN RX] sender_id %u not mapped\r\n", sender_id);
-        return;
+      // Serial.printf("[CAN RX] sender_id %u not mapped\r\n", sender_id);
+      return;
     }
     ESC* esc = esc_lookup[sender_id];
 
@@ -64,10 +76,7 @@ void handleCANMessage(const CAN_message_t &msg) {
 	    esc->state.pos_rad   = pos;
 	    esc->state.vel_rad_s = vel;
 	    esc->state.alive     = true;
-	    Serial.printf(
-			  "[CAN RX] POSVEL sender=%u pos=%.3f rad vel=%.3f rad/s\r\n",
-			  sender_id, pos, vel
-			  );
+	    // Serial.printf("[CAN RX] POSVEL sender=%u pos=%.3f rad vel=%.3f rad/s\r\n", sender_id, pos, vel);
 
             break;
         }

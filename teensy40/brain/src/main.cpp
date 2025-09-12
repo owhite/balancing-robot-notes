@@ -9,6 +9,15 @@
 #include "CAN_helper.h"
 #include "supervisor.h"
 
+#define TELEMETRY_WRITE 1
+
+// MESC CAN ID for Iq request
+#define CAN_ID_IQREQ  0x001
+
+// IDs
+#define TEENSY_NODE_ID  0x03   // sender (this Teensy)
+#define ESC_NODE_ID     0x0B 
+
 // ---------------------- Setup / Loop -----------------------
 IntervalTimer g_ctrlTimer;
 MPU6050 imu;
@@ -32,7 +41,11 @@ LEDCtrl g_led_green;
 
 void setup() {
   Serial.begin(115200);
+
+#ifdef TELEMETRY_WRITE
   Serial1.begin(115200);
+#endif
+
   while (!Serial && millis() < 1500) {}
 
   Wire.begin();
@@ -61,8 +74,28 @@ void setup() {
   Can1.enableFIFO();
 }
 
-void loop() {
+void loop2() {
+  static String inputLine = "";
 
+  while (Serial.available() > 0) {
+    char c = Serial.read();
+
+    // End of line?
+    if (c == '\n' || c == '\r') {
+      if (inputLine.length() > 0) {
+	Serial.print("You entered: ");
+	Serial.println(inputLine);
+	inputLine = "";  // reset for next line
+      }
+    } else {
+      // Add character to buffer
+      inputLine += c;
+    }
+  }
+
+}
+
+void loop() {
   // -------- HIGH PRIORITY --------
   // Set to CONTROL_PERIOD_US = 1000 µs (1 kHz).
   // ---
@@ -82,6 +115,8 @@ void loop() {
     handleCANMessage(msg);
   }
 
+  static String input = "";
+
   // -------- LOW PRIORITY --------
   // These functions are intentionally throttled using a x10 time divider
   // ---
@@ -91,6 +126,8 @@ void loop() {
   if (now_us - last_lowprio_us >= (CONTROL_PERIOD_US * 10)) {
     last_lowprio_us = now_us;
 
+#ifdef TELEMETRY_WRITE
+
     // TELEMETRY EXPORT
     TelemetryPacket pkt;
     loadTelemetryPacket(pkt, &supervisor);
@@ -98,6 +135,30 @@ void loop() {
     elapsedMicros t;  // start timer
     sendTelemetryPacket(Serial1, pkt, &supervisor);
     uint32_t elapsed = t;
+
+#endif
+
+    // PRINT OUT DATA
+    if (supervisor.rc_raw[0].raw_us > 1500 + 100 || 
+	supervisor.rc_raw[0].raw_us < 1500 - 100) {
+
+      CAN_message_t msg;
+      msg.id = canMakeExtId(CAN_ID_IQREQ, TEENSY_NODE_ID, ESC_NODE_ID);
+      msg.len = 8;
+      canPackFloat(0.1, msg.buf);
+      canPackFloat(0.0, msg.buf + 4);
+      Can1.write(msg);
+
+      Serial.printf("\033[3;10Hpos: %d   ", supervisor.rc_raw[0].raw_us);
+    }
+    else {
+      CAN_message_t msg;
+      msg.id = canMakeExtId(CAN_ID_IQREQ, TEENSY_NODE_ID, ESC_NODE_ID);
+      msg.len = 8;
+      canPackFloat(0.0, msg.buf);
+      canPackFloat(0.0, msg.buf + 4);
+      Can1.write(msg);
+    }
 
     supervisor.serial1_stats.last_block_us = elapsed;
     if (elapsed > supervisor.serial1_stats.max_block_us) {

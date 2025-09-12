@@ -24,6 +24,9 @@ uint8_t extractNodeID(uint32_t can_id);
 uint16_t extractMsgType(uint32_t can_id);
 float extractFloat(const uint8_t *buf);
 
+uint32_t canMakeExtId(uint16_t msg_id, uint8_t sender, uint8_t receiver);
+void canPackFloat(float val, uint8_t *buf);
+
 void handleCANMessage(const CAN_message_t &msg);
 
 #endif

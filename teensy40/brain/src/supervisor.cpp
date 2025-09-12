@@ -124,6 +124,25 @@ void updateRC(Supervisor_typedef *sup) {
     }
 }
 
+// ---------------- Reset timing stats ----------------
+void resetLoopTimingStats(Supervisor_typedef *sup) {
+    if (!sup) return;
+    sup->timing.min_dt_us = UINT32_MAX;
+    sup->timing.max_dt_us = 0;
+    sup->timing.sum_dt_us = 0;
+    sup->timing.count = 0;
+    sup->timing.overruns = 0;
+}
+
+// ---------------- Reset telemtry stats ----------------
+void resetTelemetryStats(Supervisor_typedef *sup) {
+    sup->serial1_stats.last_block_us = 0;
+    sup->serial1_stats.max_block_us = 0;
+    sup->serial1_stats.sum_block_us = 0;
+    sup->serial1_stats.count = 0;
+    sup->last_health_ms = 0; 
+}
+
 // ---------------- Main Control Loop ----------------
 // Strategy to preserve determinism. 
 // Do these things outside of controlLoop():
@@ -175,25 +194,9 @@ void controlLoop(MPU6050 &imu, Supervisor_typedef *sup) {
     // ---- Core control loop body ----
     // TODO: add ESC updates and control law
 
+    
+
     // Finish timing: exec_time
     sup->timing.exec_time_us = micros() - start_us;
 }
 
-// ---------------- Reset timing stats ----------------
-void resetLoopTimingStats(Supervisor_typedef *sup) {
-    if (!sup) return;
-    sup->timing.min_dt_us = UINT32_MAX;
-    sup->timing.max_dt_us = 0;
-    sup->timing.sum_dt_us = 0;
-    sup->timing.count = 0;
-    sup->timing.overruns = 0;
-}
-
-// ---------------- Reset telemtry stats ----------------
-void resetTelemetryStats(Supervisor_typedef *sup) {
-    sup->serial1_stats.last_block_us = 0;
-    sup->serial1_stats.max_block_us = 0;
-    sup->serial1_stats.sum_block_us = 0;
-    sup->serial1_stats.count = 0;
-    sup->last_health_ms = 0; 
-}
