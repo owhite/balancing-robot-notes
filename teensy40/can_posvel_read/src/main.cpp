@@ -35,9 +35,12 @@ void handlePosVel(const CAN_message_t &msg) {
     memcpy(&pos, &u0, sizeof(float));
     memcpy(&vel, &u1, sizeof(float));
 
+      Serial.printf("{\"t_us\":%lu,\"pos\":%.6f,\"vel\":%.6f}\r\n",
+		    micros(), pos, vel);
+
     // Print as JSON
-    Serial.printf("{\"t_us\":%lu,\"pos\":%.6f,\"vel\":%.6f}\r\n",
-                  micros(), pos, vel);
+    if (vel > -20.0f && vel < 20.0f && (vel > 0.1f || vel < -0.1f)) {
+    }
   }
 }
 

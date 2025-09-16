@@ -1,5 +1,7 @@
 #include "CAN_helper.h"
 
+#define INVERT_ESC_ENCODER  0
+
 bool canBufferPush(CANBuffer &cb, const CAN_message_t &msg) {
     int next = (cb.head + 1) % CAN_BUF_SIZE;
     if (next == cb.tail) {
@@ -73,8 +75,13 @@ void handleCANMessage(const CAN_message_t &msg) {
 	    float pos, vel;
 	    memcpy(&pos, &msg.buf[0], sizeof(float));
 	    memcpy(&vel, &msg.buf[4], sizeof(float));
+#if INVERT_ESC_ENCODER
+	    esc->state.pos_rad   = TWO_PI - pos;  // mirror around 2π
+	    esc->state.vel_rad_s = -vel;          // flip velocity sign
+#else
 	    esc->state.pos_rad   = pos;
 	    esc->state.vel_rad_s = vel;
+#endif
 	    esc->state.alive     = true;
 	    // Serial.printf("[CAN RX] POSVEL sender=%u pos=%.3f rad vel=%.3f rad/s\r\n", sender_id, pos, vel);
 

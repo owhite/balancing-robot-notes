@@ -1,5 +1,8 @@
 #include "supervisor.h"
 #include <string.h>
+#include "main.h"
+
+#define TELEMETRY_DECIMATE 100
 
 // ---------------- Global Flags ----------------
 // These are set by the control ISR to signal the main loop.
@@ -34,6 +37,14 @@ void controlLoop_isr(void) {
   g_control_due = true;
 }
 
+// --- Helper: compute shortest angular difference (target - actual) in [-π, +π]
+float angle_diff(float target, float actual) {
+  float diff = fmodf(target - actual + M_PI, 2.0f * M_PI);
+  if (diff < 0) diff += 2.0f * M_PI;
+  return diff - M_PI;
+}
+
+
 // ---------------- Supervisor Initialization ----------------
 // Sets up ESCs, IMU, RC inputs, and resets timing/telemetry stats.
 // Called once at startup from main().
@@ -46,7 +57,7 @@ void init_supervisor(Supervisor_typedef *sup,
   if (!sup) return;
   g_sup = sup;
 
-  memset(sup, 0, sizeof(*sup));
+  *sup = Supervisor_typedef{};
 
   // Clear ESC lookup table
   for (uint16_t i = 0; i < ESC_LOOKUP_SIZE; ++i) {
@@ -167,6 +178,10 @@ void resetTelemetryStats(Supervisor_typedef *sup) {
 //       * Update timing statistics (jitter, overruns)
 //       * Run balance control law (TODO)
 //
+
+float hold_pos_rad = 0.0f;
+static float sinusoid_entry_offset = 0.0f;
+
 void controlLoop(MPU6050 &imu, Supervisor_typedef *sup,
                  FlexCAN_T4<CAN1, RX_SIZE_256, TX_SIZE_16> &can) {
 
@@ -205,56 +220,114 @@ void controlLoop(MPU6050 &imu, Supervisor_typedef *sup,
   // ---- Update RC PWM input ----
   updateRC(sup);
 
+  static float sinusoid_t0 = 0.0f;
+
   // ---- Core control loop body ----
-  // TODO: Add ESC updates and implement balance control law
-  static bool holding = false;
-  static float hold_pos_rad = 0.0f;
-
-  if ((sup->rc_raw[0].raw_us > 1600) || (sup->rc_raw[0].raw_us < 1400)) {
-    if (!holding) {
-      // Set hold position on first trigger
-      hold_pos_rad = sup->esc[0].state.pos_rad;
-      holding = true;
-    }
-  } else {
-    holding = false;
-  }
-  if (holding) {
-
-    // PD control: torque = Kp*error + Kd*error_dot
-    float pos_err = hold_pos_rad - sup->esc[0].state.pos_rad;
-    float vel_err = 0.0f - sup->esc[0].state.vel_rad_s;
-
-    const float Kp = 2.0f;   // tune these gains
-    const float Kd = 0.1f;
-
-    float cmd_torque = Kp * pos_err + Kd * vel_err;
-
-    // Send torque request to ESC 0
+  switch (sup->mode) {
+case SUP_MODE_IDLE: {
+    // --- Send zero torque (motor free) ---
     CAN_message_t msg;
-    msg.id = canMakeExtId(CAN_ID_IQREQ, TEENSY_NODE_ID, sup->esc[0].config.node_id);
-    msg.len = 8;
-    msg.flags.extended = 1;
-    canPackFloat(cmd_torque, msg.buf);
-    canPackFloat(0.0f, msg.buf + 4);  // second float unused
-    can.write(msg);
-
-    Serial.print("\033[11;10H\033[K");
-    Serial.printf("holding: %.2f", pos_err);
-
-  }
-  else {
-    CAN_message_t msg;
-    msg.id = canMakeExtId(CAN_ID_IQREQ, TEENSY_NODE_ID, sup->esc[0].config.node_id);
+    msg.id = canMakeExtId(CAN_ID_IQREQ, TEENSY_NODE_ID,
+                          sup->esc[0].config.node_id);
     msg.len = 8;
     msg.flags.extended = 1;
     canPackFloat(0.0f, msg.buf);
     canPackFloat(0.0f, msg.buf + 4);  // second float unused
     can.write(msg);
 
-    Serial.print("\033[11;10H\033[K");
-    Serial.printf("free");
+    // --- Keep reference "parked" at current motor position ---
+    hold_pos_rad = sup->esc[0].state.pos_rad;
+
+    // --- Reset sinusoid time base ---
+    sinusoid_t0 = micros() / 1e6f;
+
+    // --- Capture entry offset so sinusoid starts smoothly ---
+    sinusoid_entry_offset = sup->esc[0].state.pos_rad;
+
+    break;
+}
+  case SUP_MODE_SINUSOIDAL: {
+    // --- Time since entering sinusoidal mode ---
+    float t_now = micros() / 1e6f;
+    float t_rel = t_now - sinusoid_t0;
+
+    float A = 2.0f * M_PI;   // amplitude [rad]
+    float f = 0.05f;         // frequency [Hz]
+        hold_pos_rad = sinusoid_entry_offset +
+               0.5f * (sinf(2.0f * M_PI * f * t_rel) + 1.0f) * A;
+
+ 
+    // --- Errors ---
+    float pos_err = hold_pos_rad - sup->esc[0].state.pos_rad;
+    float vel     = sup->esc[0].state.vel_rad_s;
+
+    // Wrap error into [-π, +π] so small corrections are applied across the 0↔2π boundary
+    // (prevents huge jumps in error when position rolls over)
+    if (pos_err >  M_PI) pos_err -= 2.0f * M_PI;
+    if (pos_err < -M_PI) pos_err += 2.0f * M_PI;
+
+    // --- Spring-damper control law ---
+    const float Kspring = 0.5f;   // unitless stiffness
+    const float B       = 0.06f;   // unitless damping
+    float cmd_torque_raw = Kspring * pos_err - B * vel;
+
+    // --- Normalize to [-1, 1] ---
+    float norm_factor = fabs(cmd_torque_raw);
+    static float max_seen = 1.0f; // prevent divide by zero
+    if (norm_factor > max_seen) {
+      max_seen = norm_factor;   // track largest magnitude observed
+    }
+    float cmd_torque_norm = cmd_torque_raw / max_seen;
+
+    // --- Rescale to safe range  ---
+    const float TORQUE_SCALE = 0.9f;
+    float cmd_torque = cmd_torque_norm * TORQUE_SCALE;
+
+    // --- Send torque request to ESC ---
+    CAN_message_t msg;
+    msg.id = canMakeExtId(CAN_ID_IQREQ, TEENSY_NODE_ID,
+                          sup->esc[0].config.node_id);
+    msg.len = 8;
+    msg.flags.extended = 1;
+    canPackFloat(cmd_torque, msg.buf);
+    canPackFloat(0.0f, msg.buf + 4);
+    can.write(msg);
+
+#if SERIAL_WRITE
+    static int telem_counter = 0;
+    if (++telem_counter >= TELEMETRY_DECIMATE) {
+      telem_counter = 0;
+
+      unsigned long t_us = micros();
+      float avg_dt_us = (sup->timing.count > 0) ?
+	static_cast<float>(sup->timing.sum_dt_us) / sup->timing.count : 0.0f;
+
+      int vel_sign = (vel > 0.0f) ? 1 : (vel < 0.0f ? -1 : 0);
+
+      Serial.printf(
+		    "%lu,%.4f,%.4f,%.4f,%.3f,%d,%.3f,%.3f\n",
+		    (unsigned long)t_us,
+		    hold_pos_rad,                  // reference pos [rad]
+		    sup->esc[0].state.pos_rad,     // measured pos [rad]
+		    pos_err,                       // error [rad]
+		    vel,                           // velocity [rad/s]
+		    vel_sign,                      // velocity sign
+		    cmd_torque_raw,                // raw torque (pre-normalization)
+		    cmd_torque                     // scaled torque [-0.3, 0.3]
+		    );
+    }
+#endif
+    break;
   }
+
+ 
+  default: {
+    break;
+  }
+  }
+
+#if SERIAL_WRITE
+#endif
 
   // ---- Finish timing measurement ----
   sup->timing.exec_time_us = micros() - start_us;

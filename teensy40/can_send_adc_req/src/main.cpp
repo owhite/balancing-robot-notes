@@ -56,7 +56,7 @@ void loop() {
     pack_float(zero, msg.buf + 4);
 
     Can1.write(msg);
-    Serial.printf("Sent Iq_req=%.3f A to ESC node_id=%u (CAN ID=0x%08X)\n",
+    Serial.printf("Sent Iq_req=%.3f A to ESC node_id=%u (CAN ID=0x%08X)\r\n",
                   cmd, ESC_NODE_ID, msg.id);
   }
 }

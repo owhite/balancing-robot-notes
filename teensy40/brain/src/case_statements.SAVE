@@ -1,0 +1,114 @@
+    // dumps torque, regardless of position to ESC
+  case SUP_MODE_SIN_TORQUE: {
+    static float torque_t0 = 0.0f;    // time offset [s]
+    static bool first_entry = true;   // flag for mode entry
+
+    float t_now = micros() / 1e6f;    // current time [s]
+
+    if (first_entry) {
+      torque_t0 = t_now;            // reset phase at entry
+      first_entry = false;
+    }
+
+    float t_rel = t_now - torque_t0;  // relative time since entry
+    float f = 0.2f;                   // frequency [Hz], adjust as needed
+    float cmd_torque = sinf(2.0f * M_PI * f * t_rel);
+    // starts at 0, ranges -1 → +1
+
+    // --- Send torque request to ESC ---
+    CAN_message_t msg;
+    msg.id = canMakeExtId(CAN_ID_IQREQ, TEENSY_NODE_ID,
+                          sup->esc[0].config.node_id);
+    msg.len = 8;
+    msg.flags.extended = 1;
+    canPackFloat(cmd_torque, msg.buf);
+    canPackFloat(0.0f, msg.buf + 4);  // second float unused
+    Serial.printf("HERE\r\n");
+    can.write(msg);
+
+    break;
+  }
+case SUP_MODE_SINUSOIDAL: {
+    // --- Time since entering sinusoidal mode ---
+    float t_now = micros() / 1e6f;       // current time [s]
+    float t_rel = t_now - sinusoid_t0;   // relative time [s]
+
+    // --- Parameters for sinusoidal reference ---
+    float A = 2.0f * M_PI;   // amplitude [rad] = full revolution
+    float f = 0.05f;         // frequency [Hz] = 20 s per cycle
+
+    // --- On first entry, capture motor's actual position ---
+    static float entry_offset = 0.0f;
+    static bool initialized = false;
+    if (!initialized) {
+        entry_offset = sup->esc[0].state.pos_rad;  // start point
+        initialized = true;
+    }
+
+    // --- Generate sinusoidal reference position ---
+    // sinf ∈ [-1, 1] → (sinf+1)/2 ∈ [0,1] → scale to [0,2π]
+    float base_wave = 0.5f * (sinf(2.0f * M_PI * f * t_rel) + 1.0f) * A;
+
+    // Reference starts at entry_offset and sweeps up to entry_offset + 2π
+    float hold_pos_rad = entry_offset + base_wave;
+
+    // --- Errors ---
+    float pos_err = hold_pos_rad - sup->esc[0].state.pos_rad;
+    float vel     = sup->esc[0].state.vel_rad_s;
+
+    // --- Feedforward acceleration torque ---
+    const float J = 0.01f;  // placeholder inertia [kg·m²]
+    float acc_ref = -(2.0f * M_PI * f) * (2.0f * M_PI * f) *
+                    (0.5f * A * sinf(2.0f * M_PI * f * t_rel));
+    float tau_ff = J * acc_ref;
+
+    // --- Spring-damper feedback law ---
+    const float Kspring = 0.5f;   // Nm/rad
+    const float B       = 0.07f;  // Nm/(rad/s)
+    float cmd_torque = tau_ff + Kspring * pos_err - B * vel;
+
+    // --- Clamp torque ---
+    const float TORQUE_LIMIT = 0.3f;
+    if (cmd_torque > TORQUE_LIMIT)  cmd_torque = TORQUE_LIMIT;
+    if (cmd_torque < -TORQUE_LIMIT) cmd_torque = -TORQUE_LIMIT;
+
+    // --- Send torque command to ESC ---
+    CAN_message_t msg;
+    msg.id = canMakeExtId(CAN_ID_IQREQ, TEENSY_NODE_ID,
+                          sup->esc[0].config.node_id);
+    cmd_torque = 0.1f;
+    msg.len = 8;
+    msg.flags.extended = 1;
+    canPackFloat(cmd_torque, msg.buf);
+    canPackFloat(0.0f, msg.buf + 4);
+    can.write(msg);
+
+#if SERIAL_WRITE
+    static int telem_counter = 0;
+    if (++telem_counter >= TELEMETRY_DECIMATE) {
+        telem_counter = 0;
+
+        unsigned long t_us = micros();
+        float avg_dt_us = (sup->timing.count > 0) ?
+                          static_cast<float>(sup->timing.sum_dt_us) / sup->timing.count : 0.0f;
+
+        Serial.printf(
+            "%lu,%.4f,%.4f,%.4f,%.3f,%.3f,%.3f,%u,%u,%u,%.1f,%u\n",
+            t_us,                           // timestamp [µs]
+            hold_pos_rad,                   // reference position [rad]
+            sup->esc[0].state.pos_rad,      // measured position [rad]
+            pos_err,                        // error [rad]
+            vel,                            // velocity [rad/s]
+            Kspring,                        // stiffness Nm/rad
+            B,                              // damping Nm/(rad/s)
+            sup->timing.dt_us,
+            sup->timing.min_dt_us,
+            sup->timing.max_dt_us,
+            avg_dt_us,
+            sup->timing.exec_time_us
+        );
+    }
+#endif
+
+    break;
+}

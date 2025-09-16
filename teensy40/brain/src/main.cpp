@@ -1,6 +1,6 @@
-#include "main.h"
 #include <FlexCAN_T4.h>
 #include "LED.h"
+#include "main.h"
 #include "pushbutton.h"
 #include "tone_player.h"
 #include "MPU6050.h"
@@ -8,9 +8,6 @@
 #include "ESP_comm.h"
 #include "CAN_helper.h"
 #include "supervisor.h"
-
-#define TELEMETRY_WRITE 0
-#define SERIAL_WRITE 1
 
 // ---------------------- Setup / Loop -----------------------
 IntervalTimer g_ctrlTimer;
@@ -35,7 +32,7 @@ LEDCtrl g_led_green;
 
 void setup() {
 #if SERIAL_WRITE
-  Serial.begin(115200);
+  Serial.begin(921600);
   while (!Serial && millis() < 1500) {}
 #endif
 
@@ -119,43 +116,6 @@ void loop() {
 
 #endif
 
-    // PRINT DATA ON VT100
-
-#if SERIAL_WRITE
-    Serial.print("\033[3;10H\033[K");
-    Serial.printf("PWM: %u", supervisor.rc_raw[0].raw_us);
-
-    Serial.print("\033[4;10H\033[K");
-    Serial.printf("pos: %.2f", supervisor.esc[0].state.pos_rad);
-
-    Serial.print("\033[5;10H\033[K");
-    Serial.printf("vel: %.2f", supervisor.esc[0].state.vel_rad_s);
-
-    Serial.print("\033[7;10H\033[K");
-    Serial.printf("min_dt: %lu", supervisor.timing.min_dt_us);
-
-    Serial.print("\033[8;10H\033[K");
-    Serial.printf("max_dt: %lu", supervisor.timing.max_dt_us);
-
-    float avg_dt_us = 0.0f;
-    if (supervisor.timing.count > 0) {
-      avg_dt_us = (float)supervisor.timing.sum_dt_us / supervisor.timing.count;
-    }
-    Serial.print("\033[9;10H\033[K");
-    Serial.printf("avg_dt: %.2f", avg_dt_us);
-
-    Serial.print("\033[10;10H\033[K");
-    Serial.printf("exec: %lu dt: %lu", supervisor.timing.exec_time_us, supervisor.timing.dt_us);
-
-    // Optionally leave cursor at top-left
-    Serial.print("\033[H");
-#endif
-
-    if (supervisor.timing.count > 0) {
-      // This resets timing stats
-      resetLoopTimingStats(&supervisor); 
-    }
-
     // LED CONTROL
     tone_update(&g_tone, now_us);
     led_update(&g_led_red, now_us);
@@ -177,6 +137,14 @@ void loop() {
 	tone_start(&g_tone, PB_BEEP_HZ, PB_BEEP_MS, PB_GAP_MS);
       }
       else if (pb_state == PB_RELEASED && g_button.isArmed()) {
+
+	// SUP_MODE_SIN_TORQUE
+	if (supervisor.mode == SUP_MODE_SINUSOIDAL) {
+	  supervisor.mode = SUP_MODE_IDLE;
+	} else {
+	  supervisor.mode = SUP_MODE_SINUSOIDAL;
+	}
+
 	LEDState cur  = g_led_red.state;
 	LEDState next = (cur == LED_BLINK_FAST) ? LED_BLINK_SLOW : LED_BLINK_FAST;
 	if (cur != LED_BLINK_FAST && cur != LED_BLINK_SLOW) next = LED_BLINK_FAST;
@@ -185,5 +153,8 @@ void loop() {
       }
       g_button.clearChanged();
     }
-  }
+
+    // Resets timing stats
+    if (supervisor.timing.count > 0) { resetLoopTimingStats(&supervisor);  }
+  } // end of low priority loop
 }

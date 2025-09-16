@@ -68,6 +68,11 @@ struct IMU_typedef {
 enum SupervisorMode {
     SUP_MODE_IDLE = 0,   // System idle, no active control
     SUP_MODE_ACTIVE,     // Normal operation / balancing
+    SUP_MODE_SINUSOIDAL,
+    SUP_MODE_HOLD_POSITION,
+    SUP_MODE_SIN_TORQUE,
+    SUP_MODE_POSITION_SAMPLE,
+    SUP_MODE_POSITION_COLLECT,
     SUP_MODE_FAULT       // Fault state (error, timeout, etc.)
 };
 
@@ -119,5 +124,6 @@ void init_supervisor(Supervisor_typedef *sup,
 void updateSupervisorRC(Supervisor_typedef *sup);   // Update RC input channels
 void resetLoopTimingStats(Supervisor_typedef *sup); // Reset loop timing stats
 void resetTelemetryStats(Supervisor_typedef *sup);  // Reset telemetry stats
+float angle_diff(float target, float actual);
 
 #endif
