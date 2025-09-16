@@ -1,5 +1,5 @@
-# Intro
-## CAN POS/VEL, Telemetry, and Scheduling — System Goals
+# CAN Telemtry of Position and Velocity
+## System Goals
 - System Goals (Teensy 4.0 “brain” + ESCs over CAN)
 - Note: the ESC uses firmware called "MESC"
 - Deterministic control at 1 kHz on Teensy.
@@ -15,17 +15,17 @@
 - Sends setpoints (torque/velocity/position) to ESCs each tick.
 - Reads high-rate encoder pos/vel from ESCs (new fast stream; see below).
 
-## Why 500 Hz (or 1 kHz) Makes Sense
+## Why 500 Hz Transfer Speeds? 
 - 2 kHz sampling in a classic LQR balancing system ([Park et al.](https://link.springer.com/article/10.1007/s10015-011-0897-9?utm_source=chatgpt.com)) establishes an upper benchmark—suggesting that balance control benefits from high-frequency updates.
   - See also: [Ref 1](https://indusedu.org/pdfs/IJREISS/IJREISS_3094_97729.pdf?utm_source=chatgpt.com) and [Ref 2](https://www.mdpi.com/1424-8220/25/4/1056?utm_source=chatgpt.com)
 - Running at 500–1000 Hz provides plenty of bandwidth to implement LQR-based stabilization effectively—while being manageable for embedded systems like Teensy + ESCs.
 - For now let's settle on 500Hz
 
-## MESC has telemetry-plane (slow, ~10–50 Hz)
+## MESC already has a telemetry-plane 
 - Useful for monitoring/logging: Vbus, Ibus, eHz, Idq/Vdq, state, etc.
 - Will not be used for balancing
 - MESC “fast” telemetry is actually ~10 Hz (every 100 ms)
-- Not for stabilization; too slow for 500 Hz balancing.
+- Will not work for stabilization; too slow for 500 Hz balancing.
 
 ## MESC receives CAN commands
 - MESC already spawns `TASK_CAN_rx` at high priority (`osPriorityAboveNormal`) to process incoming frames.
@@ -47,17 +47,14 @@
 - 2 ESCs × 1 kHz POS/VEL ≈ 256 kb/s.
 - Total ≈ 50% bus load (before additional telemetry). At 500 Hz POS/VEL, ≈ 25%.
 
-# Inserting control-plane CAN code into MESC
+# Inserting the control-plane CAN code into MESC
 ## From looking at `MESC_F405RG/MESC_F405RG.ioc`:
 - PWM frequency = ~41 kHz
 - MESC_ADC_IRQ_handler() execution rate = ~20 kHz
 - `fastLoop()` runs at ~20 kHz
 
-## Sending encoder position and motor velocity over CAN
-- Putting it inside `fastLoop()` (20 kHz ISR) is not appropriate.
-- It risks jitter in a time-critical ISR.
-- The correct place is a separate FreeRTOS task.
-- Schedule the task at 500–1000 Hz.
+## Sending encoder position and motor velocity
+- Using a separate FreeRTOS task.
 - Use `vTaskDelayUntil()` for cadence.
 - Enqueue one frame each tick.
 - TX handled by `TASK_CAN_tx`.
@@ -184,6 +181,9 @@ void TASK_CAN_telemetry_posvel(TASK_CAN_handle *handle) {
     static bool initialized = false;
 
     // Capture raw encoder count for debugging
+	//  NOTE THIS SHOULD BE REPLACED WITH 
+	//   _motor->FOC.abs_position 
+	// See decription in the MESC_control_variables in DOCS
     uint16_t curr_count = motor_curr->enctimer->Instance->CNT;
 
     // --- Read precise timestamp from DWT cycle counter ---
