@@ -181,6 +181,7 @@ void resetTelemetryStats(Supervisor_typedef *sup) {
 
 float hold_pos_rad = 0.0f;
 static float sinusoid_entry_offset = 0.0f;
+int flip = -1;
 
 void controlLoop(MPU6050 &imu, Supervisor_typedef *sup,
                  FlexCAN_T4<CAN1, RX_SIZE_256, TX_SIZE_16> &can) {
@@ -224,7 +225,7 @@ void controlLoop(MPU6050 &imu, Supervisor_typedef *sup,
 
   // ---- Core control loop body ----
   switch (sup->mode) {
-case SUP_MODE_IDLE: {
+  case SUP_MODE_IDLE: {
     // --- Send zero torque (motor free) ---
     CAN_message_t msg;
     msg.id = canMakeExtId(CAN_ID_IQREQ, TEENSY_NODE_ID,
@@ -235,53 +236,68 @@ case SUP_MODE_IDLE: {
     canPackFloat(0.0f, msg.buf + 4);  // second float unused
     can.write(msg);
 
-    // --- Keep reference "parked" at current motor position ---
-    hold_pos_rad = sup->esc[0].state.pos_rad;
-
-    // --- Reset sinusoid time base ---
-    sinusoid_t0 = micros() / 1e6f;
-
-    // --- Capture entry offset so sinusoid starts smoothly ---
-    sinusoid_entry_offset = sup->esc[0].state.pos_rad;
-
     break;
-}
-  case SUP_MODE_SINUSOIDAL: {
-    // --- Time since entering sinusoidal mode ---
-    float t_now = micros() / 1e6f;
-    float t_rel = t_now - sinusoid_t0;
-
-    float A = 2.0f * M_PI;   // amplitude [rad]
-    float f = 0.05f;         // frequency [Hz]
-        hold_pos_rad = sinusoid_entry_offset +
-               0.5f * (sinf(2.0f * M_PI * f * t_rel) + 1.0f) * A;
-
+  }
  
-    // --- Errors ---
-    float pos_err = hold_pos_rad - sup->esc[0].state.pos_rad;
-    float vel     = sup->esc[0].state.vel_rad_s;
+case SUP_MODE_SINUSOIDAL: {
+    static bool first_entry = true;
+    static float phase_offset = 0.0f;
 
-    // Wrap error into [-π, +π] so small corrections are applied across the 0↔2π boundary
-    // (prevents huge jumps in error when position rolls over)
+    const float A = M_PI * 0.8f;  // amplitude [rad] (≤ π to stay in [0, 2π])
+    const float f = 0.1f;        // frequency [Hz]
+
+    // --- Entry initialization ---
+    if (first_entry) {
+        float entry_pos = sup->esc[0].state.pos_rad;  // where the motor is
+        sinusoid_t0 = micros() / 1e6f;
+
+        // Compute phase offset so sine starts at entry_pos
+        // hold_pos_rad = π + A*sin(ωt + φ)
+        // entry_pos    = π + A*sin(φ)
+        float normalized = (entry_pos - M_PI) / A;
+        if (normalized > 1.0f) normalized = 1.0f;
+        if (normalized < -1.0f) normalized = -1.0f;
+        phase_offset = asinf(normalized);
+
+        first_entry = false;
+    }
+
+    // --- Gains ---
+    const float Kp = 0.07f;
+    const float Kd = 0.002f;
+
+    // --- Time since entering sinusoidal mode ---
+    float t_now = micros() / 1e6f - sinusoid_t0;
+
+    // --- Reference trajectory (sine wave) ---
+    hold_pos_rad = M_PI + A * sinf(2.0f * M_PI * f * t_now + phase_offset);
+
+    // Wrap into [0, 2π]
+    if (hold_pos_rad < 0.0f) hold_pos_rad += 2.0f * M_PI;
+    if (hold_pos_rad >= 2.0f * M_PI) hold_pos_rad -= 2.0f * M_PI;
+
+    // --- Error ---
+    float pos_err = hold_pos_rad - sup->esc[0].state.pos_rad;
     if (pos_err >  M_PI) pos_err -= 2.0f * M_PI;
     if (pos_err < -M_PI) pos_err += 2.0f * M_PI;
 
-    // --- Spring-damper control law ---
-    const float Kspring = 0.5f;   // unitless stiffness
-    const float B       = 0.06f;   // unitless damping
-    float cmd_torque_raw = Kspring * pos_err - B * vel;
+    // --- Reference velocity ---
+    float hold_vel = A * 2.0f * M_PI * f * cosf(2.0f * M_PI * f * t_now + phase_offset);
 
-    // --- Normalize to [-1, 1] ---
-    float norm_factor = fabs(cmd_torque_raw);
-    static float max_seen = 1.0f; // prevent divide by zero
-    if (norm_factor > max_seen) {
-      max_seen = norm_factor;   // track largest magnitude observed
-    }
-    float cmd_torque_norm = cmd_torque_raw / max_seen;
+    // --- Error derivative (reference vel - measured vel) ---
+    float d_err = hold_vel - sup->esc[0].state.vel_rad_s;
 
-    // --- Rescale to safe range  ---
-    const float TORQUE_SCALE = 0.9f;
-    float cmd_torque = cmd_torque_norm * TORQUE_SCALE;
+    // --- PD control law ---
+    float cmd_torque_raw = Kp * pos_err + Kd * d_err;
+
+    // --- Apply global torque limit ---
+    const float TORQUE_LIMIT = 0.8f;  // scale down to ±0.6 range
+    float cmd_torque = cmd_torque_raw * TORQUE_LIMIT;
+
+    const float TORQUE_CLAMP = 0.8f;
+    // --- Optional: clamp to [-1, 1] for safety ---
+    if (cmd_torque > TORQUE_CLAMP) cmd_torque = TORQUE_CLAMP;
+    if (cmd_torque < TORQUE_CLAMP * -1.0f) cmd_torque = TORQUE_CLAMP * -1.0f;
 
     // --- Send torque request to ESC ---
     CAN_message_t msg;
@@ -293,34 +309,31 @@ case SUP_MODE_IDLE: {
     canPackFloat(0.0f, msg.buf + 4);
     can.write(msg);
 
-#if SERIAL_WRITE
     static int telem_counter = 0;
     if (++telem_counter >= TELEMETRY_DECIMATE) {
-      telem_counter = 0;
+        telem_counter = 0;
 
-      unsigned long t_us = micros();
-      float avg_dt_us = (sup->timing.count > 0) ?
-	static_cast<float>(sup->timing.sum_dt_us) / sup->timing.count : 0.0f;
+        unsigned long t_us = micros();
+        float avg_dt_us = (sup->timing.count > 0) ?
+            static_cast<float>(sup->timing.sum_dt_us) / sup->timing.count : 0.0f;
 
-      int vel_sign = (vel > 0.0f) ? 1 : (vel < 0.0f ? -1 : 0);
-
-      Serial.printf(
-		    "%lu,%.4f,%.4f,%.4f,%.3f,%d,%.3f,%.3f\n",
-		    (unsigned long)t_us,
-		    hold_pos_rad,                  // reference pos [rad]
-		    sup->esc[0].state.pos_rad,     // measured pos [rad]
-		    pos_err,                       // error [rad]
-		    vel,                           // velocity [rad/s]
-		    vel_sign,                      // velocity sign
-		    cmd_torque_raw,                // raw torque (pre-normalization)
-		    cmd_torque                     // scaled torque [-0.3, 0.3]
-		    );
+        Serial.printf(
+            "%lu,%.4f,%.4f,%.4f,%d,%d,%.3f,%.3f\n",
+            (unsigned long)t_us,
+            hold_pos_rad,                  // reference pos [rad]
+            sup->esc[0].state.pos_rad,     // measured pos [rad]
+            pos_err,                       // error [rad]
+            flip,                           // was: velocity [rad/s]
+            flip * -1,                           // was: velocity sign
+            cmd_torque,                    // commanded torque (post-limit, post-clamp)
+            cmd_torque_raw                 // raw PD output (pre-limit)
+        );
+	flip = -flip;
     }
-#endif
-    break;
-  }
 
- 
+    break;
+}
+
   default: {
     break;
   }

@@ -181,10 +181,7 @@ void TASK_CAN_telemetry_posvel(TASK_CAN_handle *handle) {
     static bool initialized = false;
 
     // Capture raw encoder count for debugging
-	//  NOTE THIS SHOULD BE REPLACED WITH 
-	//   _motor->FOC.abs_position 
-	// See decription in the MESC_control_variables in DOCS
-    uint16_t curr_count = motor_curr->enctimer->Instance->CNT;
+    uint16_t curr_count = motor_curr->FOC.abs_position
 
     // --- Read precise timestamp from DWT cycle counter ---
     uint32_t now_cycles = DWT->CYCCNT;
