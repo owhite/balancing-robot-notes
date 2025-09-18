@@ -54,3 +54,58 @@ Or, a list of things that can go wrong and must be ruled out.
 
 ## ✅ One-Sentence Summary
 Your system doesn’t follow control law because it’s **a nonlinear, second-order plant (or higher), driven by a torque–current mapping that isn’t accurate**, so PID designed for a linear first-order system will struggle. Higher-level control (feedforward, LQR, gain scheduling) is needed to stabilize it.
+
+--- Some other items to consider:
+
+- This video is an ESP32 with github code: [LINK](https://www.youtube.com/watch?v=rpD8mo0Jbuc)
+- They aren’t using simple PID.
+- With LKF state estimates, they probably use state feedback (like LQR) or PID + feedforward, which can explicitly stabilize second-order dynamics.
+- Their robot balances smoothly, while yours oscillates or fails to converge.
+
+# Experiment Plan: Diagnosing Plant Order in Motor Controller System
+
+##  **Diagnose order of the plant**  
+1. **Steps**  
+   - Apply a step input (setpoint far from actual position) and observe response.  
+   - A first-order system shows exponential approach.  
+   - A second-order system shows overshoot/ringing.
+
+2. **Burst logging**  
+   - Avoid serial output during motion to prevent bottlenecks.  
+   - Log data to RAM and dump it only after the test completes.
+
+3. **Setpoint offset**  
+   - Start far from the setpoint to create a **clear transient**.  
+   - This highlights overshoot, ringing, or divergence.
+
+---
+
+## 📊 What to Record
+- **Commanded setpoint** (position or velocity).  
+- **Measured position** (encoder).  
+- **Velocity estimate** (if available).  
+- **Control effort** (torque command or current request).  
+- **Phase current feedback** (if available).  
+- **Bus voltage / battery voltage** (to catch sag effects).  
+- **Error** = setpoint − position.  
+- **Optional:** IMU tilt (if balancing robot).  
+
+---
+
+## 🔍 What to Look For
+- **First-order behavior:** smooth exponential decay to setpoint, no overshoot.  
+- **Second-order behavior:** overshoot, ringing, oscillation before settling.  
+- **Nonlinearities:** dead zones, saturation (flat response until torque jumps), current clipping.  
+- **Instability:** divergence instead of convergence.  
+
+---
+
+## ⚡ Refinement Ideas
+- Run with different step sizes (small vs. large) → nonlinearities will show up if response shape changes.  
+- Try with and without load (wheel free vs. on ground).  
+- Include a **timestamp or tick counter** in logs to reconstruct dynamics.  
+
+---
+
+## ✅ Conclusion
+This experiment will let you see clearly why the plant doesn’t behave like first-order. By analyzing step responses, you can confirm whether the system is **second-order (or higher)** and uncover nonlinearities that break PID control assumptions.
