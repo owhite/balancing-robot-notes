@@ -8,6 +8,8 @@
 #include "CAN_helper.h"
 #include "main.h"
 
+#define TELEMETRY_DECIMATE 100
+
 #define SUPERVISOR_MAX_ESCS   4
 #define RC_INPUT_MAX_PINS     8
 #define RC_INPUT_MIN_US       1000
@@ -70,6 +72,7 @@ enum SupervisorMode {
     SUP_MODE_ACTIVE,     // Normal operation / balancing
     SUP_MODE_SINUSOIDAL,
     SUP_MODE_HOLD_POSITION,
+    SUP_MODE_SET_POSITION,
     SUP_MODE_SIN_TORQUE,
     SUP_MODE_POSITION_SAMPLE,
     SUP_MODE_POSITION_COLLECT,

@@ -138,11 +138,13 @@ void loop() {
       }
       else if (pb_state == PB_RELEASED && g_button.isArmed()) {
 
-	// SUP_MODE_SIN_TORQUE
-	if (supervisor.mode == SUP_MODE_SINUSOIDAL) {
+	// User can switch mode by pressing button
+	SupervisorMode test_mode = SUP_MODE_SET_POSITION;
+
+	if (supervisor.mode == test_mode) {
 	  supervisor.mode = SUP_MODE_IDLE;
 	} else {
-	  supervisor.mode = SUP_MODE_SINUSOIDAL;
+	  supervisor.mode = test_mode;
 	}
 
 	LEDState cur  = g_led_red.state;

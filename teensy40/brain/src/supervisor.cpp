@@ -1,8 +1,16 @@
 #include "supervisor.h"
 #include <string.h>
 #include "main.h"
+#pragma once
+#include "sup_mode_sinusoidal.h"
 
-#define TELEMETRY_DECIMATE 100
+
+void run_mode_sinusoidal(Supervisor_typedef *sup,
+                         FlexCAN_T4<CAN1, RX_SIZE_256, TX_SIZE_16> &can);
+void run_mode_set_position(Supervisor_typedef *sup,
+			   FlexCAN_T4<CAN1, RX_SIZE_256, TX_SIZE_16> &can);
+
+static int telem_counter = 0;
 
 // ---------------- Global Flags ----------------
 // These are set by the control ISR to signal the main loop.
@@ -179,10 +187,6 @@ void resetTelemetryStats(Supervisor_typedef *sup) {
 //       * Run balance control law (TODO)
 //
 
-float hold_pos_rad = 0.0f;
-static float sinusoid_entry_offset = 0.0f;
-int flip = -1;
-
 void controlLoop(MPU6050 &imu, Supervisor_typedef *sup,
                  FlexCAN_T4<CAN1, RX_SIZE_256, TX_SIZE_16> &can) {
 
@@ -221,8 +225,6 @@ void controlLoop(MPU6050 &imu, Supervisor_typedef *sup,
   // ---- Update RC PWM input ----
   updateRC(sup);
 
-  static float sinusoid_t0 = 0.0f;
-
   // ---- Core control loop body ----
   switch (sup->mode) {
   case SUP_MODE_IDLE: {
@@ -236,104 +238,26 @@ void controlLoop(MPU6050 &imu, Supervisor_typedef *sup,
     canPackFloat(0.0f, msg.buf + 4);  // second float unused
     can.write(msg);
 
+    if (++telem_counter >= TELEMETRY_DECIMATE) {
+        telem_counter = 0;
+	// --- Print motor position as JSON ---
+	float pos = sup->esc[0].state.pos_rad;   // radians
+	unsigned long t_us = micros();           // timestamp
+
+	Serial.printf("{\"t\":%lu,\"pos\":%.6f}\n", t_us, pos);
+    }
+
     break;
   }
  
-case SUP_MODE_SINUSOIDAL: {
-    static bool first_entry = true;
-    static float phase_offset = 0.0f;
-
-    const float A = M_PI * 0.8f;  // amplitude [rad] (≤ π to stay in [0, 2π])
-    const float f = 0.1f;        // frequency [Hz]
-
-    // --- Entry initialization ---
-    if (first_entry) {
-        float entry_pos = sup->esc[0].state.pos_rad;  // where the motor is
-        sinusoid_t0 = micros() / 1e6f;
-
-        // Compute phase offset so sine starts at entry_pos
-        // hold_pos_rad = π + A*sin(ωt + φ)
-        // entry_pos    = π + A*sin(φ)
-        float normalized = (entry_pos - M_PI) / A;
-        if (normalized > 1.0f) normalized = 1.0f;
-        if (normalized < -1.0f) normalized = -1.0f;
-        phase_offset = asinf(normalized);
-
-        first_entry = false;
-    }
-
-    // --- Gains ---
-    const float Kp = 0.07f;
-    const float Kd = 0.002f;
-
-    // --- Time since entering sinusoidal mode ---
-    float t_now = micros() / 1e6f - sinusoid_t0;
-
-    // --- Reference trajectory (sine wave) ---
-    hold_pos_rad = M_PI + A * sinf(2.0f * M_PI * f * t_now + phase_offset);
-
-    // Wrap into [0, 2π]
-    if (hold_pos_rad < 0.0f) hold_pos_rad += 2.0f * M_PI;
-    if (hold_pos_rad >= 2.0f * M_PI) hold_pos_rad -= 2.0f * M_PI;
-
-    // --- Error ---
-    float pos_err = hold_pos_rad - sup->esc[0].state.pos_rad;
-    if (pos_err >  M_PI) pos_err -= 2.0f * M_PI;
-    if (pos_err < -M_PI) pos_err += 2.0f * M_PI;
-
-    // --- Reference velocity ---
-    float hold_vel = A * 2.0f * M_PI * f * cosf(2.0f * M_PI * f * t_now + phase_offset);
-
-    // --- Error derivative (reference vel - measured vel) ---
-    float d_err = hold_vel - sup->esc[0].state.vel_rad_s;
-
-    // --- PD control law ---
-    float cmd_torque_raw = Kp * pos_err + Kd * d_err;
-
-    // --- Apply global torque limit ---
-    const float TORQUE_LIMIT = 0.8f;  // scale down to ±0.6 range
-    float cmd_torque = cmd_torque_raw * TORQUE_LIMIT;
-
-    const float TORQUE_CLAMP = 0.8f;
-    // --- Optional: clamp to [-1, 1] for safety ---
-    if (cmd_torque > TORQUE_CLAMP) cmd_torque = TORQUE_CLAMP;
-    if (cmd_torque < TORQUE_CLAMP * -1.0f) cmd_torque = TORQUE_CLAMP * -1.0f;
-
-    // --- Send torque request to ESC ---
-    CAN_message_t msg;
-    msg.id = canMakeExtId(CAN_ID_IQREQ, TEENSY_NODE_ID,
-                          sup->esc[0].config.node_id);
-    msg.len = 8;
-    msg.flags.extended = 1;
-    canPackFloat(cmd_torque, msg.buf);
-    canPackFloat(0.0f, msg.buf + 4);
-    can.write(msg);
-
-    static int telem_counter = 0;
-    if (++telem_counter >= TELEMETRY_DECIMATE) {
-        telem_counter = 0;
-
-        unsigned long t_us = micros();
-        float avg_dt_us = (sup->timing.count > 0) ?
-            static_cast<float>(sup->timing.sum_dt_us) / sup->timing.count : 0.0f;
-
-        Serial.printf(
-            "%lu,%.4f,%.4f,%.4f,%d,%d,%.3f,%.3f\n",
-            (unsigned long)t_us,
-            hold_pos_rad,                  // reference pos [rad]
-            sup->esc[0].state.pos_rad,     // measured pos [rad]
-            pos_err,                       // error [rad]
-            flip,                           // was: velocity [rad/s]
-            flip * -1,                           // was: velocity sign
-            cmd_torque,                    // commanded torque (post-limit, post-clamp)
-            cmd_torque_raw                 // raw PD output (pre-limit)
-        );
-	flip = -flip;
-    }
-
+  case SUP_MODE_SET_POSITION: {
+    run_mode_set_position(sup, can);
     break;
-}
-
+ }
+  case SUP_MODE_SINUSOIDAL: {
+    run_mode_sinusoidal(sup, can);
+    break;
+ }
   default: {
     break;
   }
