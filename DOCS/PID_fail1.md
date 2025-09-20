@@ -88,3 +88,14 @@ void run_mode_set_position(Supervisor_typedef *sup,
 Resulting plots are here. This shows a good example: 
 
 <img src="IMAGES/PID_fail1.1.png" alt="Plot result" width="600"/>
+
+And these are sucktastic
+<img src="IMAGES/PID_fail1.2.png" alt="Plot result" width="600"/>
+
+<img src="IMAGES/PID_fail1.3.png" alt="Plot result" width="600"/>
+
+## General conclusions
+
+- there is very little reproducibility
+- the same settings result different results
+- at the risk going down rabbit holes you can consider all the issues [here](torque_nonlinearity.md)
