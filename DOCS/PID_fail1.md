@@ -114,6 +114,8 @@ void run_mode_set_position(Supervisor_typedef *sup,
 
 <img src="IMAGES/PID_fail1.2.png" alt="Plot result" width="600"/>
 
+----
+
 <img src="IMAGES/PID_fail1.3.png" alt="Plot result" width="600"/>
 
 ## General conclusions
