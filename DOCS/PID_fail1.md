@@ -1,5 +1,25 @@
 # Examples of PID not working at this point. 
 
+The way the code is set up is if the user hits the button we switch to a supervisor mode that sets the position
+```c
+
+  if (pb_state == PB_PRESSED) {
+	// SPEAKER
+	tone_start(&g_tone, PB_BEEP_HZ, PB_BEEP_MS, PB_GAP_MS);
+      }
+      else if (pb_state == PB_RELEASED && g_button.isArmed()) {
+
+	// User can switch mode by pressing button
+	SupervisorMode test_mode = SUP_MODE_SET_POSITION;
+
+	if (supervisor.mode == test_mode) {
+	  supervisor.mode = SUP_MODE_IDLE;
+	} else {
+	  supervisor.mode = test_mode;
+	}
+   }
+```
+
 Using this code block, and many different settings for Kp and Kd, I got no where with trying to get motor to move to position under PID control. 
 
 ```c
@@ -85,6 +105,7 @@ void run_mode_set_position(Supervisor_typedef *sup,
 
 ```
 
+
 ## Resulting plots are here. This shows a good example: 
 
 <img src="IMAGES/PID_fail1.1.png" alt="Plot result" width="600"/>
@@ -98,5 +119,5 @@ void run_mode_set_position(Supervisor_typedef *sup,
 ## General conclusions
 
 - there is very little reproducibility
-- the same settings result different results
+- same settings result different results
 - at the risk going down rabbit holes you can consider all the issues [here](torque_nonlinearity.md)
