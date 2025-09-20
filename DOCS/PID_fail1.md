@@ -120,6 +120,7 @@ void run_mode_set_position(Supervisor_typedef *sup,
 
 ## General conclusions
 
+Code can be found here: [link](https://github.com/owhite/MESC_brain_board/tree/main/teensy40/PID_fail1)
 - there is very little reproducibility
-- same settings result different results
-- at the risk going down rabbit holes you can consider all the issues [here](torque_nonlinearity.md)
+- same settings produce different results
+- risking going down rabbit holes you can consider all the issues [here](torque_nonlinearity.md)
