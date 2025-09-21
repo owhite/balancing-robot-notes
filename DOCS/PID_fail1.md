@@ -136,7 +136,7 @@ This only updates when fresh CAN message arrives.
 
 This aligned Teensy’s control loop with ESC data → noise and D-term chaos disappeared.
 
-<img src="IMAGES/PID_fail1.3.png" alt="Plot result" width="300"/>
+<img src="IMAGES/PID_fail1.4.png" alt="Plot result" width="300"/>
 
 
 ## General conclusions
