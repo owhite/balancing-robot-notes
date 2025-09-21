@@ -118,7 +118,11 @@ void run_mode_set_position(Supervisor_typedef *sup,
 
 <img src="IMAGES/PID_fail1.3.png" alt="Plot result" width="600"/>
 
-## What I found was: 
+- very little reproducibility
+- same settings produce different results
+- major risk: going down rabbit holes you can consider all the issues [here](torque_nonlinearity.md)
+
+## The good news is this, what I found was: 
 
 - The teensy is running its control loop at 1 kHz but my configuratino of MESC sent data at 500 Hz.
 - If you're not careful the teensy reused stale velocity samples
@@ -141,7 +145,4 @@ This aligned Teensy’s control loop with ESC data → noise and D-term chaos di
 
 ## General conclusions
 
-Code can be found here: [link](https://github.com/owhite/MESC_brain_board/tree/main/teensy40/PID_fail1)
-- there is very little reproducibility
-- same settings produce different results
-- risking going down rabbit holes you can consider all the issues [here](torque_nonlinearity.md)
+Current code can be found here: [link](https://github.com/owhite/MESC_brain_board/tree/main/teensy40/PID_fail1)
