@@ -1,0 +1,104 @@
+void run_mode_torque_threshold(Supervisor_typedef *sup,
+                               FlexCAN_T4<CAN1, RX_SIZE_256, TX_SIZE_16> &can) {
+  unsigned long now = micros();
+
+  /*
+  Serial.printf("POS: %.4f VEL: %.4f\r\n",
+		sup->esc[0].state.pos_rad,
+		sup->esc[0].state.vel_rad_s);
+  */
+
+  switch (state) {
+    case STATE_POSITION_INCREASING: {
+      float pos = sup->esc[0].state.pos_rad;   // 🔑 read position fresh
+      // Serial.printf("INCREASE\r\n");
+
+      if (inc_count == 0) {
+        start_pos = pos;   // latch once at start of rep
+      }
+
+      // Apply next torque increment
+      cmd_torque += torque_inc;
+      sendTorque(can, cmd_torque);
+
+      // Log absolute and relative position
+      if (logIndex < (int)(sizeof(logBuffer) / sizeof(logBuffer[0]))) {
+	float pos_now = sup->esc[0].state.pos_rad;
+	// Serial.printf("LOG INCREASE\r\n");
+
+	logBuffer[logIndex++] = {now, cmd_torque, pos_now - start_pos,
+	  rep_count, inc_count};
+
+	/*
+	Serial.printf("rep=%d inc=%d torque=%.4f pos=%.6f start=%.6f delta=%.6f\r\n",
+		      rep_count, inc_count, cmd_torque,
+		      pos_now, start_pos, pos_now - start_pos);
+	*/		     
+      }
+
+      // Check for bump
+      if (fabs(pos - start_pos) > move_threshold || cmd_torque > 1.0f) {
+        state = STATE_BUMP_OCCURRED;
+        bump_time_us = now;
+      }
+
+      inc_count++;
+      break;
+    }
+
+    case STATE_IDLE:
+      // Finished all reps → dump data and return to idle
+      if (rep_count >= 4) {
+	// Serial.printf("DUMP\r\n");
+
+        for (int i = 0; i < logIndex; i++) {
+	    Serial.printf("%d %.4f %.4f\r\n",
+                        logBuffer[i].loop_count,
+                        logBuffer[i].torque,
+                        logBuffer[i].pos);
+        }
+
+	// Serial.printf("LEAVE\r\n");
+
+	state = STATE_POSITION_INCREASING;
+	cmd_torque = 0.0f;
+	start_pos = 0.0f;
+	rep_count = 0;
+	inc_count = 0;
+
+        sup->mode = SUP_MODE_IDLE;
+        return;
+      }
+
+      // Start a new repetition
+      cmd_torque = 0.0f;
+      inc_count = 0;
+      start_pos = sup->esc[0].state.pos_rad;   // latch absolute pos here
+      sendTorque(can, cmd_torque);
+      state = STATE_POSITION_INCREASING;
+      break;
+
+
+    case STATE_BUMP_OCCURRED:
+      // Serial.printf("BUMP OCCURED\r\n");
+
+      cmd_torque = 0.0f;
+      sendTorque(can, cmd_torque);
+      state = STATE_WAIT_AFTER_BUMP;
+      bump_time_us = now;
+      break;
+
+    case STATE_WAIT_AFTER_BUMP:
+      sendTorque(can, 0.0f); // hold torque at zero
+      // Serial.printf("PAUSE\r\n");
+      if ((now - bump_time_us) > wait_after_bump_us) {
+
+        rep_count++;      // increment only after reset
+        cmd_torque = 0.0f;
+        inc_count = 0;
+        sendTorque(can, cmd_torque);
+        state = (rep_count >= 4) ? STATE_IDLE : STATE_POSITION_INCREASING;
+      }
+      break;
+  }
+}

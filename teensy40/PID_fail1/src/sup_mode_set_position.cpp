@@ -20,10 +20,12 @@ static int logIndex = 0;
 
 void run_mode_set_position(Supervisor_typedef *sup,
                            FlexCAN_T4<CAN1, RX_SIZE_256, TX_SIZE_16> &can) {
+    if (!sup->esc[0].state.alive) {return;}
+
     static bool first_entry = true;
     static unsigned long start_time = 0;
 
-    const float Kp = 0.04f;
+    const float Kp = 0.05f;
     const float Kd = 0.005f;
     const float setpoint = M_PI;   // target position
 
@@ -96,4 +98,6 @@ void run_mode_set_position(Supervisor_typedef *sup,
         sup->mode = SUP_MODE_IDLE;
         first_entry = true;
     }
+
+    sup->esc[0].state.alive = false;
 }

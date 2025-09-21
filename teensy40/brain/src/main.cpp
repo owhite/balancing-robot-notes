@@ -36,10 +36,6 @@ void setup() {
   while (!Serial && millis() < 1500) {}
 #endif
 
-#if TELEMETRY_WRITE
-  Serial1.begin(115200);
-#endif
-
   Wire.begin();
   Wire.setClock(400000);
   imu.begin();
@@ -86,8 +82,6 @@ void loop() {
     handleCANMessage(msg);
   }
 
-  static String input = "";
-
   // -------- LOW PRIORITY --------
   // These functions are intentionally throttled using a x10 time divider
   // ---
@@ -96,25 +90,6 @@ void loop() {
 
   if (now_us - last_lowprio_us >= (CONTROL_PERIOD_US * 100)) {
     last_lowprio_us = now_us;
-
-#if TELEMETRY_WRITE
-
-    // TELEMETRY EXPORT
-    TelemetryPacket pkt;
-    loadTelemetryPacket(pkt, &supervisor);
-
-    elapsedMicros t;  // start timer
-    sendTelemetryPacket(Serial1, pkt, &supervisor);
-    uint32_t elapsed = t;
-
-    supervisor.serial1_stats.last_block_us = elapsed;
-    if (elapsed > supervisor.serial1_stats.max_block_us) {
-      supervisor.serial1_stats.max_block_us = elapsed;
-    }
-    supervisor.serial1_stats.sum_block_us += elapsed;
-    supervisor.serial1_stats.count++;
-
-#endif
 
     // LED CONTROL
     tone_update(&g_tone, now_us);
@@ -139,7 +114,7 @@ void loop() {
       else if (pb_state == PB_RELEASED && g_button.isArmed()) {
 
 	// User can switch mode by pressing button
-	SupervisorMode test_mode = SUP_MODE_SET_POSITION;
+	SupervisorMode test_mode = SUP_MODE_TORQUE_THRESHOLD;
 
 	if (supervisor.mode == test_mode) {
 	  supervisor.mode = SUP_MODE_IDLE;

@@ -3,6 +3,7 @@
 #include "main.h"
 #pragma once
 #include "sup_mode_sinusoidal.h"
+#include "sup_mode_torque_threshold.h"
 
 
 void run_mode_sinusoidal(Supervisor_typedef *sup,
@@ -227,6 +228,7 @@ void controlLoop(MPU6050 &imu, Supervisor_typedef *sup,
 
   // ---- Core control loop body ----
   switch (sup->mode) {
+
   case SUP_MODE_IDLE: {
     // --- Send zero torque (motor free) ---
     CAN_message_t msg;
@@ -243,8 +245,6 @@ void controlLoop(MPU6050 &imu, Supervisor_typedef *sup,
 	// --- Print motor position as JSON ---
 	float pos = sup->esc[0].state.pos_rad;   // radians
 	unsigned long t_us = micros();           // timestamp
-
-	Serial.printf("{\"t\":%lu,\"pos\":%.6f}\n", t_us, pos);
     }
 
     break;
@@ -252,6 +252,10 @@ void controlLoop(MPU6050 &imu, Supervisor_typedef *sup,
  
   case SUP_MODE_SET_POSITION: {
     run_mode_set_position(sup, can);
+    break;
+ }
+  case SUP_MODE_TORQUE_THRESHOLD: {
+    run_mode_torque_threshold(sup, can);
     break;
  }
   case SUP_MODE_SINUSOIDAL: {
@@ -262,9 +266,6 @@ void controlLoop(MPU6050 &imu, Supervisor_typedef *sup,
     break;
   }
   }
-
-#if SERIAL_WRITE
-#endif
 
   // ---- Finish timing measurement ----
   sup->timing.exec_time_us = micros() - start_us;

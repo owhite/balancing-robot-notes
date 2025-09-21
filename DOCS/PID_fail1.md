@@ -118,6 +118,27 @@ void run_mode_set_position(Supervisor_typedef *sup,
 
 <img src="IMAGES/PID_fail1.3.png" alt="Plot result" width="600"/>
 
+## What I found was: 
+
+- The teensy is running control at 1 kHz but ESC sent data at 500 Hz.
+- If you're not careful the teensy reused stale velocity samples
+- The fix was to add this to the top of the control loop:
+
+```c
+if (!sup->esc[0].state.alive) return;
+.
+. rest of code
+.
+sup->esc[0].state.alive = false;
+
+``` 
+This only updates when fresh CAN message arrives.
+
+This aligned Teensy’s control loop with ESC data → noise and D-term chaos disappeared.
+
+<img src="IMAGES/PID_fail1.3.png" alt="Plot result" width="300"/>
+
+
 ## General conclusions
 
 Code can be found here: [link](https://github.com/owhite/MESC_brain_board/tree/main/teensy40/PID_fail1)

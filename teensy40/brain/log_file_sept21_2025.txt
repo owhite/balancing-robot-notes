@@ -1,0 +1,2812 @@
+08:31:17.650 (post_compile 1): Begin, version=1.58
+08:31:17.924 (loader): Teensy Loader 1.58, begin program
+08:31:18.004 (loader): File "/Users/owhite/kicad/MESC_brain_board/teensy40/can_posvel_read/.pio/build/teensy40/firmware.hex", 56320 bytes
+08:31:18.006 (loader): File "firmware.hex". 56320 bytes
+08:31:18.008 (loader): Listening for remote control on port 3149
+08:31:18.009 (loader): initialized, showing main window
+08:31:18.084 (loader): remote connection 8 opened
+08:31:18.084 (post_compile 1): Sending command: comment: Teensyduino 1.58 - MACOSX (teensy_post_compile)
+08:31:18.085 (loader): remote cmd from 8: "comment: Teensyduino 1.58 - MACOSX (teensy_post_compile)"
+08:31:18.086 (loader): remote cmd from 8: "status"
+08:31:18.087 (post_compile 1): Status: 1, 0, 0, 0, 0, 0, /Users/owhite/kicad/MESC_brain_board/teensy40/can_posvel_read/.pio/build/teensy40/, firmware.hex
+08:31:18.087 (post_compile 1): Sending command: dir:/Users/owhite/kicad/MESC_brain_board/teensy40/brain/.pio/build/teensy40/
+08:31:18.087 (loader): remote cmd from 8: "dir:/Users/owhite/kicad/MESC_brain_board/teensy40/brain/.pio/build/teensy40/"
+08:31:18.088 (post_compile 1): Sending command: file:firmware.hex
+08:31:18.088 (loader): remote cmd from 8: "file:firmware.hex"
+08:31:18.097 (loader): File "/Users/owhite/kicad/MESC_brain_board/teensy40/brain/.pio/build/teensy40/firmware.hex", 69632 bytes
+08:31:18.097 (loader): File "firmware.hex". 69632 bytes
+08:31:18.100 (loader): remote cmd from 8: "status"
+08:31:18.101 (post_compile 1): Status: 1, 0, 0, 0, 0, 0, /Users/owhite/kicad/MESC_brain_board/teensy40/brain/.pio/build/teensy40/, firmware.hex
+08:31:18.101 (post_compile 1): Sending command: auto:on
+08:31:18.102 (loader): remote cmd from 8: "auto:on"
+08:31:18.102 (post_compile 1): Disconnect
+08:31:18.112 (post_compile 2): Running teensy_reboot: /Users/owhite/.platformio/packages/tool-teensy/teensy_reboot
+08:31:18.113 (loader): remote connection 8 closed
+08:31:18.113 (loader): remote connection 8 opened
+08:31:18.113 (loader): remote connection 8 closed
+08:31:18.119 (reboot 3): Begin, version=1.58
+08:31:18.119 (reboot 3): USB device add callback
+08:31:18.119 (reboot 3):   loc=14600000, vid=16C0, pid=0483, ver=0279, ser=17888890
+08:31:18.119 (reboot 3):   actual serailnum=1788889
+08:31:18.120 (loader): remote connection 8 opened
+08:31:18.120 (reboot 3): USB device remove callback
+08:31:18.120 (reboot 3): Serial add callback
+08:31:18.121 (reboot 3):   name=/dev/cu.usbmodem178888901, loc=14600000, vid=16c0, pid=0483, ver=0279
+08:31:18.131 (reboot 3): Serial remove callback
+08:31:18.147 (reboot 3): HID Manager started
+08:31:18.148 (reboot 3): usb scan found 1 devices
+08:31:18.148 (reboot 3): found Teensy Loader, version 1.58
+08:31:18.148 (reboot 3): Sending command: show:arduino_attempt_reboot
+08:31:18.148 (loader): remote cmd from 8: "show:arduino_attempt_reboot"
+08:31:18.148 (loader): got request to show arduino rebooting message
+08:31:18.149 (reboot 3): Sending command: comment: Teensyduino 1.58 - MACOSX (teensy_reboot)
+08:31:18.149 (loader): remote cmd from 8: "comment: Teensyduino 1.58 - MACOSX (teensy_reboot)"
+08:31:18.150 (loader): remote cmd from 8: "status"
+08:31:18.150 (reboot 3): Status: 1, 1, 0, 0, 0, 0, /Users/owhite/kicad/MESC_brain_board/teensy40/brain/.pio/build/teensy40/, firmware.hex
+08:31:18.150 (reboot 3): do_reset (serial) /dev/cu.usbmodem178888901
+08:31:18.152 (loader): remote cmd from 8: "status"
+08:31:18.152 (reboot 3): Status: 1, 1, 0, 0, 0, 0, /Users/owhite/kicad/MESC_brain_board/teensy40/brain/.pio/build/teensy40/, firmware.hex
+08:31:18.152 (reboot 3): status read, retry 0
+08:31:18.258 (loader): remote cmd from 8: "status"
+08:31:18.258 (reboot 3): Status: 1, 1, 0, 0, 0, 0, /Users/owhite/kicad/MESC_brain_board/teensy40/brain/.pio/build/teensy40/, firmware.hex
+08:31:18.258 (reboot 3): status read, retry 1
+08:31:18.360 (loader): remote cmd from 8: "status"
+08:31:18.360 (reboot 3): Status: 1, 1, 0, 0, 0, 0, /Users/owhite/kicad/MESC_brain_board/teensy40/brain/.pio/build/teensy40/, firmware.hex
+08:31:18.360 (reboot 3): status read, retry 2
+08:31:18.461 (loader): remote cmd from 8: "status"
+08:31:18.461 (reboot 3): Status: 1, 1, 0, 0, 0, 0, /Users/owhite/kicad/MESC_brain_board/teensy40/brain/.pio/build/teensy40/, firmware.hex
+08:31:18.461 (reboot 3): status read, retry 3
+08:31:18.465 (loader): HID/macos: attach callback
+08:31:18.509 (loader): HID/macos: number of devices found = 1
+08:31:18.509 (loader): HID/macos: vid=16C0, pid=0478, page=FF9C, usage=0024, ver=1.08
+08:31:18.509 (loader): HID/macos: ser=001B4BD9
+08:31:18.509 (loader): try to read feature report
+08:31:18.510 (loader): got feature report, size = 384
+08:31:18.510 (loader): 7393CD01 00000000
+08:31:18.510 (loader): secure mode can not be locked: this is Standard Teensy
+08:31:18.510 (loader): encryption is possible on this Teensy, but not yet configured
+08:31:18.510 (loader): but without secure mode locked, encryption will NOT be secure!
+08:31:18.510 (loader): Device came online, code_size = 2031616
+08:31:18.510 (loader): Board is: Teensy 4.0 (IMXRT1062), version 1.08
+08:31:18.518 (loader): File "/Users/owhite/kicad/MESC_brain_board/teensy40/brain/.pio/build/teensy40/firmware.hex", 69632 bytes
+08:31:18.518 (loader): File "firmware.hex". 69632 bytes, 3% used
+08:31:18.530 (loader): set background IMG_ONLINE
+08:31:18.538 (loader): File "/Users/owhite/kicad/MESC_brain_board/teensy40/brain/.pio/build/teensy40/firmware.hex", 69632 bytes
+08:31:18.538 (loader): File "firmware.hex". 69632 bytes, 3% used
+08:31:18.550 (loader): elf appears to be for Teensy 4.0 (IMXRT1062) (2031616 bytes)
+08:31:18.550 (loader): elf binary data matches hex file
+08:31:18.550 (loader): elf file is for Teensy 4.0 (IMXRT1062)
+08:31:18.550 (loader): using hex file
+08:31:18.561 (loader): begin operation
+08:31:18.577 (loader): remote cmd from 8: "status"
+08:31:18.577 (reboot 3): Status: 1, 1, 1, 1, 0, 1, /Users/owhite/kicad/MESC_brain_board/teensy40/brain/.pio/build/teensy40/, firmware.hex
+08:31:18.577 (loader): flash, block=0, bs=1024, auto=1
+08:31:18.580 (loader): flash, block=1, bs=1024, auto=1
+08:31:18.580 (loader): flash, block=2, bs=1024, auto=1
+08:31:18.843 (loader): remote cmd from 8: "status"
+08:31:18.843 (reboot 3): Status: 1, 1, 1, 1, 0, 1, /Users/owhite/kicad/MESC_brain_board/teensy40/brain/.pio/build/teensy40/, firmware.hex
+08:31:18.843 (loader): flash, block=3, bs=1024, auto=1
+08:31:18.844 (loader): flash, block=4, bs=1024, auto=1
+08:31:18.847 (loader): flash, block=5, bs=1024, auto=1
+08:31:18.847 (loader): flash, block=6, bs=1024, auto=1
+08:31:18.848 (loader): flash, block=7, bs=1024, auto=1
+08:31:18.865 (loader): flash, block=8, bs=1024, auto=1
+08:31:18.865 (loader): flash, block=9, bs=1024, auto=1
+08:31:18.866 (loader): flash, block=10, bs=1024, auto=1
+08:31:18.884 (loader): flash, block=11, bs=1024, auto=1
+08:31:18.885 (loader): flash, block=12, bs=1024, auto=1
+08:31:18.885 (loader): flash, block=13, bs=1024, auto=1
+08:31:18.904 (loader): remote cmd from 8: "status"
+08:31:18.905 (reboot 3): Status: 1, 1, 1, 1, 0, 1, /Users/owhite/kicad/MESC_brain_board/teensy40/brain/.pio/build/teensy40/, firmware.hex
+08:31:18.905 (loader): flash, block=14, bs=1024, auto=1
+08:31:18.906 (loader): flash, block=15, bs=1024, auto=1
+08:31:18.906 (loader): flash, block=16, bs=1024, auto=1
+08:31:18.925 (loader): flash, block=17, bs=1024, auto=1
+08:31:18.926 (loader): flash, block=18, bs=1024, auto=1
+08:31:18.926 (loader): flash, block=19, bs=1024, auto=1
+08:31:18.945 (loader): flash, block=20, bs=1024, auto=1
+08:31:18.946 (loader): flash, block=21, bs=1024, auto=1
+08:31:18.947 (loader): flash, block=22, bs=1024, auto=1
+08:31:18.964 (loader): remote cmd from 8: "status"
+08:31:18.964 (reboot 3): Status: 1, 1, 1, 1, 0, 1, /Users/owhite/kicad/MESC_brain_board/teensy40/brain/.pio/build/teensy40/, firmware.hex
+08:31:18.964 (loader): flash, block=23, bs=1024, auto=1
+08:31:18.965 (loader): flash, block=24, bs=1024, auto=1
+08:31:18.965 (loader): flash, block=25, bs=1024, auto=1
+08:31:18.982 (loader): flash, block=26, bs=1024, auto=1
+08:31:18.983 (loader): flash, block=27, bs=1024, auto=1
+08:31:18.983 (loader): flash, block=28, bs=1024, auto=1
+08:31:19.002 (loader): flash, block=29, bs=1024, auto=1
+08:31:19.003 (loader): flash, block=30, bs=1024, auto=1
+08:31:19.003 (loader): flash, block=31, bs=1024, auto=1
+08:31:19.021 (loader): remote cmd from 8: "status"
+08:31:19.021 (reboot 3): Status: 1, 1, 1, 1, 0, 1, /Users/owhite/kicad/MESC_brain_board/teensy40/brain/.pio/build/teensy40/, firmware.hex
+08:31:19.022 (loader): flash, block=32, bs=1024, auto=1
+08:31:19.022 (loader): flash, block=33, bs=1024, auto=1
+08:31:19.023 (loader): flash, block=34, bs=1024, auto=1
+08:31:19.041 (loader): flash, block=35, bs=1024, auto=1
+08:31:19.042 (loader): flash, block=36, bs=1024, auto=1
+08:31:19.042 (loader): flash, block=37, bs=1024, auto=1
+08:31:19.043 (loader): flash, block=38, bs=1024, auto=1
+08:31:19.062 (loader): flash, block=39, bs=1024, auto=1
+08:31:19.063 (loader): flash, block=40, bs=1024, auto=1
+08:31:19.063 (loader): flash, block=41, bs=1024, auto=1
+08:31:19.081 (loader): remote cmd from 8: "status"
+08:31:19.081 (reboot 3): Status: 1, 1, 1, 1, 0, 1, /Users/owhite/kicad/MESC_brain_board/teensy40/brain/.pio/build/teensy40/, firmware.hex
+08:31:19.081 (loader): flash, block=42, bs=1024, auto=1
+08:31:19.081 (loader): flash, block=43, bs=1024, auto=1
+08:31:19.082 (loader): flash, block=44, bs=1024, auto=1
+08:31:19.099 (loader): flash, block=45, bs=1024, auto=1
+08:31:19.099 (loader): flash, block=46, bs=1024, auto=1
+08:31:19.099 (loader): flash, block=47, bs=1024, auto=1
+08:31:19.117 (loader): flash, block=48, bs=1024, auto=1
+08:31:19.118 (loader): flash, block=49, bs=1024, auto=1
+08:31:19.118 (loader): flash, block=50, bs=1024, auto=1
+08:31:19.134 (reboot 3): status read, retry 4
+08:31:19.134 (reboot 3): Success
+08:31:19.134 (reboot 3): Disconnect
+08:31:19.137 (loader): flash, block=51, bs=1024, auto=1
+08:31:19.138 (loader): flash, block=52, bs=1024, auto=1
+08:31:19.139 (loader): flash, block=53, bs=1024, auto=1
+08:31:19.157 (loader): remote connection 8 closed
+08:31:19.157 (loader): flash, block=54, bs=1024, auto=1
+08:31:19.157 (loader): flash, block=55, bs=1024, auto=1
+08:31:19.158 (loader): flash, block=56, bs=1024, auto=1
+08:31:19.175 (loader): flash, block=57, bs=1024, auto=1
+08:31:19.175 (loader): flash, block=58, bs=1024, auto=1
+08:31:19.175 (loader): flash, block=59, bs=1024, auto=1
+08:31:19.193 (loader): flash, block=60, bs=1024, auto=1
+08:31:19.194 (loader): flash, block=61, bs=1024, auto=1
+08:31:19.194 (loader): flash, block=62, bs=1024, auto=1
+08:31:19.212 (loader): flash, block=63, bs=1024, auto=1
+08:31:19.212 (loader): flash, block=64, bs=1024, auto=1
+08:31:19.213 (loader): flash, block=65, bs=1024, auto=1
+08:31:19.230 (loader): flash, block=66, bs=1024, auto=1
+08:31:19.231 (loader): flash, block=67, bs=1024, auto=1
+08:31:19.236 (loader): sending reboot
+08:31:19.236 (loader): begin wait_until_offline
+08:31:19.236 (loader): HID/macos: status: ok
+08:31:19.598 (loader): HID/macos: detach callback: is currently open device
+08:31:19.598 (loader): offline, waited 7
+08:31:19.598 (loader): end operation, total time = 1.037 seconds
+08:31:19.599 (loader): set background IMG_REBOOT_OK
+08:31:19.600 (loader): redraw timer set, image 14 to show for 1200 ms
+08:31:19.758 (loader): HID/macos: number of devices found = 0
+08:31:19.758 (loader): HID/macos: no devices found (empty set)
+08:31:20.801 (loader): redraw, image 9
+08:33:50.380 (post_compile 4): Begin, version=1.58
+08:33:50.380 (loader): remote connection 8 opened
+08:33:50.380 (post_compile 4): Sending command: comment: Teensyduino 1.58 - MACOSX (teensy_post_compile)
+08:33:50.381 (loader): remote cmd from 8: "comment: Teensyduino 1.58 - MACOSX (teensy_post_compile)"
+08:33:50.381 (loader): remote cmd from 8: "status"
+08:33:50.381 (loader): file changed
+08:33:50.399 (loader): File "/Users/owhite/kicad/MESC_brain_board/teensy40/brain/.pio/build/teensy40/firmware.hex", 69632 bytes
+08:33:50.399 (loader): File "firmware.hex". 69632 bytes
+08:33:50.404 (post_compile 4): Status: 1, 1, 0, 1, 0, 0, /Users/owhite/kicad/MESC_brain_board/teensy40/brain/.pio/build/teensy40/, firmware.hex
+08:33:50.404 (post_compile 4): Disconnect
+08:33:50.415 (post_compile 5): Running teensy_reboot: /Users/owhite/.platformio/packages/tool-teensy/teensy_reboot
+08:33:50.416 (loader): remote connection 8 closed
+08:33:50.416 (loader): remote connection 8 opened
+08:33:50.417 (loader): remote connection 8 closed
+08:33:50.423 (reboot 6): Begin, version=1.58
+08:33:50.423 (reboot 6): USB device add callback
+08:33:50.424 (reboot 6):   loc=14600000, vid=16C0, pid=0483, ver=0279, ser=17888890
+08:33:50.424 (reboot 6):   actual serailnum=1788889
+08:33:50.425 (loader): remote connection 8 opened
+08:33:50.425 (reboot 6): USB device remove callback
+08:33:50.425 (reboot 6): Serial add callback
+08:33:50.425 (reboot 6):   name=/dev/cu.usbmodem178888901, loc=14600000, vid=16c0, pid=0483, ver=0279
+08:33:50.434 (reboot 6): Serial remove callback
+08:33:50.446 (reboot 6): HID Manager started
+08:33:50.446 (reboot 6): usb scan found 1 devices
+08:33:50.446 (reboot 6): found Teensy Loader, version 1.58
+08:33:50.446 (reboot 6): Sending command: show:arduino_attempt_reboot
+08:33:50.447 (loader): remote cmd from 8: "show:arduino_attempt_reboot"
+08:33:50.447 (loader): got request to show arduino rebooting message
+08:33:50.447 (reboot 6): Sending command: comment: Teensyduino 1.58 - MACOSX (teensy_reboot)
+08:33:50.448 (loader): remote cmd from 8: "comment: Teensyduino 1.58 - MACOSX (teensy_reboot)"
+08:33:50.448 (loader): remote cmd from 8: "status"
+08:33:50.448 (reboot 6): Status: 1, 1, 0, 1, 0, 0, /Users/owhite/kicad/MESC_brain_board/teensy40/brain/.pio/build/teensy40/, firmware.hex
+08:33:50.448 (reboot 6): do_reset (serial) /dev/cu.usbmodem178888901
+08:33:50.451 (loader): remote cmd from 8: "status"
+08:33:50.451 (reboot 6): Status: 1, 1, 0, 1, 0, 0, /Users/owhite/kicad/MESC_brain_board/teensy40/brain/.pio/build/teensy40/, firmware.hex
+08:33:50.451 (reboot 6): status read, retry 0
+08:33:50.553 (loader): remote cmd from 8: "status"
+08:33:50.553 (reboot 6): Status: 1, 1, 0, 1, 0, 0, /Users/owhite/kicad/MESC_brain_board/teensy40/brain/.pio/build/teensy40/, firmware.hex
+08:33:50.553 (reboot 6): status read, retry 1
+08:33:50.654 (loader): remote cmd from 8: "status"
+08:33:50.654 (reboot 6): Status: 1, 1, 0, 1, 0, 0, /Users/owhite/kicad/MESC_brain_board/teensy40/brain/.pio/build/teensy40/, firmware.hex
+08:33:50.654 (reboot 6): status read, retry 2
+08:33:50.758 (loader): remote cmd from 8: "status"
+08:33:50.758 (reboot 6): Status: 1, 1, 0, 1, 0, 0, /Users/owhite/kicad/MESC_brain_board/teensy40/brain/.pio/build/teensy40/, firmware.hex
+08:33:50.758 (reboot 6): status read, retry 3
+08:33:50.759 (loader): HID/macos: attach callback
+08:33:50.864 (loader): remote cmd from 8: "status"
+08:33:50.864 (loader): HID/macos: ser=001B4BD9
+08:33:50.864 (loader): try to read feature report
+08:33:50.865 (loader): got feature report, size = 384
+08:33:50.865 (loader): 7393CD01 00000000
+08:33:50.865 (loader): secure mode can not be locked: this is Standard Teensy
+08:33:50.865 (loader): encryption is possible on this Teensy, but not yet configured
+08:33:50.865 (loader): but without secure mode locked, encryption will NOT be secure!
+08:33:50.865 (loader): Device came online, code_size = 2031616
+08:33:50.865 (loader): Board is: Teensy 4.0 (IMXRT1062), version 1.08
+08:33:50.873 (loader): File "/Users/owhite/kicad/MESC_brain_board/teensy40/brain/.pio/build/teensy40/firmware.hex", 69632 bytes
+08:33:50.873 (loader): File "firmware.hex". 69632 bytes, 3% used
+08:33:50.885 (loader): set background IMG_ONLINE
+08:33:50.894 (loader): File "/Users/owhite/kicad/MESC_brain_board/teensy40/brain/.pio/build/teensy40/firmware.hex", 69632 bytes
+08:33:50.894 (loader): File "firmware.hex". 69632 bytes, 3% used
+08:33:50.905 (loader): elf appears to be for Teensy 4.0 (IMXRT1062) (2031616 bytes)
+08:33:50.906 (loader): elf binary data matches hex file
+08:33:50.906 (loader): elf file is for Teensy 4.0 (IMXRT1062)
+08:33:50.906 (loader): using hex file
+08:33:50.917 (loader): begin operation
+08:33:50.920 (reboot 6): Status: 1, 1, 1, 2, 0, 1, /Users/owhite/kicad/MESC_brain_board/teensy40/brain/.pio/build/teensy40/, firmware.hex
+08:33:50.925 (loader): flash, block=0, bs=1024, auto=1
+08:33:50.925 (loader): flash, block=1, bs=1024, auto=1
+08:33:50.926 (loader): flash, block=2, bs=1024, auto=1
+08:33:51.439 (loader): remote cmd from 8: "status"
+08:33:51.439 (reboot 6): Status: 1, 1, 1, 2, 0, 1, /Users/owhite/kicad/MESC_brain_board/teensy40/brain/.pio/build/teensy40/, firmware.hex
+08:33:51.440 (loader): flash, block=3, bs=1024, auto=1
+08:33:51.440 (loader): flash, block=4, bs=1024, auto=1
+08:33:51.441 (loader): flash, block=5, bs=1024, auto=1
+08:33:51.442 (loader): flash, block=6, bs=1024, auto=1
+08:33:51.442 (loader): flash, block=7, bs=1024, auto=1
+08:33:51.459 (loader): flash, block=8, bs=1024, auto=1
+08:33:51.459 (loader): flash, block=9, bs=1024, auto=1
+08:33:51.460 (loader): flash, block=10, bs=1024, auto=1
+08:33:51.477 (loader): flash, block=11, bs=1024, auto=1
+08:33:51.478 (loader): flash, block=12, bs=1024, auto=1
+08:33:51.478 (loader): flash, block=13, bs=1024, auto=1
+08:33:51.495 (loader): remote cmd from 8: "status"
+08:33:51.496 (reboot 6): Status: 1, 1, 1, 2, 0, 1, /Users/owhite/kicad/MESC_brain_board/teensy40/brain/.pio/build/teensy40/, firmware.hex
+08:33:51.496 (loader): flash, block=14, bs=1024, auto=1
+08:33:51.496 (loader): flash, block=15, bs=1024, auto=1
+08:33:51.497 (loader): flash, block=16, bs=1024, auto=1
+08:33:51.515 (loader): flash, block=17, bs=1024, auto=1
+08:33:51.516 (loader): flash, block=18, bs=1024, auto=1
+08:33:51.517 (loader): flash, block=19, bs=1024, auto=1
+08:33:51.536 (loader): flash, block=20, bs=1024, auto=1
+08:33:51.536 (loader): flash, block=21, bs=1024, auto=1
+08:33:51.537 (loader): flash, block=22, bs=1024, auto=1
+08:33:51.555 (loader): remote cmd from 8: "status"
+08:33:51.555 (reboot 6): Status: 1, 1, 1, 2, 0, 1, /Users/owhite/kicad/MESC_brain_board/teensy40/brain/.pio/build/teensy40/, firmware.hex
+08:33:51.555 (loader): flash, block=23, bs=1024, auto=1
+08:33:51.556 (loader): flash, block=24, bs=1024, auto=1
+08:33:51.557 (loader): flash, block=25, bs=1024, auto=1
+08:33:51.574 (loader): flash, block=26, bs=1024, auto=1
+08:33:51.574 (loader): flash, block=27, bs=1024, auto=1
+08:33:51.575 (loader): flash, block=28, bs=1024, auto=1
+08:33:51.592 (loader): flash, block=29, bs=1024, auto=1
+08:33:51.592 (loader): flash, block=30, bs=1024, auto=1
+08:33:51.593 (loader): flash, block=31, bs=1024, auto=1
+08:33:51.611 (loader): remote cmd from 8: "status"
+08:33:51.611 (reboot 6): Status: 1, 1, 1, 2, 0, 1, /Users/owhite/kicad/MESC_brain_board/teensy40/brain/.pio/build/teensy40/, firmware.hex
+08:33:51.611 (loader): flash, block=32, bs=1024, auto=1
+08:33:51.612 (loader): flash, block=33, bs=1024, auto=1
+08:33:51.613 (loader): flash, block=34, bs=1024, auto=1
+08:33:51.631 (loader): flash, block=35, bs=1024, auto=1
+08:33:51.631 (loader): flash, block=36, bs=1024, auto=1
+08:33:51.632 (loader): flash, block=37, bs=1024, auto=1
+08:33:51.651 (loader): flash, block=38, bs=1024, auto=1
+08:33:51.651 (loader): flash, block=39, bs=1024, auto=1
+08:33:51.652 (loader): flash, block=40, bs=1024, auto=1
+08:33:51.671 (loader): remote cmd from 8: "status"
+08:33:51.671 (reboot 6): Status: 1, 1, 1, 2, 0, 1, /Users/owhite/kicad/MESC_brain_board/teensy40/brain/.pio/build/teensy40/, firmware.hex
+08:33:51.671 (loader): flash, block=41, bs=1024, auto=1
+08:33:51.673 (loader): flash, block=42, bs=1024, auto=1
+08:33:51.673 (loader): flash, block=43, bs=1024, auto=1
+08:33:51.674 (loader): flash, block=44, bs=1024, auto=1
+08:33:51.691 (loader): flash, block=45, bs=1024, auto=1
+08:33:51.692 (loader): flash, block=46, bs=1024, auto=1
+08:33:51.692 (loader): flash, block=47, bs=1024, auto=1
+08:33:51.709 (loader): flash, block=48, bs=1024, auto=1
+08:33:51.710 (loader): flash, block=49, bs=1024, auto=1
+08:33:51.710 (loader): flash, block=50, bs=1024, auto=1
+08:33:51.726 (reboot 6): status read, retry 4
+08:33:51.726 (reboot 6): Success
+08:33:51.726 (reboot 6): Disconnect
+08:33:51.728 (loader): flash, block=51, bs=1024, auto=1
+08:33:51.729 (loader): flash, block=52, bs=1024, auto=1
+08:33:51.729 (loader): flash, block=53, bs=1024, auto=1
+08:33:51.747 (loader): remote connection 8 closed
+08:33:51.747 (loader): flash, block=54, bs=1024, auto=1
+08:33:51.748 (loader): flash, block=55, bs=1024, auto=1
+08:33:51.748 (loader): flash, block=56, bs=1024, auto=1
+08:33:51.765 (loader): flash, block=57, bs=1024, auto=1
+08:33:51.766 (loader): flash, block=58, bs=1024, auto=1
+08:33:51.766 (loader): flash, block=59, bs=1024, auto=1
+08:33:51.784 (loader): flash, block=60, bs=1024, auto=1
+08:33:51.784 (loader): flash, block=61, bs=1024, auto=1
+08:33:51.784 (loader): flash, block=62, bs=1024, auto=1
+08:33:51.802 (loader): flash, block=63, bs=1024, auto=1
+08:33:51.803 (loader): flash, block=64, bs=1024, auto=1
+08:33:51.803 (loader): flash, block=65, bs=1024, auto=1
+08:33:51.821 (loader): flash, block=66, bs=1024, auto=1
+08:33:51.822 (loader): flash, block=67, bs=1024, auto=1
+08:33:51.825 (loader): sending reboot
+08:33:51.826 (loader): begin wait_until_offline
+08:33:51.826 (loader): HID/macos: status: ok
+08:33:52.131 (loader): HID/macos: detach callback: is currently open device
+08:33:52.132 (loader): offline, waited 6
+08:33:52.132 (loader): end operation, total time = 1.215 seconds
+08:33:52.132 (loader): set background IMG_REBOOT_OK
+08:33:52.134 (loader): redraw timer set, image 14 to show for 1200 ms
+08:33:52.255 (loader): HID/macos: number of devices found = 0
+08:33:52.255 (loader): HID/macos: no devices found (empty set)
+08:33:53.335 (loader): redraw, image 9
+08:36:28.861 (post_compile 7): Begin, version=1.58
+08:36:28.861 (loader): remote connection 8 opened
+08:36:28.861 (post_compile 7): Sending command: comment: Teensyduino 1.58 - MACOSX (teensy_post_compile)
+08:36:28.861 (loader): remote cmd from 8: "comment: Teensyduino 1.58 - MACOSX (teensy_post_compile)"
+08:36:28.862 (loader): remote cmd from 8: "status"
+08:36:28.862 (loader): file changed
+08:36:28.872 (loader): File "/Users/owhite/kicad/MESC_brain_board/teensy40/brain/.pio/build/teensy40/firmware.hex", 69632 bytes
+08:36:28.872 (loader): File "firmware.hex". 69632 bytes
+08:36:28.876 (post_compile 7): Status: 1, 1, 0, 2, 0, 0, /Users/owhite/kicad/MESC_brain_board/teensy40/brain/.pio/build/teensy40/, firmware.hex
+08:36:28.876 (post_compile 7): Disconnect
+08:36:28.886 (post_compile 8): Running teensy_reboot: /Users/owhite/.platformio/packages/tool-teensy/teensy_reboot
+08:36:28.887 (loader): remote connection 8 closed
+08:36:28.887 (loader): remote connection 8 opened
+08:36:28.887 (loader): remote connection 8 closed
+08:36:28.893 (reboot 9): Begin, version=1.58
+08:36:28.893 (reboot 9): USB device add callback
+08:36:28.893 (reboot 9):   loc=14600000, vid=16C0, pid=0483, ver=0279, ser=17888890
+08:36:28.893 (reboot 9):   actual serailnum=1788889
+08:36:28.895 (loader): remote connection 8 opened
+08:36:28.895 (reboot 9): USB device remove callback
+08:36:28.895 (reboot 9): Serial add callback
+08:36:28.895 (reboot 9):   name=/dev/cu.usbmodem178888901, loc=14600000, vid=16c0, pid=0483, ver=0279
+08:36:28.905 (reboot 9): Serial remove callback
+08:36:28.918 (reboot 9): HID Manager started
+08:36:28.919 (reboot 9): usb scan found 1 devices
+08:36:28.919 (reboot 9): found Teensy Loader, version 1.58
+08:36:28.919 (reboot 9): Sending command: show:arduino_attempt_reboot
+08:36:28.919 (loader): remote cmd from 8: "show:arduino_attempt_reboot"
+08:36:28.919 (loader): got request to show arduino rebooting message
+08:36:28.920 (reboot 9): Sending command: comment: Teensyduino 1.58 - MACOSX (teensy_reboot)
+08:36:28.920 (loader): remote cmd from 8: "comment: Teensyduino 1.58 - MACOSX (teensy_reboot)"
+08:36:28.920 (loader): remote cmd from 8: "status"
+08:36:28.921 (reboot 9): Status: 1, 1, 0, 2, 0, 0, /Users/owhite/kicad/MESC_brain_board/teensy40/brain/.pio/build/teensy40/, firmware.hex
+08:36:28.921 (reboot 9): do_reset (serial) /dev/cu.usbmodem178888901
+08:36:28.923 (loader): remote cmd from 8: "status"
+08:36:28.923 (reboot 9): Status: 1, 1, 0, 2, 0, 0, /Users/owhite/kicad/MESC_brain_board/teensy40/brain/.pio/build/teensy40/, firmware.hex
+08:36:28.923 (reboot 9): status read, retry 0
+08:36:29.023 (loader): remote cmd from 8: "status"
+08:36:29.024 (reboot 9): Status: 1, 1, 0, 2, 0, 0, /Users/owhite/kicad/MESC_brain_board/teensy40/brain/.pio/build/teensy40/, firmware.hex
+08:36:29.024 (reboot 9): status read, retry 1
+08:36:29.124 (loader): remote cmd from 8: "status"
+08:36:29.124 (reboot 9): Status: 1, 1, 0, 2, 0, 0, /Users/owhite/kicad/MESC_brain_board/teensy40/brain/.pio/build/teensy40/, firmware.hex
+08:36:29.124 (reboot 9): status read, retry 2
+08:36:29.214 (loader): HID/macos: attach callback
+08:36:29.225 (loader): remote cmd from 8: "status"
+08:36:29.225 (loader): HID/macos: ser=001B4BD9
+08:36:29.225 (loader): try to read feature report
+08:36:29.225 (loader): got feature report, size = 384
+08:36:29.225 (loader): 7393CD01 00000000
+08:36:29.225 (loader): secure mode can not be locked: this is Standard Teensy
+08:36:29.225 (loader): encryption is possible on this Teensy, but not yet configured
+08:36:29.225 (loader): but without secure mode locked, encryption will NOT be secure!
+08:36:29.225 (loader): Device came online, code_size = 2031616
+08:36:29.225 (loader): Board is: Teensy 4.0 (IMXRT1062), version 1.08
+08:36:29.232 (loader): File "/Users/owhite/kicad/MESC_brain_board/teensy40/brain/.pio/build/teensy40/firmware.hex", 69632 bytes
+08:36:29.232 (loader): File "firmware.hex". 69632 bytes, 3% used
+08:36:29.244 (loader): set background IMG_ONLINE
+08:36:29.252 (loader): File "/Users/owhite/kicad/MESC_brain_board/teensy40/brain/.pio/build/teensy40/firmware.hex", 69632 bytes
+08:36:29.252 (loader): File "firmware.hex". 69632 bytes, 3% used
+08:36:29.264 (loader): elf appears to be for Teensy 4.0 (IMXRT1062) (2031616 bytes)
+08:36:29.264 (loader): elf binary data matches hex file
+08:36:29.264 (loader): elf file is for Teensy 4.0 (IMXRT1062)
+08:36:29.264 (loader): using hex file
+08:36:29.275 (loader): begin operation
+08:36:29.278 (reboot 9): Status: 1, 1, 1, 3, 0, 1, /Users/owhite/kicad/MESC_brain_board/teensy40/brain/.pio/build/teensy40/, firmware.hex
+08:36:29.283 (loader): flash, block=0, bs=1024, auto=1
+08:36:29.283 (loader): flash, block=1, bs=1024, auto=1
+08:36:29.283 (loader): flash, block=2, bs=1024, auto=1
+08:36:29.787 (loader): remote cmd from 8: "status"
+08:36:29.787 (reboot 9): Status: 1, 1, 1, 3, 0, 1, /Users/owhite/kicad/MESC_brain_board/teensy40/brain/.pio/build/teensy40/, firmware.hex
+08:36:29.787 (loader): flash, block=3, bs=1024, auto=1
+08:36:29.788 (loader): flash, block=4, bs=1024, auto=1
+08:36:29.788 (loader): flash, block=5, bs=1024, auto=1
+08:36:29.789 (loader): flash, block=6, bs=1024, auto=1
+08:36:29.789 (loader): flash, block=7, bs=1024, auto=1
+08:36:29.806 (loader): flash, block=8, bs=1024, auto=1
+08:36:29.806 (loader): flash, block=9, bs=1024, auto=1
+08:36:29.807 (loader): flash, block=10, bs=1024, auto=1
+08:36:29.823 (loader): flash, block=11, bs=1024, auto=1
+08:36:29.824 (loader): flash, block=12, bs=1024, auto=1
+08:36:29.824 (loader): flash, block=13, bs=1024, auto=1
+08:36:29.841 (loader): remote cmd from 8: "status"
+08:36:29.841 (reboot 9): Status: 1, 1, 1, 3, 0, 1, /Users/owhite/kicad/MESC_brain_board/teensy40/brain/.pio/build/teensy40/, firmware.hex
+08:36:29.842 (loader): flash, block=14, bs=1024, auto=1
+08:36:29.842 (loader): flash, block=15, bs=1024, auto=1
+08:36:29.842 (loader): flash, block=16, bs=1024, auto=1
+08:36:29.859 (loader): flash, block=17, bs=1024, auto=1
+08:36:29.860 (loader): flash, block=18, bs=1024, auto=1
+08:36:29.877 (loader): flash, block=19, bs=1024, auto=1
+08:36:29.877 (loader): flash, block=20, bs=1024, auto=1
+08:36:29.878 (loader): flash, block=21, bs=1024, auto=1
+08:36:29.894 (loader): flash, block=22, bs=1024, auto=1
+08:36:29.895 (loader): flash, block=23, bs=1024, auto=1
+08:36:29.895 (loader): flash, block=24, bs=1024, auto=1
+08:36:29.912 (loader): remote cmd from 8: "status"
+08:36:29.913 (reboot 9): Status: 1, 1, 1, 3, 0, 1, /Users/owhite/kicad/MESC_brain_board/teensy40/brain/.pio/build/teensy40/, firmware.hex
+08:36:29.913 (loader): flash, block=25, bs=1024, auto=1
+08:36:29.913 (loader): flash, block=26, bs=1024, auto=1
+08:36:29.913 (loader): flash, block=27, bs=1024, auto=1
+08:36:29.930 (loader): flash, block=28, bs=1024, auto=1
+08:36:29.931 (loader): flash, block=29, bs=1024, auto=1
+08:36:29.931 (loader): flash, block=30, bs=1024, auto=1
+08:36:29.948 (loader): flash, block=31, bs=1024, auto=1
+08:36:29.949 (loader): flash, block=32, bs=1024, auto=1
+08:36:29.949 (loader): flash, block=33, bs=1024, auto=1
+08:36:29.966 (loader): remote cmd from 8: "status"
+08:36:29.966 (reboot 9): Status: 1, 1, 1, 3, 0, 1, /Users/owhite/kicad/MESC_brain_board/teensy40/brain/.pio/build/teensy40/, firmware.hex
+08:36:29.966 (loader): flash, block=34, bs=1024, auto=1
+08:36:29.966 (loader): flash, block=35, bs=1024, auto=1
+08:36:29.967 (loader): flash, block=36, bs=1024, auto=1
+08:36:29.983 (loader): flash, block=37, bs=1024, auto=1
+08:36:29.984 (loader): flash, block=38, bs=1024, auto=1
+08:36:29.984 (loader): flash, block=39, bs=1024, auto=1
+08:36:30.001 (loader): flash, block=40, bs=1024, auto=1
+08:36:30.002 (loader): flash, block=41, bs=1024, auto=1
+08:36:30.002 (loader): flash, block=42, bs=1024, auto=1
+08:36:30.021 (loader): remote cmd from 8: "status"
+08:36:30.021 (reboot 9): Status: 1, 1, 1, 3, 0, 1, /Users/owhite/kicad/MESC_brain_board/teensy40/brain/.pio/build/teensy40/, firmware.hex
+08:36:30.021 (loader): flash, block=43, bs=1024, auto=1
+08:36:30.022 (loader): flash, block=44, bs=1024, auto=1
+08:36:30.023 (loader): flash, block=45, bs=1024, auto=1
+08:36:30.040 (loader): flash, block=46, bs=1024, auto=1
+08:36:30.040 (loader): flash, block=47, bs=1024, auto=1
+08:36:30.041 (loader): flash, block=48, bs=1024, auto=1
+08:36:30.057 (loader): flash, block=49, bs=1024, auto=1
+08:36:30.058 (loader): flash, block=50, bs=1024, auto=1
+08:36:30.058 (loader): flash, block=51, bs=1024, auto=1
+08:36:30.072 (reboot 9): status read, retry 3
+08:36:30.072 (reboot 9): Success
+08:36:30.072 (reboot 9): Disconnect
+08:36:30.075 (loader): flash, block=52, bs=1024, auto=1
+08:36:30.076 (loader): flash, block=53, bs=1024, auto=1
+08:36:30.076 (loader): flash, block=54, bs=1024, auto=1
+08:36:30.093 (loader): remote connection 8 closed
+08:36:30.093 (loader): flash, block=55, bs=1024, auto=1
+08:36:30.093 (loader): flash, block=56, bs=1024, auto=1
+08:36:30.094 (loader): flash, block=57, bs=1024, auto=1
+08:36:30.111 (loader): flash, block=58, bs=1024, auto=1
+08:36:30.112 (loader): flash, block=59, bs=1024, auto=1
+08:36:30.112 (loader): flash, block=60, bs=1024, auto=1
+08:36:30.129 (loader): flash, block=61, bs=1024, auto=1
+08:36:30.129 (loader): flash, block=62, bs=1024, auto=1
+08:36:30.129 (loader): flash, block=63, bs=1024, auto=1
+08:36:30.147 (loader): flash, block=64, bs=1024, auto=1
+08:36:30.147 (loader): flash, block=65, bs=1024, auto=1
+08:36:30.147 (loader): flash, block=66, bs=1024, auto=1
+08:36:30.164 (loader): flash, block=67, bs=1024, auto=1
+08:36:30.167 (loader): sending reboot
+08:36:30.168 (loader): begin wait_until_offline
+08:36:30.168 (loader): HID/macos: status: ok
+08:36:30.471 (loader): HID/macos: detach callback: is currently open device
+08:36:30.471 (loader): offline, waited 6
+08:36:30.471 (loader): end operation, total time = 1.196 seconds
+08:36:30.472 (loader): set background IMG_REBOOT_OK
+08:36:30.473 (loader): redraw timer set, image 14 to show for 1200 ms
+08:36:30.502 (loader): HID/macos: number of devices found = 0
+08:36:30.502 (loader): HID/macos: no devices found (empty set)
+08:36:31.673 (loader): redraw, image 9
+08:39:03.539 (post_compile 10): Begin, version=1.58
+08:39:03.539 (loader): remote connection 8 opened
+08:39:03.539 (post_compile 10): Sending command: comment: Teensyduino 1.58 - MACOSX (teensy_post_compile)
+08:39:03.539 (loader): remote cmd from 8: "comment: Teensyduino 1.58 - MACOSX (teensy_post_compile)"
+08:39:03.540 (loader): remote cmd from 8: "status"
+08:39:03.540 (loader): file changed
+08:39:03.549 (loader): File "/Users/owhite/kicad/MESC_brain_board/teensy40/brain/.pio/build/teensy40/firmware.hex", 69632 bytes
+08:39:03.550 (loader): File "firmware.hex". 69632 bytes
+08:39:03.555 (post_compile 10): Status: 1, 1, 0, 3, 0, 0, /Users/owhite/kicad/MESC_brain_board/teensy40/brain/.pio/build/teensy40/, firmware.hex
+08:39:03.555 (post_compile 10): Disconnect
+08:39:03.565 (post_compile 11): Running teensy_reboot: /Users/owhite/.platformio/packages/tool-teensy/teensy_reboot
+08:39:03.565 (loader): remote connection 8 closed
+08:39:03.566 (loader): remote connection 8 opened
+08:39:03.567 (loader): remote connection 8 closed
+08:39:03.572 (reboot 12): Begin, version=1.58
+08:39:03.573 (reboot 12): USB device add callback
+08:39:03.573 (reboot 12):   loc=14600000, vid=16C0, pid=0483, ver=0279, ser=17888890
+08:39:03.573 (reboot 12):   actual serailnum=1788889
+08:39:03.575 (loader): remote connection 8 opened
+08:39:03.575 (reboot 12): USB device remove callback
+08:39:03.575 (reboot 12): Serial add callback
+08:39:03.575 (reboot 12):   name=/dev/cu.usbmodem178888901, loc=14600000, vid=16c0, pid=0483, ver=0279
+08:39:03.585 (reboot 12): Serial remove callback
+08:39:03.596 (reboot 12): HID Manager started
+08:39:03.596 (reboot 12): usb scan found 1 devices
+08:39:03.596 (reboot 12): found Teensy Loader, version 1.58
+08:39:03.596 (reboot 12): Sending command: show:arduino_attempt_reboot
+08:39:03.597 (loader): remote cmd from 8: "show:arduino_attempt_reboot"
+08:39:03.597 (loader): got request to show arduino rebooting message
+08:39:03.597 (reboot 12): Sending command: comment: Teensyduino 1.58 - MACOSX (teensy_reboot)
+08:39:03.598 (loader): remote cmd from 8: "comment: Teensyduino 1.58 - MACOSX (teensy_reboot)"
+08:39:03.598 (loader): remote cmd from 8: "status"
+08:39:03.599 (reboot 12): Status: 1, 1, 0, 3, 0, 0, /Users/owhite/kicad/MESC_brain_board/teensy40/brain/.pio/build/teensy40/, firmware.hex
+08:39:03.599 (reboot 12): do_reset (serial) /dev/cu.usbmodem178888901
+08:39:03.601 (loader): remote cmd from 8: "status"
+08:39:03.601 (reboot 12): Status: 1, 1, 0, 3, 0, 0, /Users/owhite/kicad/MESC_brain_board/teensy40/brain/.pio/build/teensy40/, firmware.hex
+08:39:03.601 (reboot 12): status read, retry 0
+08:39:03.703 (loader): remote cmd from 8: "status"
+08:39:03.703 (reboot 12): Status: 1, 1, 0, 3, 0, 0, /Users/owhite/kicad/MESC_brain_board/teensy40/brain/.pio/build/teensy40/, firmware.hex
+08:39:03.703 (reboot 12): status read, retry 1
+08:39:03.809 (loader): remote cmd from 8: "status"
+08:39:03.809 (reboot 12): Status: 1, 1, 0, 3, 0, 0, /Users/owhite/kicad/MESC_brain_board/teensy40/brain/.pio/build/teensy40/, firmware.hex
+08:39:03.809 (reboot 12): status read, retry 2
+08:39:03.896 (loader): HID/macos: attach callback
+08:39:03.911 (loader): remote cmd from 8: "status"
+08:39:03.912 (loader): HID/macos: ser=001B4BD9
+08:39:03.912 (loader): try to read feature report
+08:39:03.912 (loader): got feature report, size = 384
+08:39:03.912 (loader): 7393CD01 00000000
+08:39:03.912 (loader): secure mode can not be locked: this is Standard Teensy
+08:39:03.912 (loader): encryption is possible on this Teensy, but not yet configured
+08:39:03.912 (loader): but without secure mode locked, encryption will NOT be secure!
+08:39:03.912 (loader): Device came online, code_size = 2031616
+08:39:03.912 (loader): Board is: Teensy 4.0 (IMXRT1062), version 1.08
+08:39:03.920 (loader): File "/Users/owhite/kicad/MESC_brain_board/teensy40/brain/.pio/build/teensy40/firmware.hex", 69632 bytes
+08:39:03.920 (loader): File "firmware.hex". 69632 bytes, 3% used
+08:39:03.932 (loader): set background IMG_ONLINE
+08:39:03.940 (loader): File "/Users/owhite/kicad/MESC_brain_board/teensy40/brain/.pio/build/teensy40/firmware.hex", 69632 bytes
+08:39:03.940 (loader): File "firmware.hex". 69632 bytes, 3% used
+08:39:03.952 (loader): elf appears to be for Teensy 4.0 (IMXRT1062) (2031616 bytes)
+08:39:03.952 (loader): elf binary data matches hex file
+08:39:03.952 (loader): elf file is for Teensy 4.0 (IMXRT1062)
+08:39:03.952 (loader): using hex file
+08:39:03.963 (loader): begin operation
+08:39:03.966 (reboot 12): Status: 1, 1, 1, 4, 0, 1, /Users/owhite/kicad/MESC_brain_board/teensy40/brain/.pio/build/teensy40/, firmware.hex
+08:39:03.970 (loader): flash, block=0, bs=1024, auto=1
+08:39:03.971 (loader): flash, block=1, bs=1024, auto=1
+08:39:03.971 (loader): flash, block=2, bs=1024, auto=1
+08:39:04.490 (loader): remote cmd from 8: "status"
+08:39:04.490 (reboot 12): Status: 1, 1, 1, 4, 0, 1, /Users/owhite/kicad/MESC_brain_board/teensy40/brain/.pio/build/teensy40/, firmware.hex
+08:39:04.490 (loader): flash, block=3, bs=1024, auto=1
+08:39:04.491 (loader): flash, block=4, bs=1024, auto=1
+08:39:04.491 (loader): flash, block=5, bs=1024, auto=1
+08:39:04.492 (loader): flash, block=6, bs=1024, auto=1
+08:39:04.492 (loader): flash, block=7, bs=1024, auto=1
+08:39:04.511 (loader): flash, block=8, bs=1024, auto=1
+08:39:04.512 (loader): flash, block=9, bs=1024, auto=1
+08:39:04.513 (loader): flash, block=10, bs=1024, auto=1
+08:39:04.532 (loader): flash, block=11, bs=1024, auto=1
+08:39:04.533 (loader): flash, block=12, bs=1024, auto=1
+08:39:04.534 (loader): flash, block=13, bs=1024, auto=1
+08:39:04.534 (loader): flash, block=14, bs=1024, auto=1
+08:39:04.552 (loader): remote cmd from 8: "status"
+08:39:04.552 (reboot 12): Status: 1, 1, 1, 4, 0, 1, /Users/owhite/kicad/MESC_brain_board/teensy40/brain/.pio/build/teensy40/, firmware.hex
+08:39:04.552 (loader): flash, block=15, bs=1024, auto=1
+08:39:04.553 (loader): flash, block=16, bs=1024, auto=1
+08:39:04.553 (loader): flash, block=17, bs=1024, auto=1
+08:39:04.571 (loader): flash, block=18, bs=1024, auto=1
+08:39:04.571 (loader): flash, block=19, bs=1024, auto=1
+08:39:04.572 (loader): flash, block=20, bs=1024, auto=1
+08:39:04.591 (loader): flash, block=21, bs=1024, auto=1
+08:39:04.591 (loader): flash, block=22, bs=1024, auto=1
+08:39:04.592 (loader): flash, block=23, bs=1024, auto=1
+08:39:04.610 (loader): remote cmd from 8: "status"
+08:39:04.610 (reboot 12): Status: 1, 1, 1, 4, 0, 1, /Users/owhite/kicad/MESC_brain_board/teensy40/brain/.pio/build/teensy40/, firmware.hex
+08:39:04.610 (loader): flash, block=24, bs=1024, auto=1
+08:39:04.611 (loader): flash, block=25, bs=1024, auto=1
+08:39:04.612 (loader): flash, block=26, bs=1024, auto=1
+08:39:04.629 (loader): flash, block=27, bs=1024, auto=1
+08:39:04.630 (loader): flash, block=28, bs=1024, auto=1
+08:39:04.631 (loader): flash, block=29, bs=1024, auto=1
+08:39:04.632 (loader): flash, block=30, bs=1024, auto=1
+08:39:04.650 (loader): flash, block=31, bs=1024, auto=1
+08:39:04.651 (loader): flash, block=32, bs=1024, auto=1
+08:39:04.652 (loader): flash, block=33, bs=1024, auto=1
+08:39:04.669 (loader): remote cmd from 8: "status"
+08:39:04.669 (reboot 12): Status: 1, 1, 1, 4, 0, 1, /Users/owhite/kicad/MESC_brain_board/teensy40/brain/.pio/build/teensy40/, firmware.hex
+08:39:04.670 (loader): flash, block=34, bs=1024, auto=1
+08:39:04.670 (loader): flash, block=35, bs=1024, auto=1
+08:39:04.670 (loader): flash, block=36, bs=1024, auto=1
+08:39:04.687 (loader): flash, block=37, bs=1024, auto=1
+08:39:04.688 (loader): flash, block=38, bs=1024, auto=1
+08:39:04.688 (loader): flash, block=39, bs=1024, auto=1
+08:39:04.707 (loader): flash, block=40, bs=1024, auto=1
+08:39:04.707 (loader): flash, block=41, bs=1024, auto=1
+08:39:04.708 (loader): flash, block=42, bs=1024, auto=1
+08:39:04.727 (loader): remote cmd from 8: "status"
+08:39:04.727 (reboot 12): Status: 1, 1, 1, 4, 0, 1, /Users/owhite/kicad/MESC_brain_board/teensy40/brain/.pio/build/teensy40/, firmware.hex
+08:39:04.727 (loader): flash, block=43, bs=1024, auto=1
+08:39:04.728 (loader): flash, block=44, bs=1024, auto=1
+08:39:04.728 (loader): flash, block=45, bs=1024, auto=1
+08:39:04.747 (loader): flash, block=46, bs=1024, auto=1
+08:39:04.748 (loader): flash, block=47, bs=1024, auto=1
+08:39:04.749 (loader): flash, block=48, bs=1024, auto=1
+08:39:04.767 (loader): flash, block=49, bs=1024, auto=1
+08:39:04.768 (loader): flash, block=50, bs=1024, auto=1
+08:39:04.768 (loader): flash, block=51, bs=1024, auto=1
+08:39:04.782 (reboot 12): status read, retry 3
+08:39:04.782 (reboot 12): Success
+08:39:04.782 (reboot 12): Disconnect
+08:39:04.786 (loader): flash, block=52, bs=1024, auto=1
+08:39:04.787 (loader): flash, block=53, bs=1024, auto=1
+08:39:04.787 (loader): flash, block=54, bs=1024, auto=1
+08:39:04.805 (loader): remote connection 8 closed
+08:39:04.805 (loader): flash, block=55, bs=1024, auto=1
+08:39:04.805 (loader): flash, block=56, bs=1024, auto=1
+08:39:04.806 (loader): flash, block=57, bs=1024, auto=1
+08:39:04.823 (loader): flash, block=58, bs=1024, auto=1
+08:39:04.824 (loader): flash, block=59, bs=1024, auto=1
+08:39:04.824 (loader): flash, block=60, bs=1024, auto=1
+08:39:04.842 (loader): flash, block=61, bs=1024, auto=1
+08:39:04.842 (loader): flash, block=62, bs=1024, auto=1
+08:39:04.843 (loader): flash, block=63, bs=1024, auto=1
+08:39:04.860 (loader): flash, block=64, bs=1024, auto=1
+08:39:04.860 (loader): flash, block=65, bs=1024, auto=1
+08:39:04.861 (loader): flash, block=66, bs=1024, auto=1
+08:39:04.878 (loader): flash, block=67, bs=1024, auto=1
+08:39:04.881 (loader): sending reboot
+08:39:04.881 (loader): begin wait_until_offline
+08:39:04.881 (loader): HID/macos: status: ok
+08:39:05.136 (loader): HID/macos: detach callback: is currently open device
+08:39:05.136 (loader): offline, waited 5
+08:39:05.136 (loader): end operation, total time = 1.173 seconds
+08:39:05.136 (loader): set background IMG_REBOOT_OK
+08:39:05.137 (loader): redraw timer set, image 14 to show for 1200 ms
+08:39:05.250 (loader): HID/macos: number of devices found = 0
+08:39:05.250 (loader): HID/macos: no devices found (empty set)
+08:39:06.337 (loader): redraw, image 9
+08:39:45.392 (post_compile 13): Begin, version=1.58
+08:39:45.393 (loader): remote connection 8 opened
+08:39:45.393 (post_compile 13): Sending command: comment: Teensyduino 1.58 - MACOSX (teensy_post_compile)
+08:39:45.393 (loader): remote cmd from 8: "comment: Teensyduino 1.58 - MACOSX (teensy_post_compile)"
+08:39:45.393 (loader): remote cmd from 8: "status"
+08:39:45.393 (loader): file changed
+08:39:45.400 (loader): File "/Users/owhite/kicad/MESC_brain_board/teensy40/brain/.pio/build/teensy40/firmware.hex", 69632 bytes
+08:39:45.400 (loader): File "firmware.hex". 69632 bytes
+08:39:45.403 (post_compile 13): Status: 1, 1, 0, 4, 0, 0, /Users/owhite/kicad/MESC_brain_board/teensy40/brain/.pio/build/teensy40/, firmware.hex
+08:39:45.403 (post_compile 13): Disconnect
+08:39:45.415 (post_compile 14): Running teensy_reboot: /Users/owhite/.platformio/packages/tool-teensy/teensy_reboot
+08:39:45.416 (loader): remote connection 8 closed
+08:39:45.416 (loader): remote connection 8 opened
+08:39:45.417 (loader): remote connection 8 closed
+08:39:45.422 (reboot 15): Begin, version=1.58
+08:39:45.422 (reboot 15): USB device add callback
+08:39:45.422 (reboot 15):   loc=14600000, vid=16C0, pid=0483, ver=0279, ser=17888890
+08:39:45.422 (reboot 15):   actual serailnum=1788889
+08:39:45.424 (loader): remote connection 8 opened
+08:39:45.424 (reboot 15): USB device remove callback
+08:39:45.424 (reboot 15): Serial add callback
+08:39:45.424 (reboot 15):   name=/dev/cu.usbmodem178888901, loc=14600000, vid=16c0, pid=0483, ver=0279
+08:39:45.433 (reboot 15): Serial remove callback
+08:39:45.445 (reboot 15): HID Manager started
+08:39:45.445 (reboot 15): usb scan found 1 devices
+08:39:45.445 (reboot 15): found Teensy Loader, version 1.58
+08:39:45.445 (reboot 15): Sending command: show:arduino_attempt_reboot
+08:39:45.445 (loader): remote cmd from 8: "show:arduino_attempt_reboot"
+08:39:45.445 (loader): got request to show arduino rebooting message
+08:39:45.446 (reboot 15): Sending command: comment: Teensyduino 1.58 - MACOSX (teensy_reboot)
+08:39:45.447 (loader): remote cmd from 8: "comment: Teensyduino 1.58 - MACOSX (teensy_reboot)"
+08:39:45.447 (loader): remote cmd from 8: "status"
+08:39:45.447 (reboot 15): Status: 1, 1, 0, 4, 0, 0, /Users/owhite/kicad/MESC_brain_board/teensy40/brain/.pio/build/teensy40/, firmware.hex
+08:39:45.447 (reboot 15): do_reset (serial) /dev/cu.usbmodem178888901
+08:39:45.449 (loader): remote cmd from 8: "status"
+08:39:45.450 (reboot 15): Status: 1, 1, 0, 4, 0, 0, /Users/owhite/kicad/MESC_brain_board/teensy40/brain/.pio/build/teensy40/, firmware.hex
+08:39:45.450 (reboot 15): status read, retry 0
+08:39:45.554 (loader): remote cmd from 8: "status"
+08:39:45.554 (reboot 15): Status: 1, 1, 0, 4, 0, 0, /Users/owhite/kicad/MESC_brain_board/teensy40/brain/.pio/build/teensy40/, firmware.hex
+08:39:45.554 (reboot 15): status read, retry 1
+08:39:45.655 (loader): remote cmd from 8: "status"
+08:39:45.655 (reboot 15): Status: 1, 1, 0, 4, 0, 0, /Users/owhite/kicad/MESC_brain_board/teensy40/brain/.pio/build/teensy40/, firmware.hex
+08:39:45.655 (reboot 15): status read, retry 2
+08:39:45.755 (loader): remote cmd from 8: "status"
+08:39:45.756 (reboot 15): Status: 1, 1, 0, 4, 0, 0, /Users/owhite/kicad/MESC_brain_board/teensy40/brain/.pio/build/teensy40/, firmware.hex
+08:39:45.756 (reboot 15): status read, retry 3
+08:39:45.759 (loader): HID/macos: attach callback
+08:39:45.857 (loader): remote cmd from 8: "status"
+08:39:45.857 (loader): HID/macos: ser=001B4BD9
+08:39:45.857 (loader): try to read feature report
+08:39:45.858 (loader): got feature report, size = 384
+08:39:45.858 (loader): 7393CD01 00000000
+08:39:45.858 (loader): secure mode can not be locked: this is Standard Teensy
+08:39:45.858 (loader): encryption is possible on this Teensy, but not yet configured
+08:39:45.858 (loader): but without secure mode locked, encryption will NOT be secure!
+08:39:45.858 (loader): Device came online, code_size = 2031616
+08:39:45.858 (loader): Board is: Teensy 4.0 (IMXRT1062), version 1.08
+08:39:45.865 (loader): File "/Users/owhite/kicad/MESC_brain_board/teensy40/brain/.pio/build/teensy40/firmware.hex", 69632 bytes
+08:39:45.865 (loader): File "firmware.hex". 69632 bytes, 3% used
+08:39:45.876 (loader): set background IMG_ONLINE
+08:39:45.884 (loader): File "/Users/owhite/kicad/MESC_brain_board/teensy40/brain/.pio/build/teensy40/firmware.hex", 69632 bytes
+08:39:45.884 (loader): File "firmware.hex". 69632 bytes, 3% used
+08:39:45.896 (loader): elf appears to be for Teensy 4.0 (IMXRT1062) (2031616 bytes)
+08:39:45.896 (loader): elf binary data matches hex file
+08:39:45.896 (loader): elf file is for Teensy 4.0 (IMXRT1062)
+08:39:45.896 (loader): using hex file
+08:39:45.907 (loader): begin operation
+08:39:45.910 (reboot 15): Status: 1, 1, 1, 5, 0, 1, /Users/owhite/kicad/MESC_brain_board/teensy40/brain/.pio/build/teensy40/, firmware.hex
+08:39:45.915 (loader): flash, block=0, bs=1024, auto=1
+08:39:45.915 (loader): flash, block=1, bs=1024, auto=1
+08:39:45.916 (loader): flash, block=2, bs=1024, auto=1
+08:39:46.435 (loader): remote cmd from 8: "status"
+08:39:46.435 (reboot 15): Status: 1, 1, 1, 5, 0, 1, /Users/owhite/kicad/MESC_brain_board/teensy40/brain/.pio/build/teensy40/, firmware.hex
+08:39:46.435 (loader): flash, block=3, bs=1024, auto=1
+08:39:46.436 (loader): flash, block=4, bs=1024, auto=1
+08:39:46.436 (loader): flash, block=5, bs=1024, auto=1
+08:39:46.437 (loader): flash, block=6, bs=1024, auto=1
+08:39:46.438 (loader): flash, block=7, bs=1024, auto=1
+08:39:46.456 (loader): flash, block=8, bs=1024, auto=1
+08:39:46.457 (loader): flash, block=9, bs=1024, auto=1
+08:39:46.458 (loader): flash, block=10, bs=1024, auto=1
+08:39:46.475 (loader): flash, block=11, bs=1024, auto=1
+08:39:46.475 (loader): flash, block=12, bs=1024, auto=1
+08:39:46.476 (loader): flash, block=13, bs=1024, auto=1
+08:39:46.493 (loader): remote cmd from 8: "status"
+08:39:46.493 (reboot 15): Status: 1, 1, 1, 5, 0, 1, /Users/owhite/kicad/MESC_brain_board/teensy40/brain/.pio/build/teensy40/, firmware.hex
+08:39:46.493 (loader): flash, block=14, bs=1024, auto=1
+08:39:46.494 (loader): flash, block=15, bs=1024, auto=1
+08:39:46.494 (loader): flash, block=16, bs=1024, auto=1
+08:39:46.513 (loader): flash, block=17, bs=1024, auto=1
+08:39:46.514 (loader): flash, block=18, bs=1024, auto=1
+08:39:46.514 (loader): flash, block=19, bs=1024, auto=1
+08:39:46.533 (loader): flash, block=20, bs=1024, auto=1
+08:39:46.534 (loader): flash, block=21, bs=1024, auto=1
+08:39:46.534 (loader): flash, block=22, bs=1024, auto=1
+08:39:46.553 (loader): remote cmd from 8: "status"
+08:39:46.554 (reboot 15): Status: 1, 1, 1, 5, 0, 1, /Users/owhite/kicad/MESC_brain_board/teensy40/brain/.pio/build/teensy40/, firmware.hex
+08:39:46.554 (loader): flash, block=23, bs=1024, auto=1
+08:39:46.555 (loader): flash, block=24, bs=1024, auto=1
+08:39:46.555 (loader): flash, block=25, bs=1024, auto=1
+08:39:46.573 (loader): flash, block=26, bs=1024, auto=1
+08:39:46.574 (loader): flash, block=27, bs=1024, auto=1
+08:39:46.574 (loader): flash, block=28, bs=1024, auto=1
+08:39:46.592 (loader): flash, block=29, bs=1024, auto=1
+08:39:46.592 (loader): flash, block=30, bs=1024, auto=1
+08:39:46.593 (loader): flash, block=31, bs=1024, auto=1
+08:39:46.610 (loader): remote cmd from 8: "status"
+08:39:46.610 (reboot 15): Status: 1, 1, 1, 5, 0, 1, /Users/owhite/kicad/MESC_brain_board/teensy40/brain/.pio/build/teensy40/, firmware.hex
+08:39:46.610 (loader): flash, block=32, bs=1024, auto=1
+08:39:46.611 (loader): flash, block=33, bs=1024, auto=1
+08:39:46.611 (loader): flash, block=34, bs=1024, auto=1
+08:39:46.630 (loader): flash, block=35, bs=1024, auto=1
+08:39:46.630 (loader): flash, block=36, bs=1024, auto=1
+08:39:46.631 (loader): flash, block=37, bs=1024, auto=1
+08:39:46.650 (loader): flash, block=38, bs=1024, auto=1
+08:39:46.651 (loader): flash, block=39, bs=1024, auto=1
+08:39:46.651 (loader): flash, block=40, bs=1024, auto=1
+08:39:46.670 (loader): remote cmd from 8: "status"
+08:39:46.670 (reboot 15): Status: 1, 1, 1, 5, 0, 1, /Users/owhite/kicad/MESC_brain_board/teensy40/brain/.pio/build/teensy40/, firmware.hex
+08:39:46.671 (loader): flash, block=41, bs=1024, auto=1
+08:39:46.671 (loader): flash, block=42, bs=1024, auto=1
+08:39:46.672 (loader): flash, block=43, bs=1024, auto=1
+08:39:46.689 (loader): flash, block=44, bs=1024, auto=1
+08:39:46.690 (loader): flash, block=45, bs=1024, auto=1
+08:39:46.690 (loader): flash, block=46, bs=1024, auto=1
+08:39:46.708 (loader): flash, block=47, bs=1024, auto=1
+08:39:46.709 (loader): flash, block=48, bs=1024, auto=1
+08:39:46.709 (loader): flash, block=49, bs=1024, auto=1
+08:39:46.722 (reboot 15): status read, retry 4
+08:39:46.722 (reboot 15): Disconnect
+08:39:46.722 (reboot 15): Success
+08:39:46.727 (loader): flash, block=50, bs=1024, auto=1
+08:39:46.727 (loader): flash, block=51, bs=1024, auto=1
+08:39:46.728 (loader): flash, block=52, bs=1024, auto=1
+08:39:46.745 (loader): remote connection 8 closed
+08:39:46.745 (loader): flash, block=53, bs=1024, auto=1
+08:39:46.746 (loader): flash, block=54, bs=1024, auto=1
+08:39:46.746 (loader): flash, block=55, bs=1024, auto=1
+08:39:46.763 (loader): flash, block=56, bs=1024, auto=1
+08:39:46.763 (loader): flash, block=57, bs=1024, auto=1
+08:39:46.764 (loader): flash, block=58, bs=1024, auto=1
+08:39:46.782 (loader): flash, block=59, bs=1024, auto=1
+08:39:46.782 (loader): flash, block=60, bs=1024, auto=1
+08:39:46.782 (loader): flash, block=61, bs=1024, auto=1
+08:39:46.800 (loader): flash, block=62, bs=1024, auto=1
+08:39:46.801 (loader): flash, block=63, bs=1024, auto=1
+08:39:46.801 (loader): flash, block=64, bs=1024, auto=1
+08:39:46.819 (loader): flash, block=65, bs=1024, auto=1
+08:39:46.819 (loader): flash, block=66, bs=1024, auto=1
+08:39:46.820 (loader): flash, block=67, bs=1024, auto=1
+08:39:46.842 (loader): sending reboot
+08:39:46.842 (loader): begin wait_until_offline
+08:39:46.842 (loader): HID/macos: status: ok
+08:39:47.147 (loader): HID/macos: detach callback: is currently open device
+08:39:47.147 (loader): offline, waited 6
+08:39:47.147 (loader): end operation, total time = 1.240 seconds
+08:39:47.148 (loader): set background IMG_REBOOT_OK
+08:39:47.149 (loader): redraw timer set, image 14 to show for 1200 ms
+08:39:47.250 (loader): HID/macos: number of devices found = 0
+08:39:47.250 (loader): HID/macos: no devices found (empty set)
+08:39:48.350 (loader): redraw, image 9
+08:41:17.693 (post_compile 16): Begin, version=1.58
+08:41:17.694 (loader): remote connection 8 opened
+08:41:17.694 (post_compile 16): Sending command: comment: Teensyduino 1.58 - MACOSX (teensy_post_compile)
+08:41:17.694 (loader): remote cmd from 8: "comment: Teensyduino 1.58 - MACOSX (teensy_post_compile)"
+08:41:17.694 (loader): remote cmd from 8: "status"
+08:41:17.694 (loader): file changed
+08:41:17.710 (loader): File "/Users/owhite/kicad/MESC_brain_board/teensy40/brain/.pio/build/teensy40/firmware.hex", 69632 bytes
+08:41:17.710 (loader): File "firmware.hex". 69632 bytes
+08:41:17.713 (post_compile 16): Status: 1, 1, 0, 5, 0, 0, /Users/owhite/kicad/MESC_brain_board/teensy40/brain/.pio/build/teensy40/, firmware.hex
+08:41:17.713 (post_compile 16): Disconnect
+08:41:17.723 (post_compile 17): Running teensy_reboot: /Users/owhite/.platformio/packages/tool-teensy/teensy_reboot
+08:41:17.724 (loader): remote connection 8 closed
+08:41:17.725 (loader): remote connection 8 opened
+08:41:17.725 (loader): remote connection 8 closed
+08:41:17.731 (reboot 18): Begin, version=1.58
+08:41:17.731 (reboot 18): USB device add callback
+08:41:17.731 (reboot 18):   loc=14600000, vid=16C0, pid=0483, ver=0279, ser=17888890
+08:41:17.731 (reboot 18):   actual serailnum=1788889
+08:41:17.732 (loader): remote connection 8 opened
+08:41:17.732 (reboot 18): USB device remove callback
+08:41:17.732 (reboot 18): Serial add callback
+08:41:17.733 (reboot 18):   name=/dev/cu.usbmodem178888901, loc=14600000, vid=16c0, pid=0483, ver=0279
+08:41:17.742 (reboot 18): Serial remove callback
+08:41:17.753 (reboot 18): HID Manager started
+08:41:17.753 (reboot 18): usb scan found 1 devices
+08:41:17.753 (reboot 18): found Teensy Loader, version 1.58
+08:41:17.753 (reboot 18): Sending command: show:arduino_attempt_reboot
+08:41:17.754 (loader): remote cmd from 8: "show:arduino_attempt_reboot"
+08:41:17.754 (loader): got request to show arduino rebooting message
+08:41:17.754 (reboot 18): Sending command: comment: Teensyduino 1.58 - MACOSX (teensy_reboot)
+08:41:17.755 (loader): remote cmd from 8: "comment: Teensyduino 1.58 - MACOSX (teensy_reboot)"
+08:41:17.755 (loader): remote cmd from 8: "status"
+08:41:17.755 (reboot 18): Status: 1, 1, 0, 5, 0, 0, /Users/owhite/kicad/MESC_brain_board/teensy40/brain/.pio/build/teensy40/, firmware.hex
+08:41:17.755 (reboot 18): do_reset (serial) /dev/cu.usbmodem178888901
+08:41:17.758 (loader): remote cmd from 8: "status"
+08:41:17.758 (reboot 18): Status: 1, 1, 0, 5, 0, 0, /Users/owhite/kicad/MESC_brain_board/teensy40/brain/.pio/build/teensy40/, firmware.hex
+08:41:17.758 (reboot 18): status read, retry 0
+08:41:17.859 (loader): remote cmd from 8: "status"
+08:41:17.860 (reboot 18): Status: 1, 1, 0, 5, 0, 0, /Users/owhite/kicad/MESC_brain_board/teensy40/brain/.pio/build/teensy40/, firmware.hex
+08:41:17.860 (reboot 18): status read, retry 1
+08:41:17.965 (loader): remote cmd from 8: "status"
+08:41:17.965 (reboot 18): Status: 1, 1, 0, 5, 0, 0, /Users/owhite/kicad/MESC_brain_board/teensy40/brain/.pio/build/teensy40/, firmware.hex
+08:41:17.965 (reboot 18): status read, retry 2
+08:41:18.064 (loader): HID/macos: attach callback
+08:41:18.067 (loader): remote cmd from 8: "status"
+08:41:18.067 (loader): HID/macos: ser=001B4BD9
+08:41:18.067 (loader): try to read feature report
+08:41:18.068 (loader): got feature report, size = 384
+08:41:18.068 (loader): 7393CD01 00000000
+08:41:18.068 (loader): secure mode can not be locked: this is Standard Teensy
+08:41:18.068 (loader): encryption is possible on this Teensy, but not yet configured
+08:41:18.068 (loader): but without secure mode locked, encryption will NOT be secure!
+08:41:18.068 (loader): Device came online, code_size = 2031616
+08:41:18.068 (loader): Board is: Teensy 4.0 (IMXRT1062), version 1.08
+08:41:18.077 (loader): File "/Users/owhite/kicad/MESC_brain_board/teensy40/brain/.pio/build/teensy40/firmware.hex", 69632 bytes
+08:41:18.077 (loader): File "firmware.hex". 69632 bytes, 3% used
+08:41:18.089 (loader): set background IMG_ONLINE
+08:41:18.097 (loader): File "/Users/owhite/kicad/MESC_brain_board/teensy40/brain/.pio/build/teensy40/firmware.hex", 69632 bytes
+08:41:18.097 (loader): File "firmware.hex". 69632 bytes, 3% used
+08:41:18.109 (loader): elf appears to be for Teensy 4.0 (IMXRT1062) (2031616 bytes)
+08:41:18.109 (loader): elf binary data matches hex file
+08:41:18.109 (loader): elf file is for Teensy 4.0 (IMXRT1062)
+08:41:18.109 (loader): using hex file
+08:41:18.120 (loader): begin operation
+08:41:18.123 (reboot 18): Status: 1, 1, 1, 6, 0, 1, /Users/owhite/kicad/MESC_brain_board/teensy40/brain/.pio/build/teensy40/, firmware.hex
+08:41:18.128 (loader): flash, block=0, bs=1024, auto=1
+08:41:18.128 (loader): flash, block=1, bs=1024, auto=1
+08:41:18.129 (loader): flash, block=2, bs=1024, auto=1
+08:41:18.643 (loader): remote cmd from 8: "status"
+08:41:18.643 (reboot 18): Status: 1, 1, 1, 6, 0, 1, /Users/owhite/kicad/MESC_brain_board/teensy40/brain/.pio/build/teensy40/, firmware.hex
+08:41:18.643 (loader): flash, block=3, bs=1024, auto=1
+08:41:18.644 (loader): flash, block=4, bs=1024, auto=1
+08:41:18.645 (loader): flash, block=5, bs=1024, auto=1
+08:41:18.645 (loader): flash, block=6, bs=1024, auto=1
+08:41:18.645 (loader): flash, block=7, bs=1024, auto=1
+08:41:18.663 (loader): flash, block=8, bs=1024, auto=1
+08:41:18.663 (loader): flash, block=9, bs=1024, auto=1
+08:41:18.664 (loader): flash, block=10, bs=1024, auto=1
+08:41:18.682 (loader): flash, block=11, bs=1024, auto=1
+08:41:18.683 (loader): flash, block=12, bs=1024, auto=1
+08:41:18.684 (loader): flash, block=13, bs=1024, auto=1
+08:41:18.703 (loader): remote cmd from 8: "status"
+08:41:18.703 (reboot 18): Status: 1, 1, 1, 6, 0, 1, /Users/owhite/kicad/MESC_brain_board/teensy40/brain/.pio/build/teensy40/, firmware.hex
+08:41:18.703 (loader): flash, block=14, bs=1024, auto=1
+08:41:18.703 (loader): flash, block=15, bs=1024, auto=1
+08:41:18.704 (loader): flash, block=16, bs=1024, auto=1
+08:41:18.723 (loader): flash, block=17, bs=1024, auto=1
+08:41:18.723 (loader): flash, block=18, bs=1024, auto=1
+08:41:18.724 (loader): flash, block=19, bs=1024, auto=1
+08:41:18.743 (loader): flash, block=20, bs=1024, auto=1
+08:41:18.744 (loader): flash, block=21, bs=1024, auto=1
+08:41:18.744 (loader): flash, block=22, bs=1024, auto=1
+08:41:18.763 (loader): remote cmd from 8: "status"
+08:41:18.763 (reboot 18): Status: 1, 1, 1, 6, 0, 1, /Users/owhite/kicad/MESC_brain_board/teensy40/brain/.pio/build/teensy40/, firmware.hex
+08:41:18.763 (loader): flash, block=23, bs=1024, auto=1
+08:41:18.763 (loader): flash, block=24, bs=1024, auto=1
+08:41:18.764 (loader): flash, block=25, bs=1024, auto=1
+08:41:18.782 (loader): flash, block=26, bs=1024, auto=1
+08:41:18.783 (loader): flash, block=27, bs=1024, auto=1
+08:41:18.784 (loader): flash, block=28, bs=1024, auto=1
+08:41:18.803 (loader): flash, block=29, bs=1024, auto=1
+08:41:18.804 (loader): flash, block=30, bs=1024, auto=1
+08:41:18.804 (loader): flash, block=31, bs=1024, auto=1
+08:41:18.805 (loader): flash, block=32, bs=1024, auto=1
+08:41:18.824 (loader): remote cmd from 8: "status"
+08:41:18.824 (reboot 18): Status: 1, 1, 1, 6, 0, 1, /Users/owhite/kicad/MESC_brain_board/teensy40/brain/.pio/build/teensy40/, firmware.hex
+08:41:18.825 (loader): flash, block=33, bs=1024, auto=1
+08:41:18.826 (loader): flash, block=34, bs=1024, auto=1
+08:41:18.827 (loader): flash, block=35, bs=1024, auto=1
+08:41:18.827 (loader): flash, block=36, bs=1024, auto=1
+08:41:18.845 (loader): flash, block=37, bs=1024, auto=1
+08:41:18.845 (loader): flash, block=38, bs=1024, auto=1
+08:41:18.846 (loader): flash, block=39, bs=1024, auto=1
+08:41:18.863 (loader): flash, block=40, bs=1024, auto=1
+08:41:18.863 (loader): flash, block=41, bs=1024, auto=1
+08:41:18.864 (loader): flash, block=42, bs=1024, auto=1
+08:41:18.882 (loader): remote cmd from 8: "status"
+08:41:18.882 (reboot 18): Status: 1, 1, 1, 6, 0, 1, /Users/owhite/kicad/MESC_brain_board/teensy40/brain/.pio/build/teensy40/, firmware.hex
+08:41:18.882 (loader): flash, block=43, bs=1024, auto=1
+08:41:18.883 (loader): flash, block=44, bs=1024, auto=1
+08:41:18.883 (loader): flash, block=45, bs=1024, auto=1
+08:41:18.901 (loader): flash, block=46, bs=1024, auto=1
+08:41:18.902 (loader): flash, block=47, bs=1024, auto=1
+08:41:18.902 (loader): flash, block=48, bs=1024, auto=1
+08:41:18.922 (loader): flash, block=49, bs=1024, auto=1
+08:41:18.922 (loader): flash, block=50, bs=1024, auto=1
+08:41:18.923 (loader): flash, block=51, bs=1024, auto=1
+08:41:18.924 (loader): flash, block=52, bs=1024, auto=1
+08:41:18.932 (reboot 18): status read, retry 3
+08:41:18.932 (reboot 18): Success
+08:41:18.932 (reboot 18): Disconnect
+08:41:18.944 (loader): remote connection 8 closed
+08:41:18.944 (loader): flash, block=53, bs=1024, auto=1
+08:41:18.945 (loader): flash, block=54, bs=1024, auto=1
+08:41:18.945 (loader): flash, block=55, bs=1024, auto=1
+08:41:18.962 (loader): flash, block=56, bs=1024, auto=1
+08:41:18.963 (loader): flash, block=57, bs=1024, auto=1
+08:41:18.963 (loader): flash, block=58, bs=1024, auto=1
+08:41:18.981 (loader): flash, block=59, bs=1024, auto=1
+08:41:18.981 (loader): flash, block=60, bs=1024, auto=1
+08:41:18.982 (loader): flash, block=61, bs=1024, auto=1
+08:41:18.999 (loader): flash, block=62, bs=1024, auto=1
+08:41:19.000 (loader): flash, block=63, bs=1024, auto=1
+08:41:19.000 (loader): flash, block=64, bs=1024, auto=1
+08:41:19.018 (loader): flash, block=65, bs=1024, auto=1
+08:41:19.018 (loader): flash, block=66, bs=1024, auto=1
+08:41:19.019 (loader): flash, block=67, bs=1024, auto=1
+08:41:19.038 (loader): sending reboot
+08:41:19.039 (loader): begin wait_until_offline
+08:41:19.039 (loader): HID/macos: status: ok
+08:41:19.342 (loader): HID/macos: detach callback: is currently open device
+08:41:19.342 (loader): offline, waited 6
+08:41:19.342 (loader): end operation, total time = 1.222 seconds
+08:41:19.343 (loader): set background IMG_REBOOT_OK
+08:41:19.343 (loader): redraw timer set, image 14 to show for 1200 ms
+08:41:19.498 (loader): HID/macos: number of devices found = 0
+08:41:19.498 (loader): HID/macos: no devices found (empty set)
+08:41:20.544 (loader): redraw, image 9
+08:44:07.069 (post_compile 19): Begin, version=1.58
+08:44:07.069 (loader): remote connection 8 opened
+08:44:07.069 (post_compile 19): Sending command: comment: Teensyduino 1.58 - MACOSX (teensy_post_compile)
+08:44:07.070 (loader): remote cmd from 8: "comment: Teensyduino 1.58 - MACOSX (teensy_post_compile)"
+08:44:07.070 (loader): remote cmd from 8: "status"
+08:44:07.070 (loader): file changed
+08:44:07.087 (loader): File "/Users/owhite/kicad/MESC_brain_board/teensy40/brain/.pio/build/teensy40/firmware.hex", 69632 bytes
+08:44:07.087 (loader): File "firmware.hex". 69632 bytes
+08:44:07.091 (post_compile 19): Status: 1, 1, 0, 6, 0, 0, /Users/owhite/kicad/MESC_brain_board/teensy40/brain/.pio/build/teensy40/, firmware.hex
+08:44:07.091 (post_compile 19): Disconnect
+08:44:07.101 (post_compile 20): Running teensy_reboot: /Users/owhite/.platformio/packages/tool-teensy/teensy_reboot
+08:44:07.101 (loader): remote connection 8 closed
+08:44:07.102 (loader): remote connection 8 opened
+08:44:07.102 (loader): remote connection 8 closed
+08:44:07.107 (reboot 21): Begin, version=1.58
+08:44:07.107 (reboot 21): USB device add callback
+08:44:07.108 (reboot 21):   loc=14600000, vid=16C0, pid=0483, ver=0279, ser=17888890
+08:44:07.108 (reboot 21):   actual serailnum=1788889
+08:44:07.109 (loader): remote connection 8 opened
+08:44:07.109 (reboot 21): USB device remove callback
+08:44:07.109 (reboot 21): Serial add callback
+08:44:07.109 (reboot 21):   name=/dev/cu.usbmodem178888901, loc=14600000, vid=16c0, pid=0483, ver=0279
+08:44:07.118 (reboot 21): Serial remove callback
+08:44:07.129 (reboot 21): HID Manager started
+08:44:07.130 (reboot 21): usb scan found 1 devices
+08:44:07.130 (reboot 21): found Teensy Loader, version 1.58
+08:44:07.130 (reboot 21): Sending command: show:arduino_attempt_reboot
+08:44:07.130 (loader): remote cmd from 8: "show:arduino_attempt_reboot"
+08:44:07.130 (loader): got request to show arduino rebooting message
+08:44:07.131 (reboot 21): Sending command: comment: Teensyduino 1.58 - MACOSX (teensy_reboot)
+08:44:07.131 (loader): remote cmd from 8: "comment: Teensyduino 1.58 - MACOSX (teensy_reboot)"
+08:44:07.132 (loader): remote cmd from 8: "status"
+08:44:07.132 (reboot 21): Status: 1, 1, 0, 6, 0, 0, /Users/owhite/kicad/MESC_brain_board/teensy40/brain/.pio/build/teensy40/, firmware.hex
+08:44:07.132 (reboot 21): do_reset (serial) /dev/cu.usbmodem178888901
+08:44:07.134 (loader): remote cmd from 8: "status"
+08:44:07.134 (reboot 21): Status: 1, 1, 0, 6, 0, 0, /Users/owhite/kicad/MESC_brain_board/teensy40/brain/.pio/build/teensy40/, firmware.hex
+08:44:07.134 (reboot 21): status read, retry 0
+08:44:07.236 (loader): remote cmd from 8: "status"
+08:44:07.236 (reboot 21): Status: 1, 1, 0, 6, 0, 0, /Users/owhite/kicad/MESC_brain_board/teensy40/brain/.pio/build/teensy40/, firmware.hex
+08:44:07.236 (reboot 21): status read, retry 1
+08:44:07.337 (loader): remote cmd from 8: "status"
+08:44:07.337 (reboot 21): Status: 1, 1, 0, 6, 0, 0, /Users/owhite/kicad/MESC_brain_board/teensy40/brain/.pio/build/teensy40/, firmware.hex
+08:44:07.337 (reboot 21): status read, retry 2
+08:44:07.428 (loader): HID/macos: attach callback
+08:44:07.441 (loader): remote cmd from 8: "status"
+08:44:07.441 (loader): HID/macos: ser=001B4BD9
+08:44:07.441 (loader): try to read feature report
+08:44:07.441 (loader): got feature report, size = 384
+08:44:07.441 (loader): 7393CD01 00000000
+08:44:07.441 (loader): secure mode can not be locked: this is Standard Teensy
+08:44:07.441 (loader): encryption is possible on this Teensy, but not yet configured
+08:44:07.441 (loader): but without secure mode locked, encryption will NOT be secure!
+08:44:07.442 (loader): Device came online, code_size = 2031616
+08:44:07.442 (loader): Board is: Teensy 4.0 (IMXRT1062), version 1.08
+08:44:07.449 (loader): File "/Users/owhite/kicad/MESC_brain_board/teensy40/brain/.pio/build/teensy40/firmware.hex", 69632 bytes
+08:44:07.449 (loader): File "firmware.hex". 69632 bytes, 3% used
+08:44:07.460 (loader): set background IMG_ONLINE
+08:44:07.468 (loader): File "/Users/owhite/kicad/MESC_brain_board/teensy40/brain/.pio/build/teensy40/firmware.hex", 69632 bytes
+08:44:07.468 (loader): File "firmware.hex". 69632 bytes, 3% used
+08:44:07.480 (loader): elf appears to be for Teensy 4.0 (IMXRT1062) (2031616 bytes)
+08:44:07.480 (loader): elf binary data matches hex file
+08:44:07.480 (loader): elf file is for Teensy 4.0 (IMXRT1062)
+08:44:07.480 (loader): using hex file
+08:44:07.491 (loader): begin operation
+08:44:07.494 (reboot 21): Status: 1, 1, 1, 7, 0, 1, /Users/owhite/kicad/MESC_brain_board/teensy40/brain/.pio/build/teensy40/, firmware.hex
+08:44:07.498 (loader): flash, block=0, bs=1024, auto=1
+08:44:07.499 (loader): flash, block=1, bs=1024, auto=1
+08:44:07.499 (loader): flash, block=2, bs=1024, auto=1
+08:44:08.017 (loader): remote cmd from 8: "status"
+08:44:08.017 (reboot 21): Status: 1, 1, 1, 7, 0, 1, /Users/owhite/kicad/MESC_brain_board/teensy40/brain/.pio/build/teensy40/, firmware.hex
+08:44:08.018 (loader): flash, block=3, bs=1024, auto=1
+08:44:08.019 (loader): flash, block=4, bs=1024, auto=1
+08:44:08.020 (loader): flash, block=5, bs=1024, auto=1
+08:44:08.020 (loader): flash, block=6, bs=1024, auto=1
+08:44:08.021 (loader): flash, block=7, bs=1024, auto=1
+08:44:08.038 (loader): flash, block=8, bs=1024, auto=1
+08:44:08.039 (loader): flash, block=9, bs=1024, auto=1
+08:44:08.039 (loader): flash, block=10, bs=1024, auto=1
+08:44:08.057 (loader): flash, block=11, bs=1024, auto=1
+08:44:08.058 (loader): flash, block=12, bs=1024, auto=1
+08:44:08.058 (loader): flash, block=13, bs=1024, auto=1
+08:44:08.077 (loader): remote cmd from 8: "status"
+08:44:08.077 (reboot 21): Status: 1, 1, 1, 7, 0, 1, /Users/owhite/kicad/MESC_brain_board/teensy40/brain/.pio/build/teensy40/, firmware.hex
+08:44:08.077 (loader): flash, block=14, bs=1024, auto=1
+08:44:08.078 (loader): flash, block=15, bs=1024, auto=1
+08:44:08.078 (loader): flash, block=16, bs=1024, auto=1
+08:44:08.097 (loader): flash, block=17, bs=1024, auto=1
+08:44:08.098 (loader): flash, block=18, bs=1024, auto=1
+08:44:08.099 (loader): flash, block=19, bs=1024, auto=1
+08:44:08.100 (loader): flash, block=20, bs=1024, auto=1
+08:44:08.119 (loader): flash, block=21, bs=1024, auto=1
+08:44:08.119 (loader): flash, block=22, bs=1024, auto=1
+08:44:08.120 (loader): flash, block=23, bs=1024, auto=1
+08:44:08.138 (loader): remote cmd from 8: "status"
+08:44:08.138 (reboot 21): Status: 1, 1, 1, 7, 0, 1, /Users/owhite/kicad/MESC_brain_board/teensy40/brain/.pio/build/teensy40/, firmware.hex
+08:44:08.138 (loader): flash, block=24, bs=1024, auto=1
+08:44:08.139 (loader): flash, block=25, bs=1024, auto=1
+08:44:08.139 (loader): flash, block=26, bs=1024, auto=1
+08:44:08.157 (loader): flash, block=27, bs=1024, auto=1
+08:44:08.158 (loader): flash, block=28, bs=1024, auto=1
+08:44:08.158 (loader): flash, block=29, bs=1024, auto=1
+08:44:08.177 (loader): flash, block=30, bs=1024, auto=1
+08:44:08.178 (loader): flash, block=31, bs=1024, auto=1
+08:44:08.178 (loader): flash, block=32, bs=1024, auto=1
+08:44:08.197 (loader): remote cmd from 8: "status"
+08:44:08.197 (reboot 21): Status: 1, 1, 1, 7, 0, 1, /Users/owhite/kicad/MESC_brain_board/teensy40/brain/.pio/build/teensy40/, firmware.hex
+08:44:08.198 (loader): flash, block=33, bs=1024, auto=1
+08:44:08.198 (loader): flash, block=34, bs=1024, auto=1
+08:44:08.199 (loader): flash, block=35, bs=1024, auto=1
+08:44:08.217 (loader): flash, block=36, bs=1024, auto=1
+08:44:08.218 (loader): flash, block=37, bs=1024, auto=1
+08:44:08.220 (loader): flash, block=38, bs=1024, auto=1
+08:44:08.220 (loader): flash, block=39, bs=1024, auto=1
+08:44:08.238 (loader): flash, block=40, bs=1024, auto=1
+08:44:08.239 (loader): flash, block=41, bs=1024, auto=1
+08:44:08.239 (loader): flash, block=42, bs=1024, auto=1
+08:44:08.256 (loader): remote cmd from 8: "status"
+08:44:08.256 (reboot 21): Status: 1, 1, 1, 7, 0, 1, /Users/owhite/kicad/MESC_brain_board/teensy40/brain/.pio/build/teensy40/, firmware.hex
+08:44:08.256 (loader): flash, block=43, bs=1024, auto=1
+08:44:08.256 (loader): flash, block=44, bs=1024, auto=1
+08:44:08.257 (loader): flash, block=45, bs=1024, auto=1
+08:44:08.275 (loader): flash, block=46, bs=1024, auto=1
+08:44:08.276 (loader): flash, block=47, bs=1024, auto=1
+08:44:08.277 (loader): flash, block=48, bs=1024, auto=1
+08:44:08.295 (loader): flash, block=49, bs=1024, auto=1
+08:44:08.296 (loader): flash, block=50, bs=1024, auto=1
+08:44:08.297 (loader): flash, block=51, bs=1024, auto=1
+08:44:08.309 (reboot 21): status read, retry 3
+08:44:08.309 (reboot 21): Success
+08:44:08.309 (reboot 21): Disconnect
+08:44:08.317 (loader): flash, block=52, bs=1024, auto=1
+08:44:08.318 (loader): flash, block=53, bs=1024, auto=1
+08:44:08.318 (loader): flash, block=54, bs=1024, auto=1
+08:44:08.335 (loader): remote connection 8 closed
+08:44:08.335 (loader): flash, block=55, bs=1024, auto=1
+08:44:08.336 (loader): flash, block=56, bs=1024, auto=1
+08:44:08.336 (loader): flash, block=57, bs=1024, auto=1
+08:44:08.354 (loader): flash, block=58, bs=1024, auto=1
+08:44:08.355 (loader): flash, block=59, bs=1024, auto=1
+08:44:08.355 (loader): flash, block=60, bs=1024, auto=1
+08:44:08.372 (loader): flash, block=61, bs=1024, auto=1
+08:44:08.372 (loader): flash, block=62, bs=1024, auto=1
+08:44:08.373 (loader): flash, block=63, bs=1024, auto=1
+08:44:08.391 (loader): flash, block=64, bs=1024, auto=1
+08:44:08.391 (loader): flash, block=65, bs=1024, auto=1
+08:44:08.391 (loader): flash, block=66, bs=1024, auto=1
+08:44:08.409 (loader): flash, block=67, bs=1024, auto=1
+08:44:08.412 (loader): sending reboot
+08:44:08.412 (loader): begin wait_until_offline
+08:44:08.413 (loader): HID/macos: status: ok
+08:44:08.718 (loader): HID/macos: detach callback: is currently open device
+08:44:08.718 (loader): offline, waited 6
+08:44:08.718 (loader): end operation, total time = 1.227 seconds
+08:44:08.719 (loader): set background IMG_REBOOT_OK
+08:44:08.720 (loader): redraw timer set, image 14 to show for 1200 ms
+08:44:08.744 (loader): HID/macos: number of devices found = 0
+08:44:08.744 (loader): HID/macos: no devices found (empty set)
+08:44:09.921 (loader): redraw, image 9
+08:45:23.776 (post_compile 22): Begin, version=1.58
+08:45:23.777 (loader): remote connection 8 opened
+08:45:23.777 (post_compile 22): Sending command: comment: Teensyduino 1.58 - MACOSX (teensy_post_compile)
+08:45:23.777 (loader): remote cmd from 8: "comment: Teensyduino 1.58 - MACOSX (teensy_post_compile)"
+08:45:23.777 (loader): remote cmd from 8: "status"
+08:45:23.777 (loader): file changed
+08:45:23.794 (loader): File "/Users/owhite/kicad/MESC_brain_board/teensy40/brain/.pio/build/teensy40/firmware.hex", 69632 bytes
+08:45:23.794 (loader): File "firmware.hex". 69632 bytes
+08:45:23.800 (post_compile 22): Status: 1, 1, 0, 7, 0, 0, /Users/owhite/kicad/MESC_brain_board/teensy40/brain/.pio/build/teensy40/, firmware.hex
+08:45:23.800 (post_compile 22): Disconnect
+08:45:23.812 (post_compile 23): Running teensy_reboot: /Users/owhite/.platformio/packages/tool-teensy/teensy_reboot
+08:45:23.813 (loader): remote connection 8 closed
+08:45:23.813 (loader): remote connection 8 opened
+08:45:23.814 (loader): remote connection 8 closed
+08:45:23.818 (reboot 24): Begin, version=1.58
+08:45:23.818 (reboot 24): USB device add callback
+08:45:23.819 (reboot 24):   loc=14600000, vid=16C0, pid=0483, ver=0279, ser=17888890
+08:45:23.819 (reboot 24):   actual serailnum=1788889
+08:45:23.820 (loader): remote connection 8 opened
+08:45:23.820 (reboot 24): USB device remove callback
+08:45:23.820 (reboot 24): Serial add callback
+08:45:23.820 (reboot 24):   name=/dev/cu.usbmodem178888901, loc=14600000, vid=16c0, pid=0483, ver=0279
+08:45:23.830 (reboot 24): Serial remove callback
+08:45:23.841 (reboot 24): HID Manager started
+08:45:23.841 (reboot 24): usb scan found 1 devices
+08:45:23.841 (reboot 24): found Teensy Loader, version 1.58
+08:45:23.841 (reboot 24): Sending command: show:arduino_attempt_reboot
+08:45:23.842 (loader): remote cmd from 8: "show:arduino_attempt_reboot"
+08:45:23.842 (loader): got request to show arduino rebooting message
+08:45:23.842 (reboot 24): Sending command: comment: Teensyduino 1.58 - MACOSX (teensy_reboot)
+08:45:23.843 (loader): remote cmd from 8: "comment: Teensyduino 1.58 - MACOSX (teensy_reboot)"
+08:45:23.843 (loader): remote cmd from 8: "status"
+08:45:23.844 (reboot 24): Status: 1, 1, 0, 7, 0, 0, /Users/owhite/kicad/MESC_brain_board/teensy40/brain/.pio/build/teensy40/, firmware.hex
+08:45:23.844 (reboot 24): do_reset (serial) /dev/cu.usbmodem178888901
+08:45:23.846 (loader): remote cmd from 8: "status"
+08:45:23.846 (reboot 24): Status: 1, 1, 0, 7, 0, 0, /Users/owhite/kicad/MESC_brain_board/teensy40/brain/.pio/build/teensy40/, firmware.hex
+08:45:23.846 (reboot 24): status read, retry 0
+08:45:23.951 (loader): remote cmd from 8: "status"
+08:45:23.951 (reboot 24): Status: 1, 1, 0, 7, 0, 0, /Users/owhite/kicad/MESC_brain_board/teensy40/brain/.pio/build/teensy40/, firmware.hex
+08:45:23.951 (reboot 24): status read, retry 1
+08:45:24.056 (loader): remote cmd from 8: "status"
+08:45:24.056 (reboot 24): Status: 1, 1, 0, 7, 0, 0, /Users/owhite/kicad/MESC_brain_board/teensy40/brain/.pio/build/teensy40/, firmware.hex
+08:45:24.056 (reboot 24): status read, retry 2
+08:45:24.141 (loader): HID/macos: attach callback
+08:45:24.160 (loader): remote cmd from 8: "status"
+08:45:24.160 (loader): HID/macos: ser=001B4BD9
+08:45:24.160 (loader): try to read feature report
+08:45:24.160 (loader): got feature report, size = 384
+08:45:24.161 (loader): 7393CD01 00000000
+08:45:24.161 (loader): secure mode can not be locked: this is Standard Teensy
+08:45:24.161 (loader): encryption is possible on this Teensy, but not yet configured
+08:45:24.161 (loader): but without secure mode locked, encryption will NOT be secure!
+08:45:24.161 (loader): Device came online, code_size = 2031616
+08:45:24.161 (loader): Board is: Teensy 4.0 (IMXRT1062), version 1.08
+08:45:24.170 (loader): File "/Users/owhite/kicad/MESC_brain_board/teensy40/brain/.pio/build/teensy40/firmware.hex", 69632 bytes
+08:45:24.170 (loader): File "firmware.hex". 69632 bytes, 3% used
+08:45:24.182 (loader): set background IMG_ONLINE
+08:45:24.189 (loader): File "/Users/owhite/kicad/MESC_brain_board/teensy40/brain/.pio/build/teensy40/firmware.hex", 69632 bytes
+08:45:24.189 (loader): File "firmware.hex". 69632 bytes, 3% used
+08:45:24.201 (loader): elf appears to be for Teensy 4.0 (IMXRT1062) (2031616 bytes)
+08:45:24.201 (loader): elf binary data matches hex file
+08:45:24.201 (loader): elf file is for Teensy 4.0 (IMXRT1062)
+08:45:24.201 (loader): using hex file
+08:45:24.213 (loader): begin operation
+08:45:24.215 (reboot 24): Status: 1, 1, 1, 8, 0, 1, /Users/owhite/kicad/MESC_brain_board/teensy40/brain/.pio/build/teensy40/, firmware.hex
+08:45:24.220 (loader): flash, block=0, bs=1024, auto=1
+08:45:24.220 (loader): flash, block=1, bs=1024, auto=1
+08:45:24.221 (loader): flash, block=2, bs=1024, auto=1
+08:45:24.732 (loader): remote cmd from 8: "status"
+08:45:24.733 (reboot 24): Status: 1, 1, 1, 8, 0, 1, /Users/owhite/kicad/MESC_brain_board/teensy40/brain/.pio/build/teensy40/, firmware.hex
+08:45:24.733 (loader): flash, block=3, bs=1024, auto=1
+08:45:24.734 (loader): flash, block=4, bs=1024, auto=1
+08:45:24.735 (loader): flash, block=5, bs=1024, auto=1
+08:45:24.735 (loader): flash, block=6, bs=1024, auto=1
+08:45:24.736 (loader): flash, block=7, bs=1024, auto=1
+08:45:24.755 (loader): flash, block=8, bs=1024, auto=1
+08:45:24.756 (loader): flash, block=9, bs=1024, auto=1
+08:45:24.756 (loader): flash, block=10, bs=1024, auto=1
+08:45:24.774 (loader): flash, block=11, bs=1024, auto=1
+08:45:24.774 (loader): flash, block=12, bs=1024, auto=1
+08:45:24.775 (loader): flash, block=13, bs=1024, auto=1
+08:45:24.793 (loader): remote cmd from 8: "status"
+08:45:24.793 (reboot 24): Status: 1, 1, 1, 8, 0, 1, /Users/owhite/kicad/MESC_brain_board/teensy40/brain/.pio/build/teensy40/, firmware.hex
+08:45:24.793 (loader): flash, block=14, bs=1024, auto=1
+08:45:24.794 (loader): flash, block=15, bs=1024, auto=1
+08:45:24.794 (loader): flash, block=16, bs=1024, auto=1
+08:45:24.811 (loader): flash, block=17, bs=1024, auto=1
+08:45:24.812 (loader): flash, block=18, bs=1024, auto=1
+08:45:24.812 (loader): flash, block=19, bs=1024, auto=1
+08:45:24.830 (loader): flash, block=20, bs=1024, auto=1
+08:45:24.831 (loader): flash, block=21, bs=1024, auto=1
+08:45:24.832 (loader): flash, block=22, bs=1024, auto=1
+08:45:24.833 (loader): flash, block=23, bs=1024, auto=1
+08:45:24.852 (loader): remote cmd from 8: "status"
+08:45:24.852 (reboot 24): Status: 1, 1, 1, 8, 0, 1, /Users/owhite/kicad/MESC_brain_board/teensy40/brain/.pio/build/teensy40/, firmware.hex
+08:45:24.852 (loader): flash, block=24, bs=1024, auto=1
+08:45:24.853 (loader): flash, block=25, bs=1024, auto=1
+08:45:24.853 (loader): flash, block=26, bs=1024, auto=1
+08:45:24.872 (loader): flash, block=27, bs=1024, auto=1
+08:45:24.873 (loader): flash, block=28, bs=1024, auto=1
+08:45:24.875 (loader): flash, block=29, bs=1024, auto=1
+08:45:24.875 (loader): flash, block=30, bs=1024, auto=1
+08:45:24.893 (loader): flash, block=31, bs=1024, auto=1
+08:45:24.894 (loader): flash, block=32, bs=1024, auto=1
+08:45:24.894 (loader): flash, block=33, bs=1024, auto=1
+08:45:24.911 (loader): remote cmd from 8: "status"
+08:45:24.911 (reboot 24): Status: 1, 1, 1, 8, 0, 1, /Users/owhite/kicad/MESC_brain_board/teensy40/brain/.pio/build/teensy40/, firmware.hex
+08:45:24.911 (loader): flash, block=34, bs=1024, auto=1
+08:45:24.912 (loader): flash, block=35, bs=1024, auto=1
+08:45:24.912 (loader): flash, block=36, bs=1024, auto=1
+08:45:24.930 (loader): flash, block=37, bs=1024, auto=1
+08:45:24.931 (loader): flash, block=38, bs=1024, auto=1
+08:45:24.931 (loader): flash, block=39, bs=1024, auto=1
+08:45:24.950 (loader): flash, block=40, bs=1024, auto=1
+08:45:24.951 (loader): flash, block=41, bs=1024, auto=1
+08:45:24.951 (loader): flash, block=42, bs=1024, auto=1
+08:45:24.971 (loader): remote cmd from 8: "status"
+08:45:24.971 (reboot 24): Status: 1, 1, 1, 8, 0, 1, /Users/owhite/kicad/MESC_brain_board/teensy40/brain/.pio/build/teensy40/, firmware.hex
+08:45:24.971 (loader): flash, block=43, bs=1024, auto=1
+08:45:24.972 (loader): flash, block=44, bs=1024, auto=1
+08:45:24.972 (loader): flash, block=45, bs=1024, auto=1
+08:45:24.991 (loader): flash, block=46, bs=1024, auto=1
+08:45:24.992 (loader): flash, block=47, bs=1024, auto=1
+08:45:24.992 (loader): flash, block=48, bs=1024, auto=1
+08:45:25.010 (loader): flash, block=49, bs=1024, auto=1
+08:45:25.011 (loader): flash, block=50, bs=1024, auto=1
+08:45:25.011 (loader): flash, block=51, bs=1024, auto=1
+08:45:25.023 (reboot 24): status read, retry 3
+08:45:25.023 (reboot 24): Success
+08:45:25.023 (reboot 24): Disconnect
+08:45:25.028 (loader): flash, block=52, bs=1024, auto=1
+08:45:25.029 (loader): flash, block=53, bs=1024, auto=1
+08:45:25.029 (loader): flash, block=54, bs=1024, auto=1
+08:45:25.047 (loader): remote connection 8 closed
+08:45:25.047 (loader): flash, block=55, bs=1024, auto=1
+08:45:25.048 (loader): flash, block=56, bs=1024, auto=1
+08:45:25.048 (loader): flash, block=57, bs=1024, auto=1
+08:45:25.066 (loader): flash, block=58, bs=1024, auto=1
+08:45:25.066 (loader): flash, block=59, bs=1024, auto=1
+08:45:25.066 (loader): flash, block=60, bs=1024, auto=1
+08:45:25.084 (loader): flash, block=61, bs=1024, auto=1
+08:45:25.085 (loader): flash, block=62, bs=1024, auto=1
+08:45:25.085 (loader): flash, block=63, bs=1024, auto=1
+08:45:25.102 (loader): flash, block=64, bs=1024, auto=1
+08:45:25.102 (loader): flash, block=65, bs=1024, auto=1
+08:45:25.103 (loader): flash, block=66, bs=1024, auto=1
+08:45:25.121 (loader): flash, block=67, bs=1024, auto=1
+08:45:25.125 (loader): sending reboot
+08:45:25.125 (loader): begin wait_until_offline
+08:45:25.125 (loader): HID/macos: status: ok
+08:45:25.427 (loader): HID/macos: detach callback: is currently open device
+08:45:25.427 (loader): offline, waited 6
+08:45:25.427 (loader): end operation, total time = 1.215 seconds
+08:45:25.428 (loader): set background IMG_REBOOT_OK
+08:45:25.429 (loader): redraw timer set, image 14 to show for 1200 ms
+08:45:25.493 (loader): HID/macos: number of devices found = 0
+08:45:25.493 (loader): HID/macos: no devices found (empty set)
+08:45:26.630 (loader): redraw, image 9
+08:46:35.888 (post_compile 25): Begin, version=1.58
+08:46:35.889 (loader): remote connection 8 opened
+08:46:35.889 (post_compile 25): Sending command: comment: Teensyduino 1.58 - MACOSX (teensy_post_compile)
+08:46:35.889 (loader): remote cmd from 8: "comment: Teensyduino 1.58 - MACOSX (teensy_post_compile)"
+08:46:35.890 (loader): remote cmd from 8: "status"
+08:46:35.890 (loader): file changed
+08:46:35.903 (loader): File "/Users/owhite/kicad/MESC_brain_board/teensy40/brain/.pio/build/teensy40/firmware.hex", 69632 bytes
+08:46:35.903 (loader): File "firmware.hex". 69632 bytes
+08:46:35.907 (post_compile 25): Status: 1, 1, 0, 8, 0, 0, /Users/owhite/kicad/MESC_brain_board/teensy40/brain/.pio/build/teensy40/, firmware.hex
+08:46:35.907 (post_compile 25): Disconnect
+08:46:35.918 (post_compile 26): Running teensy_reboot: /Users/owhite/.platformio/packages/tool-teensy/teensy_reboot
+08:46:35.918 (loader): remote connection 8 closed
+08:46:35.918 (loader): remote connection 8 opened
+08:46:35.919 (loader): remote connection 8 closed
+08:46:35.923 (reboot 27): Begin, version=1.58
+08:46:35.924 (reboot 27): USB device add callback
+08:46:35.924 (reboot 27):   loc=14600000, vid=16C0, pid=0483, ver=0279, ser=17888890
+08:46:35.924 (reboot 27):   actual serailnum=1788889
+08:46:35.925 (loader): remote connection 8 opened
+08:46:35.925 (reboot 27): USB device remove callback
+08:46:35.925 (reboot 27): Serial add callback
+08:46:35.926 (reboot 27):   name=/dev/cu.usbmodem178888901, loc=14600000, vid=16c0, pid=0483, ver=0279
+08:46:35.935 (reboot 27): Serial remove callback
+08:46:35.946 (reboot 27): HID Manager started
+08:46:35.947 (reboot 27): usb scan found 1 devices
+08:46:35.947 (reboot 27): found Teensy Loader, version 1.58
+08:46:35.947 (reboot 27): Sending command: show:arduino_attempt_reboot
+08:46:35.947 (loader): remote cmd from 8: "show:arduino_attempt_reboot"
+08:46:35.947 (loader): got request to show arduino rebooting message
+08:46:35.948 (reboot 27): Sending command: comment: Teensyduino 1.58 - MACOSX (teensy_reboot)
+08:46:35.948 (loader): remote cmd from 8: "comment: Teensyduino 1.58 - MACOSX (teensy_reboot)"
+08:46:35.948 (loader): remote cmd from 8: "status"
+08:46:35.949 (reboot 27): Status: 1, 1, 0, 8, 0, 0, /Users/owhite/kicad/MESC_brain_board/teensy40/brain/.pio/build/teensy40/, firmware.hex
+08:46:35.949 (reboot 27): do_reset (serial) /dev/cu.usbmodem178888901
+08:46:35.951 (loader): remote cmd from 8: "status"
+08:46:35.951 (reboot 27): Status: 1, 1, 0, 8, 0, 0, /Users/owhite/kicad/MESC_brain_board/teensy40/brain/.pio/build/teensy40/, firmware.hex
+08:46:35.951 (reboot 27): status read, retry 0
+08:46:36.054 (loader): remote cmd from 8: "status"
+08:46:36.054 (reboot 27): Status: 1, 1, 0, 8, 0, 0, /Users/owhite/kicad/MESC_brain_board/teensy40/brain/.pio/build/teensy40/, firmware.hex
+08:46:36.054 (reboot 27): status read, retry 1
+08:46:36.158 (loader): remote cmd from 8: "status"
+08:46:36.158 (reboot 27): Status: 1, 1, 0, 8, 0, 0, /Users/owhite/kicad/MESC_brain_board/teensy40/brain/.pio/build/teensy40/, firmware.hex
+08:46:36.158 (reboot 27): status read, retry 2
+08:46:36.250 (loader): HID/macos: attach callback
+08:46:36.259 (loader): remote cmd from 8: "status"
+08:46:36.259 (loader): HID/macos: ser=001B4BD9
+08:46:36.259 (loader): try to read feature report
+08:46:36.259 (loader): got feature report, size = 384
+08:46:36.259 (loader): 7393CD01 00000000
+08:46:36.259 (loader): secure mode can not be locked: this is Standard Teensy
+08:46:36.259 (loader): encryption is possible on this Teensy, but not yet configured
+08:46:36.259 (loader): but without secure mode locked, encryption will NOT be secure!
+08:46:36.259 (loader): Device came online, code_size = 2031616
+08:46:36.259 (loader): Board is: Teensy 4.0 (IMXRT1062), version 1.08
+08:46:36.266 (loader): File "/Users/owhite/kicad/MESC_brain_board/teensy40/brain/.pio/build/teensy40/firmware.hex", 69632 bytes
+08:46:36.266 (loader): File "firmware.hex". 69632 bytes, 3% used
+08:46:36.278 (loader): set background IMG_ONLINE
+08:46:36.286 (loader): File "/Users/owhite/kicad/MESC_brain_board/teensy40/brain/.pio/build/teensy40/firmware.hex", 69632 bytes
+08:46:36.286 (loader): File "firmware.hex". 69632 bytes, 3% used
+08:46:36.298 (loader): elf appears to be for Teensy 4.0 (IMXRT1062) (2031616 bytes)
+08:46:36.298 (loader): elf binary data matches hex file
+08:46:36.298 (loader): elf file is for Teensy 4.0 (IMXRT1062)
+08:46:36.298 (loader): using hex file
+08:46:36.309 (loader): begin operation
+08:46:36.312 (reboot 27): Status: 1, 1, 1, 9, 0, 1, /Users/owhite/kicad/MESC_brain_board/teensy40/brain/.pio/build/teensy40/, firmware.hex
+08:46:36.316 (loader): flash, block=0, bs=1024, auto=1
+08:46:36.317 (loader): flash, block=1, bs=1024, auto=1
+08:46:36.317 (loader): flash, block=2, bs=1024, auto=1
+08:46:36.812 (loader): remote cmd from 8: "status"
+08:46:36.812 (reboot 27): Status: 1, 1, 1, 9, 0, 1, /Users/owhite/kicad/MESC_brain_board/teensy40/brain/.pio/build/teensy40/, firmware.hex
+08:46:36.812 (loader): flash, block=3, bs=1024, auto=1
+08:46:36.813 (loader): flash, block=4, bs=1024, auto=1
+08:46:36.813 (loader): flash, block=5, bs=1024, auto=1
+08:46:36.814 (loader): flash, block=6, bs=1024, auto=1
+08:46:36.814 (loader): flash, block=7, bs=1024, auto=1
+08:46:36.833 (loader): flash, block=8, bs=1024, auto=1
+08:46:36.833 (loader): flash, block=9, bs=1024, auto=1
+08:46:36.834 (loader): flash, block=10, bs=1024, auto=1
+08:46:36.851 (loader): flash, block=11, bs=1024, auto=1
+08:46:36.852 (loader): flash, block=12, bs=1024, auto=1
+08:46:36.853 (loader): flash, block=13, bs=1024, auto=1
+08:46:36.872 (loader): remote cmd from 8: "status"
+08:46:36.872 (reboot 27): Status: 1, 1, 1, 9, 0, 1, /Users/owhite/kicad/MESC_brain_board/teensy40/brain/.pio/build/teensy40/, firmware.hex
+08:46:36.872 (loader): flash, block=14, bs=1024, auto=1
+08:46:36.873 (loader): flash, block=15, bs=1024, auto=1
+08:46:36.874 (loader): flash, block=16, bs=1024, auto=1
+08:46:36.893 (loader): flash, block=17, bs=1024, auto=1
+08:46:36.893 (loader): flash, block=18, bs=1024, auto=1
+08:46:36.894 (loader): flash, block=19, bs=1024, auto=1
+08:46:36.911 (loader): flash, block=20, bs=1024, auto=1
+08:46:36.912 (loader): flash, block=21, bs=1024, auto=1
+08:46:36.912 (loader): flash, block=22, bs=1024, auto=1
+08:46:36.929 (loader): remote cmd from 8: "status"
+08:46:36.929 (reboot 27): Status: 1, 1, 1, 9, 0, 1, /Users/owhite/kicad/MESC_brain_board/teensy40/brain/.pio/build/teensy40/, firmware.hex
+08:46:36.929 (loader): flash, block=23, bs=1024, auto=1
+08:46:36.930 (loader): flash, block=24, bs=1024, auto=1
+08:46:36.930 (loader): flash, block=25, bs=1024, auto=1
+08:46:36.949 (loader): flash, block=26, bs=1024, auto=1
+08:46:36.949 (loader): flash, block=27, bs=1024, auto=1
+08:46:36.950 (loader): flash, block=28, bs=1024, auto=1
+08:46:36.969 (loader): flash, block=29, bs=1024, auto=1
+08:46:36.970 (loader): flash, block=30, bs=1024, auto=1
+08:46:36.971 (loader): flash, block=31, bs=1024, auto=1
+08:46:36.990 (loader): remote cmd from 8: "status"
+08:46:36.990 (reboot 27): Status: 1, 1, 1, 9, 0, 1, /Users/owhite/kicad/MESC_brain_board/teensy40/brain/.pio/build/teensy40/, firmware.hex
+08:46:36.990 (loader): flash, block=32, bs=1024, auto=1
+08:46:36.991 (loader): flash, block=33, bs=1024, auto=1
+08:46:36.991 (loader): flash, block=34, bs=1024, auto=1
+08:46:37.009 (loader): flash, block=35, bs=1024, auto=1
+08:46:37.010 (loader): flash, block=36, bs=1024, auto=1
+08:46:37.011 (loader): flash, block=37, bs=1024, auto=1
+08:46:37.028 (loader): flash, block=38, bs=1024, auto=1
+08:46:37.028 (loader): flash, block=39, bs=1024, auto=1
+08:46:37.029 (loader): flash, block=40, bs=1024, auto=1
+08:46:37.046 (loader): remote cmd from 8: "status"
+08:46:37.046 (reboot 27): Status: 1, 1, 1, 9, 0, 1, /Users/owhite/kicad/MESC_brain_board/teensy40/brain/.pio/build/teensy40/, firmware.hex
+08:46:37.046 (loader): flash, block=41, bs=1024, auto=1
+08:46:37.047 (loader): flash, block=42, bs=1024, auto=1
+08:46:37.047 (loader): flash, block=43, bs=1024, auto=1
+08:46:37.066 (loader): flash, block=44, bs=1024, auto=1
+08:46:37.066 (loader): flash, block=45, bs=1024, auto=1
+08:46:37.067 (loader): flash, block=46, bs=1024, auto=1
+08:46:37.085 (loader): flash, block=47, bs=1024, auto=1
+08:46:37.086 (loader): flash, block=48, bs=1024, auto=1
+08:46:37.087 (loader): flash, block=49, bs=1024, auto=1
+08:46:37.098 (reboot 27): status read, retry 3
+08:46:37.098 (reboot 27): Success
+08:46:37.098 (reboot 27): Disconnect
+08:46:37.107 (loader): flash, block=50, bs=1024, auto=1
+08:46:37.107 (loader): flash, block=51, bs=1024, auto=1
+08:46:37.108 (loader): flash, block=52, bs=1024, auto=1
+08:46:37.125 (loader): remote connection 8 closed
+08:46:37.125 (loader): flash, block=53, bs=1024, auto=1
+08:46:37.126 (loader): flash, block=54, bs=1024, auto=1
+08:46:37.126 (loader): flash, block=55, bs=1024, auto=1
+08:46:37.144 (loader): flash, block=56, bs=1024, auto=1
+08:46:37.144 (loader): flash, block=57, bs=1024, auto=1
+08:46:37.145 (loader): flash, block=58, bs=1024, auto=1
+08:46:37.162 (loader): flash, block=59, bs=1024, auto=1
+08:46:37.162 (loader): flash, block=60, bs=1024, auto=1
+08:46:37.162 (loader): flash, block=61, bs=1024, auto=1
+08:46:37.180 (loader): flash, block=62, bs=1024, auto=1
+08:46:37.181 (loader): flash, block=63, bs=1024, auto=1
+08:46:37.181 (loader): flash, block=64, bs=1024, auto=1
+08:46:37.199 (loader): flash, block=65, bs=1024, auto=1
+08:46:37.199 (loader): flash, block=66, bs=1024, auto=1
+08:46:37.200 (loader): flash, block=67, bs=1024, auto=1
+08:46:37.220 (loader): sending reboot
+08:46:37.220 (loader): begin wait_until_offline
+08:46:37.220 (loader): HID/macos: status: ok
+08:46:37.577 (loader): HID/macos: detach callback: is currently open device
+08:46:37.577 (loader): offline, waited 7
+08:46:37.577 (loader): end operation, total time = 1.268 seconds
+08:46:37.578 (loader): set background IMG_REBOOT_OK
+08:46:37.579 (loader): redraw timer set, image 14 to show for 1200 ms
+08:46:37.741 (loader): HID/macos: number of devices found = 0
+08:46:37.741 (loader): HID/macos: no devices found (empty set)
+08:46:38.780 (loader): redraw, image 9
+18:03:50.024 (post_compile 28): Begin, version=1.58
+18:03:50.024 (loader): remote connection 8 opened
+18:03:50.024 (post_compile 28): Sending command: comment: Teensyduino 1.58 - MACOSX (teensy_post_compile)
+18:03:50.025 (loader): remote cmd from 8: "comment: Teensyduino 1.58 - MACOSX (teensy_post_compile)"
+18:03:50.025 (loader): remote cmd from 8: "status"
+18:03:50.025 (loader): file changed
+18:03:50.033 (loader): File "/Users/owhite/kicad/MESC_brain_board/teensy40/brain/.pio/build/teensy40/firmware.hex", 67584 bytes
+18:03:50.033 (loader): File "firmware.hex". 67584 bytes
+18:03:50.036 (post_compile 28): Status: 1, 1, 0, 9, 0, 0, /Users/owhite/kicad/MESC_brain_board/teensy40/brain/.pio/build/teensy40/, firmware.hex
+18:03:50.036 (post_compile 28): Disconnect
+18:03:50.047 (post_compile 29): Running teensy_reboot: /Users/owhite/.platformio/packages/tool-teensy/teensy_reboot
+18:03:50.047 (loader): remote connection 8 closed
+18:03:50.047 (loader): remote connection 8 opened
+18:03:50.048 (loader): remote connection 8 closed
+18:03:50.053 (reboot 30): Begin, version=1.58
+18:03:50.053 (reboot 30): USB device add callback
+18:03:50.054 (reboot 30):   loc=14600000, vid=16C0, pid=0483, ver=0279, ser=17888890
+18:03:50.054 (reboot 30):   actual serailnum=1788889
+18:03:50.055 (loader): remote connection 8 opened
+18:03:50.055 (reboot 30): USB device remove callback
+18:03:50.055 (reboot 30): Serial add callback
+18:03:50.055 (reboot 30):   name=/dev/cu.usbmodem178888901, loc=14600000, vid=16c0, pid=0483, ver=0279
+18:03:50.065 (reboot 30): Serial remove callback
+18:03:50.081 (reboot 30): HID Manager started
+18:03:50.082 (reboot 30): usb scan found 1 devices
+18:03:50.082 (reboot 30): found Teensy Loader, version 1.58
+18:03:50.082 (reboot 30): Sending command: show:arduino_attempt_reboot
+18:03:50.082 (loader): remote cmd from 8: "show:arduino_attempt_reboot"
+18:03:50.082 (loader): got request to show arduino rebooting message
+18:03:50.083 (reboot 30): Sending command: comment: Teensyduino 1.58 - MACOSX (teensy_reboot)
+18:03:50.083 (loader): remote cmd from 8: "comment: Teensyduino 1.58 - MACOSX (teensy_reboot)"
+18:03:50.084 (loader): remote cmd from 8: "status"
+18:03:50.084 (reboot 30): Status: 1, 1, 0, 9, 0, 0, /Users/owhite/kicad/MESC_brain_board/teensy40/brain/.pio/build/teensy40/, firmware.hex
+18:03:50.084 (reboot 30): do_reset (serial) /dev/cu.usbmodem178888901
+18:03:50.086 (loader): remote cmd from 8: "status"
+18:03:50.086 (reboot 30): Status: 1, 1, 0, 9, 0, 0, /Users/owhite/kicad/MESC_brain_board/teensy40/brain/.pio/build/teensy40/, firmware.hex
+18:03:50.086 (reboot 30): status read, retry 0
+18:03:50.191 (loader): remote cmd from 8: "status"
+18:03:50.192 (reboot 30): Status: 1, 1, 0, 9, 0, 0, /Users/owhite/kicad/MESC_brain_board/teensy40/brain/.pio/build/teensy40/, firmware.hex
+18:03:50.192 (reboot 30): status read, retry 1
+18:03:50.295 (loader): remote cmd from 8: "status"
+18:03:50.295 (reboot 30): Status: 1, 1, 0, 9, 0, 0, /Users/owhite/kicad/MESC_brain_board/teensy40/brain/.pio/build/teensy40/, firmware.hex
+18:03:50.295 (reboot 30): status read, retry 2
+18:03:50.380 (loader): HID/macos: attach callback
+18:03:50.396 (loader): remote cmd from 8: "status"
+18:03:50.396 (loader): HID/macos: ser=001B4BD9
+18:03:50.396 (loader): try to read feature report
+18:03:50.397 (loader): got feature report, size = 384
+18:03:50.397 (loader): 7393CD01 00000000
+18:03:50.397 (loader): secure mode can not be locked: this is Standard Teensy
+18:03:50.397 (loader): encryption is possible on this Teensy, but not yet configured
+18:03:50.397 (loader): but without secure mode locked, encryption will NOT be secure!
+18:03:50.397 (loader): Device came online, code_size = 2031616
+18:03:50.397 (loader): Board is: Teensy 4.0 (IMXRT1062), version 1.08
+18:03:50.404 (loader): File "/Users/owhite/kicad/MESC_brain_board/teensy40/brain/.pio/build/teensy40/firmware.hex", 67584 bytes
+18:03:50.404 (loader): File "firmware.hex". 67584 bytes, 3% used
+18:03:50.415 (loader): set background IMG_ONLINE
+18:03:50.423 (loader): File "/Users/owhite/kicad/MESC_brain_board/teensy40/brain/.pio/build/teensy40/firmware.hex", 67584 bytes
+18:03:50.423 (loader): File "firmware.hex". 67584 bytes, 3% used
+18:03:50.435 (loader): elf appears to be for Teensy 4.0 (IMXRT1062) (2031616 bytes)
+18:03:50.435 (loader): elf binary data matches hex file
+18:03:50.435 (loader): elf file is for Teensy 4.0 (IMXRT1062)
+18:03:50.435 (loader): using hex file
+18:03:50.446 (loader): begin operation
+18:03:50.449 (reboot 30): Status: 1, 1, 1, 10, 0, 1, /Users/owhite/kicad/MESC_brain_board/teensy40/brain/.pio/build/teensy40/, firmware.hex
+18:03:50.453 (loader): flash, block=0, bs=1024, auto=1
+18:03:50.454 (loader): flash, block=1, bs=1024, auto=1
+18:03:50.455 (loader): flash, block=2, bs=1024, auto=1
+18:03:50.987 (loader): remote cmd from 8: "status"
+18:03:50.987 (reboot 30): Status: 1, 1, 1, 10, 0, 1, /Users/owhite/kicad/MESC_brain_board/teensy40/brain/.pio/build/teensy40/, firmware.hex
+18:03:50.987 (loader): flash, block=3, bs=1024, auto=1
+18:03:50.989 (loader): flash, block=4, bs=1024, auto=1
+18:03:50.989 (loader): flash, block=5, bs=1024, auto=1
+18:03:50.990 (loader): flash, block=6, bs=1024, auto=1
+18:03:50.990 (loader): flash, block=7, bs=1024, auto=1
+18:03:51.009 (loader): flash, block=8, bs=1024, auto=1
+18:03:51.010 (loader): flash, block=9, bs=1024, auto=1
+18:03:51.011 (loader): flash, block=10, bs=1024, auto=1
+18:03:51.028 (loader): flash, block=11, bs=1024, auto=1
+18:03:51.029 (loader): flash, block=12, bs=1024, auto=1
+18:03:51.029 (loader): flash, block=13, bs=1024, auto=1
+18:03:51.047 (loader): remote cmd from 8: "status"
+18:03:51.047 (reboot 30): Status: 1, 1, 1, 10, 0, 1, /Users/owhite/kicad/MESC_brain_board/teensy40/brain/.pio/build/teensy40/, firmware.hex
+18:03:51.047 (loader): flash, block=14, bs=1024, auto=1
+18:03:51.048 (loader): flash, block=15, bs=1024, auto=1
+18:03:51.048 (loader): flash, block=16, bs=1024, auto=1
+18:03:51.066 (loader): flash, block=17, bs=1024, auto=1
+18:03:51.066 (loader): flash, block=18, bs=1024, auto=1
+18:03:51.067 (loader): flash, block=19, bs=1024, auto=1
+18:03:51.083 (loader): flash, block=20, bs=1024, auto=1
+18:03:51.084 (loader): flash, block=21, bs=1024, auto=1
+18:03:51.084 (loader): flash, block=22, bs=1024, auto=1
+18:03:51.103 (loader): remote cmd from 8: "status"
+18:03:51.103 (reboot 30): Status: 1, 1, 1, 10, 0, 1, /Users/owhite/kicad/MESC_brain_board/teensy40/brain/.pio/build/teensy40/, firmware.hex
+18:03:51.104 (loader): flash, block=23, bs=1024, auto=1
+18:03:51.105 (loader): flash, block=24, bs=1024, auto=1
+18:03:51.106 (loader): flash, block=25, bs=1024, auto=1
+18:03:51.106 (loader): flash, block=26, bs=1024, auto=1
+18:03:51.124 (loader): flash, block=27, bs=1024, auto=1
+18:03:51.125 (loader): flash, block=28, bs=1024, auto=1
+18:03:51.125 (loader): flash, block=29, bs=1024, auto=1
+18:03:51.144 (loader): flash, block=30, bs=1024, auto=1
+18:03:51.145 (loader): flash, block=31, bs=1024, auto=1
+18:03:51.146 (loader): flash, block=32, bs=1024, auto=1
+18:03:51.163 (loader): remote cmd from 8: "status"
+18:03:51.164 (reboot 30): Status: 1, 1, 1, 10, 0, 1, /Users/owhite/kicad/MESC_brain_board/teensy40/brain/.pio/build/teensy40/, firmware.hex
+18:03:51.164 (loader): flash, block=33, bs=1024, auto=1
+18:03:51.164 (loader): flash, block=34, bs=1024, auto=1
+18:03:51.165 (loader): flash, block=35, bs=1024, auto=1
+18:03:51.182 (loader): flash, block=36, bs=1024, auto=1
+18:03:51.183 (loader): flash, block=37, bs=1024, auto=1
+18:03:51.183 (loader): flash, block=38, bs=1024, auto=1
+18:03:51.202 (loader): flash, block=39, bs=1024, auto=1
+18:03:51.203 (loader): flash, block=40, bs=1024, auto=1
+18:03:51.203 (loader): flash, block=41, bs=1024, auto=1
+18:03:51.222 (loader): remote cmd from 8: "status"
+18:03:51.222 (reboot 30): Status: 1, 1, 1, 10, 0, 1, /Users/owhite/kicad/MESC_brain_board/teensy40/brain/.pio/build/teensy40/, firmware.hex
+18:03:51.222 (loader): flash, block=42, bs=1024, auto=1
+18:03:51.223 (loader): flash, block=43, bs=1024, auto=1
+18:03:51.223 (loader): flash, block=44, bs=1024, auto=1
+18:03:51.242 (loader): flash, block=45, bs=1024, auto=1
+18:03:51.243 (loader): flash, block=46, bs=1024, auto=1
+18:03:51.244 (loader): flash, block=47, bs=1024, auto=1
+18:03:51.262 (loader): flash, block=48, bs=1024, auto=1
+18:03:51.263 (loader): flash, block=49, bs=1024, auto=1
+18:03:51.263 (loader): flash, block=50, bs=1024, auto=1
+18:03:51.275 (reboot 30): status read, retry 3
+18:03:51.275 (reboot 30): Success
+18:03:51.275 (reboot 30): Disconnect
+18:03:51.281 (loader): flash, block=51, bs=1024, auto=1
+18:03:51.281 (loader): flash, block=52, bs=1024, auto=1
+18:03:51.282 (loader): flash, block=53, bs=1024, auto=1
+18:03:51.300 (loader): remote connection 8 closed
+18:03:51.300 (loader): flash, block=54, bs=1024, auto=1
+18:03:51.300 (loader): flash, block=55, bs=1024, auto=1
+18:03:51.301 (loader): flash, block=56, bs=1024, auto=1
+18:03:51.318 (loader): flash, block=57, bs=1024, auto=1
+18:03:51.319 (loader): flash, block=58, bs=1024, auto=1
+18:03:51.319 (loader): flash, block=59, bs=1024, auto=1
+18:03:51.337 (loader): flash, block=60, bs=1024, auto=1
+18:03:51.337 (loader): flash, block=61, bs=1024, auto=1
+18:03:51.338 (loader): flash, block=62, bs=1024, auto=1
+18:03:51.355 (loader): flash, block=63, bs=1024, auto=1
+18:03:51.356 (loader): flash, block=64, bs=1024, auto=1
+18:03:51.356 (loader): flash, block=65, bs=1024, auto=1
+18:03:51.376 (loader): sending reboot
+18:03:51.377 (loader): begin wait_until_offline
+18:03:51.377 (loader): HID/macos: status: ok
+18:03:51.680 (loader): HID/macos: detach callback: is currently open device
+18:03:51.680 (loader): offline, waited 6
+18:03:51.680 (loader): end operation, total time = 1.234 seconds
+18:03:51.681 (loader): set background IMG_REBOOT_OK
+18:03:51.682 (loader): redraw timer set, image 14 to show for 1200 ms
+18:03:51.853 (loader): HID/macos: number of devices found = 0
+18:03:51.853 (loader): HID/macos: no devices found (empty set)
+18:03:52.883 (loader): redraw, image 9
+18:14:37.825 (loader): file changed
+19:11:11.138 (post_compile 31): Begin, version=1.58
+19:11:11.138 (loader): remote connection 8 opened
+19:11:11.138 (post_compile 31): Sending command: comment: Teensyduino 1.58 - MACOSX (teensy_post_compile)
+19:11:11.138 (loader): remote cmd from 8: "comment: Teensyduino 1.58 - MACOSX (teensy_post_compile)"
+19:11:11.138 (loader): remote cmd from 8: "status"
+19:11:11.138 (loader): file changed
+19:11:11.149 (loader): File "/Users/owhite/kicad/MESC_brain_board/teensy40/brain/.pio/build/teensy40/firmware.hex", 69632 bytes
+19:11:11.149 (loader): File "firmware.hex". 69632 bytes
+19:11:11.152 (post_compile 31): Status: 1, 1, 0, 10, 0, 0, /Users/owhite/kicad/MESC_brain_board/teensy40/brain/.pio/build/teensy40/, firmware.hex
+19:11:11.152 (post_compile 31): Disconnect
+19:11:11.163 (post_compile 32): Running teensy_reboot: /Users/owhite/.platformio/packages/tool-teensy/teensy_reboot
+19:11:11.163 (loader): remote connection 8 closed
+19:11:11.163 (loader): remote connection 8 opened
+19:11:11.164 (loader): remote connection 8 closed
+19:11:11.170 (reboot 33): Begin, version=1.58
+19:11:11.170 (reboot 33): USB device add callback
+19:11:11.171 (reboot 33):   loc=14600000, vid=16C0, pid=0483, ver=0279, ser=17888890
+19:11:11.171 (reboot 33):   actual serailnum=1788889
+19:11:11.171 (loader): remote connection 8 opened
+19:11:11.172 (reboot 33): USB device remove callback
+19:11:11.172 (reboot 33): Serial add callback
+19:11:11.172 (reboot 33):   name=/dev/cu.usbmodem178888901, loc=14600000, vid=16c0, pid=0483, ver=0279
+19:11:11.182 (reboot 33): Serial remove callback
+19:11:11.193 (reboot 33): HID Manager started
+19:11:11.194 (reboot 33): usb scan found 1 devices
+19:11:11.194 (reboot 33): found Teensy Loader, version 1.58
+19:11:11.194 (reboot 33): Sending command: show:arduino_attempt_reboot
+19:11:11.194 (loader): remote cmd from 8: "show:arduino_attempt_reboot"
+19:11:11.194 (loader): got request to show arduino rebooting message
+19:11:11.195 (reboot 33): Sending command: comment: Teensyduino 1.58 - MACOSX (teensy_reboot)
+19:11:11.196 (loader): remote cmd from 8: "comment: Teensyduino 1.58 - MACOSX (teensy_reboot)"
+19:11:11.196 (loader): remote cmd from 8: "status"
+19:11:11.196 (reboot 33): Status: 1, 1, 0, 10, 0, 0, /Users/owhite/kicad/MESC_brain_board/teensy40/brain/.pio/build/teensy40/, firmware.hex
+19:11:11.196 (reboot 33): do_reset (serial) /dev/cu.usbmodem178888901
+19:11:11.199 (loader): remote cmd from 8: "status"
+19:11:11.199 (reboot 33): Status: 1, 1, 0, 10, 0, 0, /Users/owhite/kicad/MESC_brain_board/teensy40/brain/.pio/build/teensy40/, firmware.hex
+19:11:11.199 (reboot 33): status read, retry 0
+19:11:11.302 (loader): remote cmd from 8: "status"
+19:11:11.303 (reboot 33): Status: 1, 1, 0, 10, 0, 0, /Users/owhite/kicad/MESC_brain_board/teensy40/brain/.pio/build/teensy40/, firmware.hex
+19:11:11.303 (reboot 33): status read, retry 1
+19:11:11.405 (loader): remote cmd from 8: "status"
+19:11:11.406 (reboot 33): Status: 1, 1, 0, 10, 0, 0, /Users/owhite/kicad/MESC_brain_board/teensy40/brain/.pio/build/teensy40/, firmware.hex
+19:11:11.406 (reboot 33): status read, retry 2
+19:11:11.500 (loader): HID/macos: attach callback
+19:11:11.510 (loader): remote cmd from 8: "status"
+19:11:11.510 (loader): HID/macos: ser=001B4BD9
+19:11:11.510 (loader): try to read feature report
+19:11:11.510 (loader): got feature report, size = 384
+19:11:11.510 (loader): 7393CD01 00000000
+19:11:11.510 (loader): secure mode can not be locked: this is Standard Teensy
+19:11:11.510 (loader): encryption is possible on this Teensy, but not yet configured
+19:11:11.510 (loader): but without secure mode locked, encryption will NOT be secure!
+19:11:11.510 (loader): Device came online, code_size = 2031616
+19:11:11.510 (loader): Board is: Teensy 4.0 (IMXRT1062), version 1.08
+19:11:11.518 (loader): File "/Users/owhite/kicad/MESC_brain_board/teensy40/brain/.pio/build/teensy40/firmware.hex", 69632 bytes
+19:11:11.518 (loader): File "firmware.hex". 69632 bytes, 3% used
+19:11:11.530 (loader): set background IMG_ONLINE
+19:11:11.538 (loader): File "/Users/owhite/kicad/MESC_brain_board/teensy40/brain/.pio/build/teensy40/firmware.hex", 69632 bytes
+19:11:11.538 (loader): File "firmware.hex". 69632 bytes, 3% used
+19:11:11.550 (loader): elf appears to be for Teensy 4.0 (IMXRT1062) (2031616 bytes)
+19:11:11.550 (loader): elf binary data matches hex file
+19:11:11.550 (loader): elf file is for Teensy 4.0 (IMXRT1062)
+19:11:11.550 (loader): using hex file
+19:11:11.561 (loader): begin operation
+19:11:11.564 (reboot 33): Status: 1, 1, 1, 11, 0, 1, /Users/owhite/kicad/MESC_brain_board/teensy40/brain/.pio/build/teensy40/, firmware.hex
+19:11:11.568 (loader): flash, block=0, bs=1024, auto=1
+19:11:11.569 (loader): flash, block=1, bs=1024, auto=1
+19:11:11.569 (loader): flash, block=2, bs=1024, auto=1
+19:11:12.096 (loader): remote cmd from 8: "status"
+19:11:12.096 (reboot 33): Status: 1, 1, 1, 11, 0, 1, /Users/owhite/kicad/MESC_brain_board/teensy40/brain/.pio/build/teensy40/, firmware.hex
+19:11:12.097 (loader): flash, block=3, bs=1024, auto=1
+19:11:12.097 (loader): flash, block=4, bs=1024, auto=1
+19:11:12.098 (loader): flash, block=5, bs=1024, auto=1
+19:11:12.098 (loader): flash, block=6, bs=1024, auto=1
+19:11:12.098 (loader): flash, block=7, bs=1024, auto=1
+19:11:12.115 (loader): flash, block=8, bs=1024, auto=1
+19:11:12.116 (loader): flash, block=9, bs=1024, auto=1
+19:11:12.116 (loader): flash, block=10, bs=1024, auto=1
+19:11:12.133 (loader): flash, block=11, bs=1024, auto=1
+19:11:12.133 (loader): flash, block=12, bs=1024, auto=1
+19:11:12.134 (loader): flash, block=13, bs=1024, auto=1
+19:11:12.151 (loader): remote cmd from 8: "status"
+19:11:12.151 (reboot 33): Status: 1, 1, 1, 11, 0, 1, /Users/owhite/kicad/MESC_brain_board/teensy40/brain/.pio/build/teensy40/, firmware.hex
+19:11:12.151 (loader): flash, block=14, bs=1024, auto=1
+19:11:12.152 (loader): flash, block=15, bs=1024, auto=1
+19:11:12.152 (loader): flash, block=16, bs=1024, auto=1
+19:11:12.170 (loader): flash, block=17, bs=1024, auto=1
+19:11:12.171 (loader): flash, block=18, bs=1024, auto=1
+19:11:12.171 (loader): flash, block=19, bs=1024, auto=1
+19:11:12.188 (loader): flash, block=20, bs=1024, auto=1
+19:11:12.189 (loader): flash, block=21, bs=1024, auto=1
+19:11:12.189 (loader): flash, block=22, bs=1024, auto=1
+19:11:12.205 (loader): remote cmd from 8: "status"
+19:11:12.205 (reboot 33): Status: 1, 1, 1, 11, 0, 1, /Users/owhite/kicad/MESC_brain_board/teensy40/brain/.pio/build/teensy40/, firmware.hex
+19:11:12.206 (loader): flash, block=23, bs=1024, auto=1
+19:11:12.206 (loader): flash, block=24, bs=1024, auto=1
+19:11:12.207 (loader): flash, block=25, bs=1024, auto=1
+19:11:12.223 (loader): flash, block=26, bs=1024, auto=1
+19:11:12.224 (loader): flash, block=27, bs=1024, auto=1
+19:11:12.224 (loader): flash, block=28, bs=1024, auto=1
+19:11:12.241 (loader): flash, block=29, bs=1024, auto=1
+19:11:12.241 (loader): flash, block=30, bs=1024, auto=1
+19:11:12.259 (loader): remote cmd from 8: "status"
+19:11:12.259 (reboot 33): Status: 1, 1, 1, 11, 0, 1, /Users/owhite/kicad/MESC_brain_board/teensy40/brain/.pio/build/teensy40/, firmware.hex
+19:11:12.259 (loader): flash, block=31, bs=1024, auto=1
+19:11:12.260 (loader): flash, block=32, bs=1024, auto=1
+19:11:12.260 (loader): flash, block=33, bs=1024, auto=1
+19:11:12.284 (loader): flash, block=34, bs=1024, auto=1
+19:11:12.284 (loader): flash, block=35, bs=1024, auto=1
+19:11:12.285 (loader): flash, block=36, bs=1024, auto=1
+19:11:12.301 (loader): flash, block=37, bs=1024, auto=1
+19:11:12.302 (loader): flash, block=38, bs=1024, auto=1
+19:11:12.302 (loader): flash, block=39, bs=1024, auto=1
+19:11:12.319 (loader): remote cmd from 8: "status"
+19:11:12.319 (reboot 33): Status: 1, 1, 1, 11, 0, 1, /Users/owhite/kicad/MESC_brain_board/teensy40/brain/.pio/build/teensy40/, firmware.hex
+19:11:12.319 (loader): flash, block=40, bs=1024, auto=1
+19:11:12.320 (loader): flash, block=41, bs=1024, auto=1
+19:11:12.320 (loader): flash, block=42, bs=1024, auto=1
+19:11:12.338 (loader): flash, block=43, bs=1024, auto=1
+19:11:12.339 (loader): flash, block=44, bs=1024, auto=1
+19:11:12.340 (loader): flash, block=45, bs=1024, auto=1
+19:11:12.356 (loader): flash, block=46, bs=1024, auto=1
+19:11:12.357 (loader): flash, block=47, bs=1024, auto=1
+19:11:12.357 (loader): flash, block=48, bs=1024, auto=1
+19:11:12.373 (reboot 33): status read, retry 3
+19:11:12.373 (reboot 33): Success
+19:11:12.373 (reboot 33): Disconnect
+19:11:12.374 (loader): flash, block=49, bs=1024, auto=1
+19:11:12.374 (loader): flash, block=50, bs=1024, auto=1
+19:11:12.375 (loader): flash, block=51, bs=1024, auto=1
+19:11:12.391 (loader): remote connection 8 closed
+19:11:12.391 (loader): flash, block=52, bs=1024, auto=1
+19:11:12.392 (loader): flash, block=53, bs=1024, auto=1
+19:11:12.392 (loader): flash, block=54, bs=1024, auto=1
+19:11:12.409 (loader): flash, block=55, bs=1024, auto=1
+19:11:12.409 (loader): flash, block=56, bs=1024, auto=1
+19:11:12.410 (loader): flash, block=57, bs=1024, auto=1
+19:11:12.427 (loader): flash, block=58, bs=1024, auto=1
+19:11:12.428 (loader): flash, block=59, bs=1024, auto=1
+19:11:12.428 (loader): flash, block=60, bs=1024, auto=1
+19:11:12.445 (loader): flash, block=61, bs=1024, auto=1
+19:11:12.445 (loader): flash, block=62, bs=1024, auto=1
+19:11:12.446 (loader): flash, block=63, bs=1024, auto=1
+19:11:12.463 (loader): flash, block=64, bs=1024, auto=1
+19:11:12.463 (loader): flash, block=65, bs=1024, auto=1
+19:11:12.464 (loader): flash, block=66, bs=1024, auto=1
+19:11:12.481 (loader): flash, block=67, bs=1024, auto=1
+19:11:12.484 (loader): sending reboot
+19:11:12.484 (loader): begin wait_until_offline
+19:11:12.484 (loader): HID/macos: status: ok
+19:11:12.786 (loader): HID/macos: detach callback: is currently open device
+19:11:12.786 (loader): offline, waited 6
+19:11:12.786 (loader): end operation, total time = 1.225 seconds
+19:11:12.787 (loader): set background IMG_REBOOT_OK
+19:11:12.788 (loader): redraw timer set, image 14 to show for 1200 ms
+19:11:12.912 (loader): HID/macos: number of devices found = 0
+19:11:12.912 (loader): HID/macos: no devices found (empty set)
+19:11:13.988 (loader): redraw, image 9
+20:15:14.527 (loader): file changed
+20:15:14.558 (post_compile 34): Begin, version=1.58
+20:15:14.558 (loader): remote connection 8 opened
+20:15:14.558 (post_compile 34): Sending command: comment: Teensyduino 1.58 - MACOSX (teensy_post_compile)
+20:15:14.559 (loader): remote cmd from 8: "comment: Teensyduino 1.58 - MACOSX (teensy_post_compile)"
+20:15:14.559 (loader): remote cmd from 8: "status"
+20:15:14.559 (loader): file changed
+20:15:14.569 (loader): File "/Users/owhite/kicad/MESC_brain_board/teensy40/brain/.pio/build/teensy40/firmware.hex", 69632 bytes
+20:15:14.569 (loader): File "firmware.hex". 69632 bytes
+20:15:14.571 (post_compile 34): Status: 1, 1, 0, 11, 0, 0, /Users/owhite/kicad/MESC_brain_board/teensy40/brain/.pio/build/teensy40/, firmware.hex
+20:15:14.571 (post_compile 34): Disconnect
+20:15:14.583 (post_compile 35): Running teensy_reboot: /Users/owhite/.platformio/packages/tool-teensy/teensy_reboot
+20:15:14.583 (loader): remote connection 8 closed
+20:15:14.583 (loader): remote connection 8 opened
+20:15:14.584 (loader): remote connection 8 closed
+20:15:14.593 (reboot 36): Begin, version=1.58
+20:15:14.593 (reboot 36): USB device add callback
+20:15:14.593 (reboot 36):   loc=14600000, vid=16C0, pid=0483, ver=0279, ser=17888890
+20:15:14.593 (reboot 36):   actual serailnum=1788889
+20:15:14.595 (loader): remote connection 8 opened
+20:15:14.595 (reboot 36): USB device remove callback
+20:15:14.595 (reboot 36): Serial add callback
+20:15:14.595 (reboot 36):   name=/dev/cu.usbmodem178888901, loc=14600000, vid=16c0, pid=0483, ver=0279
+20:15:14.606 (reboot 36): Serial remove callback
+20:15:14.619 (reboot 36): HID Manager started
+20:15:14.620 (reboot 36): usb scan found 1 devices
+20:15:14.620 (reboot 36): found Teensy Loader, version 1.58
+20:15:14.620 (reboot 36): Sending command: show:arduino_attempt_reboot
+20:15:14.620 (loader): remote cmd from 8: "show:arduino_attempt_reboot"
+20:15:14.620 (loader): got request to show arduino rebooting message
+20:15:14.621 (reboot 36): Sending command: comment: Teensyduino 1.58 - MACOSX (teensy_reboot)
+20:15:14.621 (loader): remote cmd from 8: "comment: Teensyduino 1.58 - MACOSX (teensy_reboot)"
+20:15:14.622 (loader): remote cmd from 8: "status"
+20:15:14.622 (reboot 36): Status: 1, 1, 0, 11, 0, 0, /Users/owhite/kicad/MESC_brain_board/teensy40/brain/.pio/build/teensy40/, firmware.hex
+20:15:14.622 (reboot 36): do_reset (serial) /dev/cu.usbmodem178888901
+20:15:14.624 (loader): remote cmd from 8: "status"
+20:15:14.624 (reboot 36): Status: 1, 1, 0, 11, 0, 0, /Users/owhite/kicad/MESC_brain_board/teensy40/brain/.pio/build/teensy40/, firmware.hex
+20:15:14.624 (reboot 36): status read, retry 0
+20:15:14.727 (loader): remote cmd from 8: "status"
+20:15:14.728 (reboot 36): Status: 1, 1, 0, 11, 0, 0, /Users/owhite/kicad/MESC_brain_board/teensy40/brain/.pio/build/teensy40/, firmware.hex
+20:15:14.728 (reboot 36): status read, retry 1
+20:15:14.829 (loader): remote cmd from 8: "status"
+20:15:14.829 (reboot 36): Status: 1, 1, 0, 11, 0, 0, /Users/owhite/kicad/MESC_brain_board/teensy40/brain/.pio/build/teensy40/, firmware.hex
+20:15:14.829 (reboot 36): status read, retry 2
+20:15:14.927 (loader): HID/macos: attach callback
+20:15:14.931 (loader): remote cmd from 8: "status"
+20:15:14.931 (loader): HID/macos: ser=001B4BD9
+20:15:14.931 (loader): try to read feature report
+20:15:14.932 (loader): got feature report, size = 384
+20:15:14.932 (loader): 7393CD01 00000000
+20:15:14.932 (loader): secure mode can not be locked: this is Standard Teensy
+20:15:14.932 (loader): encryption is possible on this Teensy, but not yet configured
+20:15:14.932 (loader): but without secure mode locked, encryption will NOT be secure!
+20:15:14.932 (loader): Device came online, code_size = 2031616
+20:15:14.932 (loader): Board is: Teensy 4.0 (IMXRT1062), version 1.08
+20:15:14.940 (loader): File "/Users/owhite/kicad/MESC_brain_board/teensy40/brain/.pio/build/teensy40/firmware.hex", 69632 bytes
+20:15:14.940 (loader): File "firmware.hex". 69632 bytes, 3% used
+20:15:14.953 (loader): set background IMG_ONLINE
+20:15:14.961 (loader): File "/Users/owhite/kicad/MESC_brain_board/teensy40/brain/.pio/build/teensy40/firmware.hex", 69632 bytes
+20:15:14.961 (loader): File "firmware.hex". 69632 bytes, 3% used
+20:15:14.973 (loader): elf appears to be for Teensy 4.0 (IMXRT1062) (2031616 bytes)
+20:15:14.973 (loader): elf binary data matches hex file
+20:15:14.973 (loader): elf file is for Teensy 4.0 (IMXRT1062)
+20:15:14.973 (loader): using hex file
+20:15:14.984 (loader): begin operation
+20:15:14.987 (reboot 36): Status: 1, 1, 1, 12, 0, 1, /Users/owhite/kicad/MESC_brain_board/teensy40/brain/.pio/build/teensy40/, firmware.hex
+20:15:14.992 (loader): flash, block=0, bs=1024, auto=1
+20:15:14.992 (loader): flash, block=1, bs=1024, auto=1
+20:15:14.992 (loader): flash, block=2, bs=1024, auto=1
+20:15:15.505 (loader): remote cmd from 8: "status"
+20:15:15.505 (reboot 36): Status: 1, 1, 1, 12, 0, 1, /Users/owhite/kicad/MESC_brain_board/teensy40/brain/.pio/build/teensy40/, firmware.hex
+20:15:15.506 (loader): flash, block=3, bs=1024, auto=1
+20:15:15.506 (loader): flash, block=4, bs=1024, auto=1
+20:15:15.506 (loader): flash, block=5, bs=1024, auto=1
+20:15:15.507 (loader): flash, block=6, bs=1024, auto=1
+20:15:15.507 (loader): flash, block=7, bs=1024, auto=1
+20:15:15.524 (loader): flash, block=8, bs=1024, auto=1
+20:15:15.525 (loader): flash, block=9, bs=1024, auto=1
+20:15:15.525 (loader): flash, block=10, bs=1024, auto=1
+20:15:15.543 (loader): flash, block=11, bs=1024, auto=1
+20:15:15.544 (loader): flash, block=12, bs=1024, auto=1
+20:15:15.544 (loader): flash, block=13, bs=1024, auto=1
+20:15:15.562 (loader): remote cmd from 8: "status"
+20:15:15.562 (reboot 36): Status: 1, 1, 1, 12, 0, 1, /Users/owhite/kicad/MESC_brain_board/teensy40/brain/.pio/build/teensy40/, firmware.hex
+20:15:15.563 (loader): flash, block=14, bs=1024, auto=1
+20:15:15.563 (loader): flash, block=15, bs=1024, auto=1
+20:15:15.564 (loader): flash, block=16, bs=1024, auto=1
+20:15:15.581 (loader): flash, block=17, bs=1024, auto=1
+20:15:15.581 (loader): flash, block=18, bs=1024, auto=1
+20:15:15.582 (loader): flash, block=19, bs=1024, auto=1
+20:15:15.600 (loader): flash, block=20, bs=1024, auto=1
+20:15:15.600 (loader): flash, block=21, bs=1024, auto=1
+20:15:15.601 (loader): flash, block=22, bs=1024, auto=1
+20:15:15.618 (loader): remote cmd from 8: "status"
+20:15:15.618 (reboot 36): Status: 1, 1, 1, 12, 0, 1, /Users/owhite/kicad/MESC_brain_board/teensy40/brain/.pio/build/teensy40/, firmware.hex
+20:15:15.618 (loader): flash, block=23, bs=1024, auto=1
+20:15:15.619 (loader): flash, block=24, bs=1024, auto=1
+20:15:15.619 (loader): flash, block=25, bs=1024, auto=1
+20:15:15.636 (loader): flash, block=26, bs=1024, auto=1
+20:15:15.636 (loader): flash, block=27, bs=1024, auto=1
+20:15:15.637 (loader): flash, block=28, bs=1024, auto=1
+20:15:15.653 (loader): flash, block=29, bs=1024, auto=1
+20:15:15.654 (loader): flash, block=30, bs=1024, auto=1
+20:15:15.654 (loader): flash, block=31, bs=1024, auto=1
+20:15:15.672 (loader): remote cmd from 8: "status"
+20:15:15.672 (reboot 36): Status: 1, 1, 1, 12, 0, 1, /Users/owhite/kicad/MESC_brain_board/teensy40/brain/.pio/build/teensy40/, firmware.hex
+20:15:15.672 (loader): flash, block=32, bs=1024, auto=1
+20:15:15.673 (loader): flash, block=33, bs=1024, auto=1
+20:15:15.673 (loader): flash, block=34, bs=1024, auto=1
+20:15:15.690 (loader): flash, block=35, bs=1024, auto=1
+20:15:15.690 (loader): flash, block=36, bs=1024, auto=1
+20:15:15.691 (loader): flash, block=37, bs=1024, auto=1
+20:15:15.707 (loader): flash, block=38, bs=1024, auto=1
+20:15:15.708 (loader): flash, block=39, bs=1024, auto=1
+20:15:15.708 (loader): flash, block=40, bs=1024, auto=1
+20:15:15.726 (loader): remote cmd from 8: "status"
+20:15:15.726 (reboot 36): Status: 1, 1, 1, 12, 0, 1, /Users/owhite/kicad/MESC_brain_board/teensy40/brain/.pio/build/teensy40/, firmware.hex
+20:15:15.726 (loader): flash, block=41, bs=1024, auto=1
+20:15:15.726 (loader): flash, block=42, bs=1024, auto=1
+20:15:15.727 (loader): flash, block=43, bs=1024, auto=1
+20:15:15.744 (loader): flash, block=44, bs=1024, auto=1
+20:15:15.745 (loader): flash, block=45, bs=1024, auto=1
+20:15:15.745 (loader): flash, block=46, bs=1024, auto=1
+20:15:15.763 (loader): flash, block=47, bs=1024, auto=1
+20:15:15.764 (loader): flash, block=48, bs=1024, auto=1
+20:15:15.764 (loader): flash, block=49, bs=1024, auto=1
+20:15:15.778 (reboot 36): status read, retry 3
+20:15:15.778 (reboot 36): Success
+20:15:15.778 (reboot 36): Disconnect
+20:15:15.783 (loader): flash, block=50, bs=1024, auto=1
+20:15:15.785 (loader): flash, block=51, bs=1024, auto=1
+20:15:15.785 (loader): flash, block=52, bs=1024, auto=1
+20:15:15.785 (loader): flash, block=53, bs=1024, auto=1
+20:15:15.802 (loader): remote connection 8 closed
+20:15:15.802 (loader): flash, block=54, bs=1024, auto=1
+20:15:15.803 (loader): flash, block=55, bs=1024, auto=1
+20:15:15.803 (loader): flash, block=56, bs=1024, auto=1
+20:15:15.820 (loader): flash, block=57, bs=1024, auto=1
+20:15:15.821 (loader): flash, block=58, bs=1024, auto=1
+20:15:15.838 (loader): flash, block=59, bs=1024, auto=1
+20:15:15.838 (loader): flash, block=60, bs=1024, auto=1
+20:15:15.838 (loader): flash, block=61, bs=1024, auto=1
+20:15:15.856 (loader): flash, block=62, bs=1024, auto=1
+20:15:15.856 (loader): flash, block=63, bs=1024, auto=1
+20:15:15.856 (loader): flash, block=64, bs=1024, auto=1
+20:15:15.873 (loader): flash, block=65, bs=1024, auto=1
+20:15:15.874 (loader): flash, block=66, bs=1024, auto=1
+20:15:15.874 (loader): flash, block=67, bs=1024, auto=1
+20:15:15.894 (loader): sending reboot
+20:15:15.895 (loader): begin wait_until_offline
+20:15:15.895 (loader): HID/macos: status: ok
+20:15:16.199 (loader): HID/macos: detach callback: is currently open device
+20:15:16.199 (loader): offline, waited 6
+20:15:16.199 (loader): end operation, total time = 1.215 seconds
+20:15:16.199 (loader): set background IMG_REBOOT_OK
+20:15:16.200 (loader): redraw timer set, image 14 to show for 1200 ms
+20:15:16.278 (loader): HID/macos: number of devices found = 0
+20:15:16.278 (loader): HID/macos: no devices found (empty set)
+20:15:17.400 (loader): redraw, image 9
+20:24:13.095 (post_compile 37): Begin, version=1.58
+20:24:13.095 (loader): remote connection 8 opened
+20:24:13.095 (post_compile 37): Sending command: comment: Teensyduino 1.58 - MACOSX (teensy_post_compile)
+20:24:13.096 (loader): remote cmd from 8: "comment: Teensyduino 1.58 - MACOSX (teensy_post_compile)"
+20:24:13.096 (loader): remote cmd from 8: "status"
+20:24:13.096 (loader): file changed
+20:24:13.104 (loader): File "/Users/owhite/kicad/MESC_brain_board/teensy40/brain/.pio/build/teensy40/firmware.hex", 69632 bytes
+20:24:13.104 (loader): File "firmware.hex". 69632 bytes
+20:24:13.106 (post_compile 37): Status: 1, 1, 0, 12, 0, 0, /Users/owhite/kicad/MESC_brain_board/teensy40/brain/.pio/build/teensy40/, firmware.hex
+20:24:13.106 (post_compile 37): Disconnect
+20:24:13.118 (post_compile 38): Running teensy_reboot: /Users/owhite/.platformio/packages/tool-teensy/teensy_reboot
+20:24:13.118 (loader): remote connection 8 closed
+20:24:13.118 (loader): remote connection 8 opened
+20:24:13.119 (loader): remote connection 8 closed
+20:24:13.125 (reboot 39): Begin, version=1.58
+20:24:13.125 (reboot 39): USB device add callback
+20:24:13.125 (reboot 39):   loc=14600000, vid=16C0, pid=0483, ver=0279, ser=17888890
+20:24:13.125 (reboot 39):   actual serailnum=1788889
+20:24:13.126 (loader): remote connection 8 opened
+20:24:13.126 (reboot 39): USB device remove callback
+20:24:13.126 (reboot 39): Serial add callback
+20:24:13.127 (reboot 39):   name=/dev/cu.usbmodem178888901, loc=14600000, vid=16c0, pid=0483, ver=0279
+20:24:13.136 (reboot 39): Serial remove callback
+20:24:13.150 (reboot 39): HID Manager started
+20:24:13.151 (reboot 39): usb scan found 1 devices
+20:24:13.151 (reboot 39): found Teensy Loader, version 1.58
+20:24:13.151 (reboot 39): Sending command: show:arduino_attempt_reboot
+20:24:13.151 (loader): remote cmd from 8: "show:arduino_attempt_reboot"
+20:24:13.151 (loader): got request to show arduino rebooting message
+20:24:13.152 (reboot 39): Sending command: comment: Teensyduino 1.58 - MACOSX (teensy_reboot)
+20:24:13.153 (loader): remote cmd from 8: "comment: Teensyduino 1.58 - MACOSX (teensy_reboot)"
+20:24:13.153 (loader): remote cmd from 8: "status"
+20:24:13.153 (reboot 39): Status: 1, 1, 0, 12, 0, 0, /Users/owhite/kicad/MESC_brain_board/teensy40/brain/.pio/build/teensy40/, firmware.hex
+20:24:13.153 (reboot 39): do_reset (serial) /dev/cu.usbmodem178888901
+20:24:13.156 (loader): remote cmd from 8: "status"
+20:24:13.156 (reboot 39): Status: 1, 1, 0, 12, 0, 0, /Users/owhite/kicad/MESC_brain_board/teensy40/brain/.pio/build/teensy40/, firmware.hex
+20:24:13.156 (reboot 39): status read, retry 0
+20:24:13.260 (loader): remote cmd from 8: "status"
+20:24:13.261 (reboot 39): Status: 1, 1, 0, 12, 0, 0, /Users/owhite/kicad/MESC_brain_board/teensy40/brain/.pio/build/teensy40/, firmware.hex
+20:24:13.261 (reboot 39): status read, retry 1
+20:24:13.363 (loader): remote cmd from 8: "status"
+20:24:13.363 (reboot 39): Status: 1, 1, 0, 12, 0, 0, /Users/owhite/kicad/MESC_brain_board/teensy40/brain/.pio/build/teensy40/, firmware.hex
+20:24:13.363 (reboot 39): status read, retry 2
+20:24:13.456 (loader): HID/macos: attach callback
+20:24:13.467 (loader): remote cmd from 8: "status"
+20:24:13.468 (loader): HID/macos: ser=001B4BD9
+20:24:13.468 (loader): try to read feature report
+20:24:13.468 (loader): got feature report, size = 384
+20:24:13.468 (loader): 7393CD01 00000000
+20:24:13.468 (loader): secure mode can not be locked: this is Standard Teensy
+20:24:13.468 (loader): encryption is possible on this Teensy, but not yet configured
+20:24:13.468 (loader): but without secure mode locked, encryption will NOT be secure!
+20:24:13.468 (loader): Device came online, code_size = 2031616
+20:24:13.468 (loader): Board is: Teensy 4.0 (IMXRT1062), version 1.08
+20:24:13.476 (loader): File "/Users/owhite/kicad/MESC_brain_board/teensy40/brain/.pio/build/teensy40/firmware.hex", 69632 bytes
+20:24:13.476 (loader): File "firmware.hex". 69632 bytes, 3% used
+20:24:13.488 (loader): set background IMG_ONLINE
+20:24:13.496 (loader): File "/Users/owhite/kicad/MESC_brain_board/teensy40/brain/.pio/build/teensy40/firmware.hex", 69632 bytes
+20:24:13.496 (loader): File "firmware.hex". 69632 bytes, 3% used
+20:24:13.508 (loader): elf appears to be for Teensy 4.0 (IMXRT1062) (2031616 bytes)
+20:24:13.508 (loader): elf binary data matches hex file
+20:24:13.508 (loader): elf file is for Teensy 4.0 (IMXRT1062)
+20:24:13.508 (loader): using hex file
+20:24:13.519 (loader): begin operation
+20:24:13.522 (reboot 39): Status: 1, 1, 1, 13, 0, 1, /Users/owhite/kicad/MESC_brain_board/teensy40/brain/.pio/build/teensy40/, firmware.hex
+20:24:13.528 (loader): flash, block=0, bs=1024, auto=1
+20:24:13.528 (loader): flash, block=1, bs=1024, auto=1
+20:24:13.529 (loader): flash, block=2, bs=1024, auto=1
+20:24:14.044 (loader): remote cmd from 8: "status"
+20:24:14.045 (reboot 39): Status: 1, 1, 1, 13, 0, 1, /Users/owhite/kicad/MESC_brain_board/teensy40/brain/.pio/build/teensy40/, firmware.hex
+20:24:14.045 (loader): flash, block=3, bs=1024, auto=1
+20:24:14.045 (loader): flash, block=4, bs=1024, auto=1
+20:24:14.046 (loader): flash, block=5, bs=1024, auto=1
+20:24:14.046 (loader): flash, block=6, bs=1024, auto=1
+20:24:14.046 (loader): flash, block=7, bs=1024, auto=1
+20:24:14.063 (loader): flash, block=8, bs=1024, auto=1
+20:24:14.064 (loader): flash, block=9, bs=1024, auto=1
+20:24:14.064 (loader): flash, block=10, bs=1024, auto=1
+20:24:14.082 (loader): flash, block=11, bs=1024, auto=1
+20:24:14.083 (loader): flash, block=12, bs=1024, auto=1
+20:24:14.083 (loader): flash, block=13, bs=1024, auto=1
+20:24:14.101 (loader): remote cmd from 8: "status"
+20:24:14.101 (reboot 39): Status: 1, 1, 1, 13, 0, 1, /Users/owhite/kicad/MESC_brain_board/teensy40/brain/.pio/build/teensy40/, firmware.hex
+20:24:14.102 (loader): flash, block=14, bs=1024, auto=1
+20:24:14.102 (loader): flash, block=15, bs=1024, auto=1
+20:24:14.103 (loader): flash, block=16, bs=1024, auto=1
+20:24:14.120 (loader): flash, block=17, bs=1024, auto=1
+20:24:14.120 (loader): flash, block=18, bs=1024, auto=1
+20:24:14.121 (loader): flash, block=19, bs=1024, auto=1
+20:24:14.138 (loader): flash, block=20, bs=1024, auto=1
+20:24:14.138 (loader): flash, block=21, bs=1024, auto=1
+20:24:14.139 (loader): flash, block=22, bs=1024, auto=1
+20:24:14.156 (loader): remote cmd from 8: "status"
+20:24:14.156 (reboot 39): Status: 1, 1, 1, 13, 0, 1, /Users/owhite/kicad/MESC_brain_board/teensy40/brain/.pio/build/teensy40/, firmware.hex
+20:24:14.156 (loader): flash, block=23, bs=1024, auto=1
+20:24:14.156 (loader): flash, block=24, bs=1024, auto=1
+20:24:14.157 (loader): flash, block=25, bs=1024, auto=1
+20:24:14.173 (loader): flash, block=26, bs=1024, auto=1
+20:24:14.174 (loader): flash, block=27, bs=1024, auto=1
+20:24:14.174 (loader): flash, block=28, bs=1024, auto=1
+20:24:14.192 (loader): flash, block=29, bs=1024, auto=1
+20:24:14.192 (loader): flash, block=30, bs=1024, auto=1
+20:24:14.192 (loader): flash, block=31, bs=1024, auto=1
+20:24:14.209 (loader): flash, block=32, bs=1024, auto=1
+20:24:14.210 (loader): remote cmd from 8: "status"
+20:24:14.210 (reboot 39): Status: 1, 1, 1, 13, 0, 1, /Users/owhite/kicad/MESC_brain_board/teensy40/brain/.pio/build/teensy40/, firmware.hex
+20:24:14.210 (loader): flash, block=33, bs=1024, auto=1
+20:24:14.210 (loader): flash, block=34, bs=1024, auto=1
+20:24:14.228 (loader): flash, block=35, bs=1024, auto=1
+20:24:14.228 (loader): flash, block=36, bs=1024, auto=1
+20:24:14.228 (loader): flash, block=37, bs=1024, auto=1
+20:24:14.246 (loader): flash, block=38, bs=1024, auto=1
+20:24:14.246 (loader): flash, block=39, bs=1024, auto=1
+20:24:14.247 (loader): flash, block=40, bs=1024, auto=1
+20:24:14.264 (loader): remote cmd from 8: "status"
+20:24:14.264 (reboot 39): Status: 1, 1, 1, 13, 0, 1, /Users/owhite/kicad/MESC_brain_board/teensy40/brain/.pio/build/teensy40/, firmware.hex
+20:24:14.264 (loader): flash, block=41, bs=1024, auto=1
+20:24:14.265 (loader): flash, block=42, bs=1024, auto=1
+20:24:14.266 (loader): flash, block=43, bs=1024, auto=1
+20:24:14.283 (loader): flash, block=44, bs=1024, auto=1
+20:24:14.284 (loader): flash, block=45, bs=1024, auto=1
+20:24:14.284 (loader): flash, block=46, bs=1024, auto=1
+20:24:14.303 (loader): flash, block=47, bs=1024, auto=1
+20:24:14.304 (loader): flash, block=48, bs=1024, auto=1
+20:24:14.304 (loader): flash, block=49, bs=1024, auto=1
+20:24:14.318 (reboot 39): status read, retry 3
+20:24:14.318 (reboot 39): Success
+20:24:14.318 (reboot 39): Disconnect
+20:24:14.321 (loader): flash, block=50, bs=1024, auto=1
+20:24:14.322 (loader): flash, block=51, bs=1024, auto=1
+20:24:14.322 (loader): flash, block=52, bs=1024, auto=1
+20:24:14.339 (loader): remote connection 8 closed
+20:24:14.339 (loader): flash, block=53, bs=1024, auto=1
+20:24:14.339 (loader): flash, block=54, bs=1024, auto=1
+20:24:14.340 (loader): flash, block=55, bs=1024, auto=1
+20:24:14.356 (loader): flash, block=56, bs=1024, auto=1
+20:24:14.357 (loader): flash, block=57, bs=1024, auto=1
+20:24:14.357 (loader): flash, block=58, bs=1024, auto=1
+20:24:14.374 (loader): flash, block=59, bs=1024, auto=1
+20:24:14.375 (loader): flash, block=60, bs=1024, auto=1
+20:24:14.375 (loader): flash, block=61, bs=1024, auto=1
+20:24:14.393 (loader): flash, block=62, bs=1024, auto=1
+20:24:14.393 (loader): flash, block=63, bs=1024, auto=1
+20:24:14.393 (loader): flash, block=64, bs=1024, auto=1
+20:24:14.410 (loader): flash, block=65, bs=1024, auto=1
+20:24:14.411 (loader): flash, block=66, bs=1024, auto=1
+20:24:14.411 (loader): flash, block=67, bs=1024, auto=1
+20:24:14.432 (loader): sending reboot
+20:24:14.432 (loader): begin wait_until_offline
+20:24:14.432 (loader): HID/macos: status: ok
+20:24:14.736 (loader): HID/macos: detach callback: is currently open device
+20:24:14.736 (loader): offline, waited 6
+20:24:14.736 (loader): end operation, total time = 1.217 seconds
+20:24:14.737 (loader): set background IMG_REBOOT_OK
+20:24:14.737 (loader): redraw timer set, image 14 to show for 1200 ms
+20:24:14.764 (loader): HID/macos: number of devices found = 0
+20:24:14.764 (loader): HID/macos: no devices found (empty set)
+20:24:15.938 (loader): redraw, image 9
+20:24:51.864 (post_compile 40): Begin, version=1.58
+20:24:51.865 (loader): remote connection 8 opened
+20:24:51.865 (post_compile 40): Sending command: comment: Teensyduino 1.58 - MACOSX (teensy_post_compile)
+20:24:51.865 (loader): remote cmd from 8: "comment: Teensyduino 1.58 - MACOSX (teensy_post_compile)"
+20:24:51.865 (loader): remote cmd from 8: "status"
+20:24:51.865 (loader): file changed
+20:24:51.872 (loader): File "/Users/owhite/kicad/MESC_brain_board/teensy40/brain/.pio/build/teensy40/firmware.hex", 69632 bytes
+20:24:51.872 (loader): File "firmware.hex". 69632 bytes
+20:24:51.875 (post_compile 40): Status: 1, 1, 0, 13, 0, 0, /Users/owhite/kicad/MESC_brain_board/teensy40/brain/.pio/build/teensy40/, firmware.hex
+20:24:51.875 (post_compile 40): Disconnect
+20:24:51.887 (post_compile 41): Running teensy_reboot: /Users/owhite/.platformio/packages/tool-teensy/teensy_reboot
+20:24:51.887 (loader): remote connection 8 closed
+20:24:51.887 (loader): remote connection 8 opened
+20:24:51.888 (loader): remote connection 8 closed
+20:24:51.894 (reboot 42): Begin, version=1.58
+20:24:51.895 (reboot 42): USB device add callback
+20:24:51.895 (reboot 42):   loc=14600000, vid=16C0, pid=0483, ver=0279, ser=17888890
+20:24:51.895 (reboot 42):   actual serailnum=1788889
+20:24:51.896 (loader): remote connection 8 opened
+20:24:51.896 (reboot 42): USB device remove callback
+20:24:51.896 (reboot 42): Serial add callback
+20:24:51.896 (reboot 42):   name=/dev/cu.usbmodem178888901, loc=14600000, vid=16c0, pid=0483, ver=0279
+20:24:51.906 (reboot 42): Serial remove callback
+20:24:51.918 (reboot 42): HID Manager started
+20:24:51.918 (reboot 42): usb scan found 1 devices
+20:24:51.918 (reboot 42): found Teensy Loader, version 1.58
+20:24:51.918 (reboot 42): Sending command: show:arduino_attempt_reboot
+20:24:51.918 (loader): remote cmd from 8: "show:arduino_attempt_reboot"
+20:24:51.918 (loader): got request to show arduino rebooting message
+20:24:51.919 (reboot 42): Sending command: comment: Teensyduino 1.58 - MACOSX (teensy_reboot)
+20:24:51.920 (loader): remote cmd from 8: "comment: Teensyduino 1.58 - MACOSX (teensy_reboot)"
+20:24:51.920 (loader): remote cmd from 8: "status"
+20:24:51.920 (reboot 42): Status: 1, 1, 0, 13, 0, 0, /Users/owhite/kicad/MESC_brain_board/teensy40/brain/.pio/build/teensy40/, firmware.hex
+20:24:51.920 (reboot 42): do_reset (serial) /dev/cu.usbmodem178888901
+20:24:51.922 (loader): remote cmd from 8: "status"
+20:24:51.923 (reboot 42): Status: 1, 1, 0, 13, 0, 0, /Users/owhite/kicad/MESC_brain_board/teensy40/brain/.pio/build/teensy40/, firmware.hex
+20:24:51.923 (reboot 42): status read, retry 0
+20:24:52.023 (loader): remote cmd from 8: "status"
+20:24:52.023 (reboot 42): Status: 1, 1, 0, 13, 0, 0, /Users/owhite/kicad/MESC_brain_board/teensy40/brain/.pio/build/teensy40/, firmware.hex
+20:24:52.023 (reboot 42): status read, retry 1
+20:24:52.127 (loader): remote cmd from 8: "status"
+20:24:52.127 (reboot 42): Status: 1, 1, 0, 13, 0, 0, /Users/owhite/kicad/MESC_brain_board/teensy40/brain/.pio/build/teensy40/, firmware.hex
+20:24:52.127 (reboot 42): status read, retry 2
+20:24:52.226 (loader): HID/macos: attach callback
+20:24:52.228 (loader): remote cmd from 8: "status"
+20:24:52.228 (loader): HID/macos: ser=001B4BD9
+20:24:52.228 (loader): try to read feature report
+20:24:52.228 (loader): got feature report, size = 384
+20:24:52.228 (loader): 7393CD01 00000000
+20:24:52.228 (loader): secure mode can not be locked: this is Standard Teensy
+20:24:52.228 (loader): encryption is possible on this Teensy, but not yet configured
+20:24:52.228 (loader): but without secure mode locked, encryption will NOT be secure!
+20:24:52.228 (loader): Device came online, code_size = 2031616
+20:24:52.228 (loader): Board is: Teensy 4.0 (IMXRT1062), version 1.08
+20:24:52.235 (loader): File "/Users/owhite/kicad/MESC_brain_board/teensy40/brain/.pio/build/teensy40/firmware.hex", 69632 bytes
+20:24:52.235 (loader): File "firmware.hex". 69632 bytes, 3% used
+20:24:52.247 (loader): set background IMG_ONLINE
+20:24:52.258 (loader): File "/Users/owhite/kicad/MESC_brain_board/teensy40/brain/.pio/build/teensy40/firmware.hex", 69632 bytes
+20:24:52.258 (loader): File "firmware.hex". 69632 bytes, 3% used
+20:24:52.269 (loader): elf appears to be for Teensy 4.0 (IMXRT1062) (2031616 bytes)
+20:24:52.270 (loader): elf binary data matches hex file
+20:24:52.270 (loader): elf file is for Teensy 4.0 (IMXRT1062)
+20:24:52.270 (loader): using hex file
+20:24:52.281 (loader): begin operation
+20:24:52.284 (reboot 42): Status: 1, 1, 1, 14, 0, 1, /Users/owhite/kicad/MESC_brain_board/teensy40/brain/.pio/build/teensy40/, firmware.hex
+20:24:52.289 (loader): flash, block=0, bs=1024, auto=1
+20:24:52.290 (loader): flash, block=1, bs=1024, auto=1
+20:24:52.290 (loader): flash, block=2, bs=1024, auto=1
+20:24:52.806 (loader): remote cmd from 8: "status"
+20:24:52.806 (reboot 42): Status: 1, 1, 1, 14, 0, 1, /Users/owhite/kicad/MESC_brain_board/teensy40/brain/.pio/build/teensy40/, firmware.hex
+20:24:52.807 (loader): flash, block=3, bs=1024, auto=1
+20:24:52.807 (loader): flash, block=4, bs=1024, auto=1
+20:24:52.808 (loader): flash, block=5, bs=1024, auto=1
+20:24:52.808 (loader): flash, block=6, bs=1024, auto=1
+20:24:52.809 (loader): flash, block=7, bs=1024, auto=1
+20:24:52.810 (loader): flash, block=8, bs=1024, auto=1
+20:24:52.827 (loader): flash, block=9, bs=1024, auto=1
+20:24:52.828 (loader): flash, block=10, bs=1024, auto=1
+20:24:52.828 (loader): flash, block=11, bs=1024, auto=1
+20:24:52.845 (loader): flash, block=12, bs=1024, auto=1
+20:24:52.845 (loader): flash, block=13, bs=1024, auto=1
+20:24:52.846 (loader): flash, block=14, bs=1024, auto=1
+20:24:52.864 (loader): remote cmd from 8: "status"
+20:24:52.864 (reboot 42): Status: 1, 1, 1, 14, 0, 1, /Users/owhite/kicad/MESC_brain_board/teensy40/brain/.pio/build/teensy40/, firmware.hex
+20:24:52.864 (loader): flash, block=15, bs=1024, auto=1
+20:24:52.864 (loader): flash, block=16, bs=1024, auto=1
+20:24:52.865 (loader): flash, block=17, bs=1024, auto=1
+20:24:52.882 (loader): flash, block=18, bs=1024, auto=1
+20:24:52.883 (loader): flash, block=19, bs=1024, auto=1
+20:24:52.883 (loader): flash, block=20, bs=1024, auto=1
+20:24:52.901 (loader): flash, block=21, bs=1024, auto=1
+20:24:52.901 (loader): flash, block=22, bs=1024, auto=1
+20:24:52.901 (loader): flash, block=23, bs=1024, auto=1
+20:24:52.918 (loader): remote cmd from 8: "status"
+20:24:52.918 (reboot 42): Status: 1, 1, 1, 14, 0, 1, /Users/owhite/kicad/MESC_brain_board/teensy40/brain/.pio/build/teensy40/, firmware.hex
+20:24:52.919 (loader): flash, block=24, bs=1024, auto=1
+20:24:52.919 (loader): flash, block=25, bs=1024, auto=1
+20:24:52.919 (loader): flash, block=26, bs=1024, auto=1
+20:24:52.937 (loader): flash, block=27, bs=1024, auto=1
+20:24:52.938 (loader): flash, block=28, bs=1024, auto=1
+20:24:52.938 (loader): flash, block=29, bs=1024, auto=1
+20:24:52.957 (loader): flash, block=30, bs=1024, auto=1
+20:24:52.957 (loader): flash, block=31, bs=1024, auto=1
+20:24:52.958 (loader): flash, block=32, bs=1024, auto=1
+20:24:52.976 (loader): remote cmd from 8: "status"
+20:24:52.976 (reboot 42): Status: 1, 1, 1, 14, 0, 1, /Users/owhite/kicad/MESC_brain_board/teensy40/brain/.pio/build/teensy40/, firmware.hex
+20:24:52.976 (loader): flash, block=33, bs=1024, auto=1
+20:24:52.977 (loader): flash, block=34, bs=1024, auto=1
+20:24:52.977 (loader): flash, block=35, bs=1024, auto=1
+20:24:52.995 (loader): flash, block=36, bs=1024, auto=1
+20:24:52.995 (loader): flash, block=37, bs=1024, auto=1
+20:24:52.995 (loader): flash, block=38, bs=1024, auto=1
+20:24:53.013 (loader): flash, block=39, bs=1024, auto=1
+20:24:53.014 (loader): flash, block=40, bs=1024, auto=1
+20:24:53.014 (loader): flash, block=41, bs=1024, auto=1
+20:24:53.031 (loader): remote cmd from 8: "status"
+20:24:53.032 (reboot 42): Status: 1, 1, 1, 14, 0, 1, /Users/owhite/kicad/MESC_brain_board/teensy40/brain/.pio/build/teensy40/, firmware.hex
+20:24:53.032 (loader): flash, block=42, bs=1024, auto=1
+20:24:53.032 (loader): flash, block=43, bs=1024, auto=1
+20:24:53.032 (loader): flash, block=44, bs=1024, auto=1
+20:24:53.050 (loader): flash, block=45, bs=1024, auto=1
+20:24:53.051 (loader): flash, block=46, bs=1024, auto=1
+20:24:53.051 (loader): flash, block=47, bs=1024, auto=1
+20:24:53.069 (loader): flash, block=48, bs=1024, auto=1
+20:24:53.069 (loader): flash, block=49, bs=1024, auto=1
+20:24:53.069 (loader): flash, block=50, bs=1024, auto=1
+20:24:53.085 (reboot 42): status read, retry 3
+20:24:53.085 (reboot 42): Success
+20:24:53.085 (reboot 42): Disconnect
+20:24:53.087 (loader): flash, block=51, bs=1024, auto=1
+20:24:53.087 (loader): flash, block=52, bs=1024, auto=1
+20:24:53.087 (loader): flash, block=53, bs=1024, auto=1
+20:24:53.104 (loader): remote connection 8 closed
+20:24:53.104 (loader): flash, block=54, bs=1024, auto=1
+20:24:53.105 (loader): flash, block=55, bs=1024, auto=1
+20:24:53.105 (loader): flash, block=56, bs=1024, auto=1
+20:24:53.123 (loader): flash, block=57, bs=1024, auto=1
+20:24:53.123 (loader): flash, block=58, bs=1024, auto=1
+20:24:53.123 (loader): flash, block=59, bs=1024, auto=1
+20:24:53.141 (loader): flash, block=60, bs=1024, auto=1
+20:24:53.142 (loader): flash, block=61, bs=1024, auto=1
+20:24:53.143 (loader): flash, block=62, bs=1024, auto=1
+20:24:53.144 (loader): flash, block=63, bs=1024, auto=1
+20:24:53.161 (loader): flash, block=64, bs=1024, auto=1
+20:24:53.162 (loader): flash, block=65, bs=1024, auto=1
+20:24:53.162 (loader): flash, block=66, bs=1024, auto=1
+20:24:53.179 (loader): flash, block=67, bs=1024, auto=1
+20:24:53.182 (loader): sending reboot
+20:24:53.183 (loader): begin wait_until_offline
+20:24:53.183 (loader): HID/macos: status: ok
+20:24:53.487 (loader): HID/macos: detach callback: is currently open device
+20:24:53.487 (loader): offline, waited 6
+20:24:53.487 (loader): end operation, total time = 1.206 seconds
+20:24:53.487 (loader): set background IMG_REBOOT_OK
+20:24:53.488 (loader): redraw timer set, image 14 to show for 1200 ms
+20:24:53.583 (loader): HID/macos: number of devices found = 0
+20:24:53.583 (loader): HID/macos: no devices found (empty set)
+20:24:54.688 (loader): redraw, image 9
+20:25:33.732 (post_compile 43): Begin, version=1.58
+20:25:33.733 (loader): remote connection 8 opened
+20:25:33.733 (post_compile 43): Sending command: comment: Teensyduino 1.58 - MACOSX (teensy_post_compile)
+20:25:33.733 (loader): remote cmd from 8: "comment: Teensyduino 1.58 - MACOSX (teensy_post_compile)"
+20:25:33.733 (loader): remote cmd from 8: "status"
+20:25:33.733 (loader): file changed
+20:25:33.740 (loader): File "/Users/owhite/kicad/MESC_brain_board/teensy40/brain/.pio/build/teensy40/firmware.hex", 69632 bytes
+20:25:33.740 (loader): File "firmware.hex". 69632 bytes
+20:25:33.743 (post_compile 43): Status: 1, 1, 0, 14, 0, 0, /Users/owhite/kicad/MESC_brain_board/teensy40/brain/.pio/build/teensy40/, firmware.hex
+20:25:33.743 (post_compile 43): Disconnect
+20:25:33.754 (post_compile 44): Running teensy_reboot: /Users/owhite/.platformio/packages/tool-teensy/teensy_reboot
+20:25:33.754 (loader): remote connection 8 closed
+20:25:33.754 (loader): remote connection 8 opened
+20:25:33.755 (loader): remote connection 8 closed
+20:25:33.759 (reboot 45): Begin, version=1.58
+20:25:33.759 (reboot 45): USB device add callback
+20:25:33.759 (reboot 45):   loc=14600000, vid=16C0, pid=0483, ver=0279, ser=17888890
+20:25:33.759 (reboot 45):   actual serailnum=1788889
+20:25:33.761 (loader): remote connection 8 opened
+20:25:33.761 (reboot 45): USB device remove callback
+20:25:33.761 (reboot 45): Serial add callback
+20:25:33.761 (reboot 45):   name=/dev/cu.usbmodem178888901, loc=14600000, vid=16c0, pid=0483, ver=0279
+20:25:33.772 (reboot 45): Serial remove callback
+20:25:33.784 (reboot 45): HID Manager started
+20:25:33.784 (reboot 45): usb scan found 1 devices
+20:25:33.784 (reboot 45): found Teensy Loader, version 1.58
+20:25:33.784 (reboot 45): Sending command: show:arduino_attempt_reboot
+20:25:33.784 (loader): remote cmd from 8: "show:arduino_attempt_reboot"
+20:25:33.784 (loader): got request to show arduino rebooting message
+20:25:33.785 (reboot 45): Sending command: comment: Teensyduino 1.58 - MACOSX (teensy_reboot)
+20:25:33.786 (loader): remote cmd from 8: "comment: Teensyduino 1.58 - MACOSX (teensy_reboot)"
+20:25:33.786 (loader): remote cmd from 8: "status"
+20:25:33.786 (reboot 45): Status: 1, 1, 0, 14, 0, 0, /Users/owhite/kicad/MESC_brain_board/teensy40/brain/.pio/build/teensy40/, firmware.hex
+20:25:33.786 (reboot 45): do_reset (serial) /dev/cu.usbmodem178888901
+20:25:33.788 (loader): remote cmd from 8: "status"
+20:25:33.789 (reboot 45): Status: 1, 1, 0, 14, 0, 0, /Users/owhite/kicad/MESC_brain_board/teensy40/brain/.pio/build/teensy40/, firmware.hex
+20:25:33.789 (reboot 45): status read, retry 0
+20:25:33.893 (loader): remote cmd from 8: "status"
+20:25:33.894 (reboot 45): Status: 1, 1, 0, 14, 0, 0, /Users/owhite/kicad/MESC_brain_board/teensy40/brain/.pio/build/teensy40/, firmware.hex
+20:25:33.894 (reboot 45): status read, retry 1
+20:25:33.996 (loader): remote cmd from 8: "status"
+20:25:33.996 (reboot 45): Status: 1, 1, 0, 14, 0, 0, /Users/owhite/kicad/MESC_brain_board/teensy40/brain/.pio/build/teensy40/, firmware.hex
+20:25:33.996 (reboot 45): status read, retry 2
+20:25:34.093 (loader): HID/macos: attach callback
+20:25:34.099 (loader): remote cmd from 8: "status"
+20:25:34.099 (loader): HID/macos: ser=001B4BD9
+20:25:34.099 (loader): try to read feature report
+20:25:34.099 (loader): got feature report, size = 384
+20:25:34.099 (loader): 7393CD01 00000000
+20:25:34.099 (loader): secure mode can not be locked: this is Standard Teensy
+20:25:34.099 (loader): encryption is possible on this Teensy, but not yet configured
+20:25:34.099 (loader): but without secure mode locked, encryption will NOT be secure!
+20:25:34.099 (loader): Device came online, code_size = 2031616
+20:25:34.099 (loader): Board is: Teensy 4.0 (IMXRT1062), version 1.08
+20:25:34.109 (loader): File "/Users/owhite/kicad/MESC_brain_board/teensy40/brain/.pio/build/teensy40/firmware.hex", 69632 bytes
+20:25:34.109 (loader): File "firmware.hex". 69632 bytes, 3% used
+20:25:34.121 (loader): set background IMG_ONLINE
+20:25:34.132 (loader): File "/Users/owhite/kicad/MESC_brain_board/teensy40/brain/.pio/build/teensy40/firmware.hex", 69632 bytes
+20:25:34.132 (loader): File "firmware.hex". 69632 bytes, 3% used
+20:25:34.143 (loader): elf appears to be for Teensy 4.0 (IMXRT1062) (2031616 bytes)
+20:25:34.143 (loader): elf binary data matches hex file
+20:25:34.143 (loader): elf file is for Teensy 4.0 (IMXRT1062)
+20:25:34.143 (loader): using hex file
+20:25:34.155 (loader): begin operation
+20:25:34.158 (reboot 45): Status: 1, 1, 1, 15, 0, 1, /Users/owhite/kicad/MESC_brain_board/teensy40/brain/.pio/build/teensy40/, firmware.hex
+20:25:34.162 (loader): flash, block=0, bs=1024, auto=1
+20:25:34.163 (loader): flash, block=1, bs=1024, auto=1
+20:25:34.163 (loader): flash, block=2, bs=1024, auto=1
+20:25:34.679 (loader): remote cmd from 8: "status"
+20:25:34.680 (reboot 45): Status: 1, 1, 1, 15, 0, 1, /Users/owhite/kicad/MESC_brain_board/teensy40/brain/.pio/build/teensy40/, firmware.hex
+20:25:34.680 (loader): flash, block=3, bs=1024, auto=1
+20:25:34.681 (loader): flash, block=4, bs=1024, auto=1
+20:25:34.681 (loader): flash, block=5, bs=1024, auto=1
+20:25:34.682 (loader): flash, block=6, bs=1024, auto=1
+20:25:34.682 (loader): flash, block=7, bs=1024, auto=1
+20:25:34.700 (loader): flash, block=8, bs=1024, auto=1
+20:25:34.701 (loader): flash, block=9, bs=1024, auto=1
+20:25:34.701 (loader): flash, block=10, bs=1024, auto=1
+20:25:34.718 (loader): flash, block=11, bs=1024, auto=1
+20:25:34.718 (loader): flash, block=12, bs=1024, auto=1
+20:25:34.719 (loader): flash, block=13, bs=1024, auto=1
+20:25:34.736 (loader): remote cmd from 8: "status"
+20:25:34.736 (reboot 45): Status: 1, 1, 1, 15, 0, 1, /Users/owhite/kicad/MESC_brain_board/teensy40/brain/.pio/build/teensy40/, firmware.hex
+20:25:34.736 (loader): flash, block=14, bs=1024, auto=1
+20:25:34.737 (loader): flash, block=15, bs=1024, auto=1
+20:25:34.737 (loader): flash, block=16, bs=1024, auto=1
+20:25:34.754 (loader): flash, block=17, bs=1024, auto=1
+20:25:34.755 (loader): flash, block=18, bs=1024, auto=1
+20:25:34.755 (loader): flash, block=19, bs=1024, auto=1
+20:25:34.773 (loader): flash, block=20, bs=1024, auto=1
+20:25:34.773 (loader): flash, block=21, bs=1024, auto=1
+20:25:34.774 (loader): flash, block=22, bs=1024, auto=1
+20:25:34.792 (loader): remote cmd from 8: "status"
+20:25:34.792 (reboot 45): Status: 1, 1, 1, 15, 0, 1, /Users/owhite/kicad/MESC_brain_board/teensy40/brain/.pio/build/teensy40/, firmware.hex
+20:25:34.792 (loader): flash, block=23, bs=1024, auto=1
+20:25:34.792 (loader): flash, block=24, bs=1024, auto=1
+20:25:34.793 (loader): flash, block=25, bs=1024, auto=1
+20:25:34.811 (loader): flash, block=26, bs=1024, auto=1
+20:25:34.812 (loader): flash, block=27, bs=1024, auto=1
+20:25:34.812 (loader): flash, block=28, bs=1024, auto=1
+20:25:34.831 (loader): flash, block=29, bs=1024, auto=1
+20:25:34.832 (loader): flash, block=30, bs=1024, auto=1
+20:25:34.833 (loader): flash, block=31, bs=1024, auto=1
+20:25:34.833 (loader): flash, block=32, bs=1024, auto=1
+20:25:34.850 (loader): remote cmd from 8: "status"
+20:25:34.850 (reboot 45): Status: 1, 1, 1, 15, 0, 1, /Users/owhite/kicad/MESC_brain_board/teensy40/brain/.pio/build/teensy40/, firmware.hex
+20:25:34.850 (loader): flash, block=33, bs=1024, auto=1
+20:25:34.851 (loader): flash, block=34, bs=1024, auto=1
+20:25:34.851 (loader): flash, block=35, bs=1024, auto=1
+20:25:34.868 (loader): flash, block=36, bs=1024, auto=1
+20:25:34.868 (loader): flash, block=37, bs=1024, auto=1
+20:25:34.869 (loader): flash, block=38, bs=1024, auto=1
+20:25:34.887 (loader): flash, block=39, bs=1024, auto=1
+20:25:34.887 (loader): flash, block=40, bs=1024, auto=1
+20:25:34.887 (loader): flash, block=41, bs=1024, auto=1
+20:25:34.904 (loader): remote cmd from 8: "status"
+20:25:34.905 (reboot 45): Status: 1, 1, 1, 15, 0, 1, /Users/owhite/kicad/MESC_brain_board/teensy40/brain/.pio/build/teensy40/, firmware.hex
+20:25:34.905 (loader): flash, block=42, bs=1024, auto=1
+20:25:34.905 (loader): flash, block=43, bs=1024, auto=1
+20:25:34.905 (loader): flash, block=44, bs=1024, auto=1
+20:25:34.922 (loader): flash, block=45, bs=1024, auto=1
+20:25:34.923 (loader): flash, block=46, bs=1024, auto=1
+20:25:34.923 (loader): flash, block=47, bs=1024, auto=1
+20:25:34.940 (loader): flash, block=48, bs=1024, auto=1
+20:25:34.941 (loader): flash, block=49, bs=1024, auto=1
+20:25:34.941 (loader): flash, block=50, bs=1024, auto=1
+20:25:34.957 (reboot 45): status read, retry 3
+20:25:34.957 (reboot 45): Success
+20:25:34.957 (reboot 45): Disconnect
+20:25:34.959 (loader): flash, block=51, bs=1024, auto=1
+20:25:34.959 (loader): flash, block=52, bs=1024, auto=1
+20:25:34.959 (loader): flash, block=53, bs=1024, auto=1
+20:25:34.976 (loader): remote connection 8 closed
+20:25:34.976 (loader): flash, block=54, bs=1024, auto=1
+20:25:34.977 (loader): flash, block=55, bs=1024, auto=1
+20:25:34.977 (loader): flash, block=56, bs=1024, auto=1
+20:25:34.995 (loader): flash, block=57, bs=1024, auto=1
+20:25:34.995 (loader): flash, block=58, bs=1024, auto=1
+20:25:34.996 (loader): flash, block=59, bs=1024, auto=1
+20:25:35.013 (loader): flash, block=60, bs=1024, auto=1
+20:25:35.013 (loader): flash, block=61, bs=1024, auto=1
+20:25:35.014 (loader): flash, block=62, bs=1024, auto=1
+20:25:35.031 (loader): flash, block=63, bs=1024, auto=1
+20:25:35.032 (loader): flash, block=64, bs=1024, auto=1
+20:25:35.033 (loader): flash, block=65, bs=1024, auto=1
+20:25:35.050 (loader): flash, block=66, bs=1024, auto=1
+20:25:35.051 (loader): flash, block=67, bs=1024, auto=1
+20:25:35.055 (loader): sending reboot
+20:25:35.055 (loader): begin wait_until_offline
+20:25:35.055 (loader): HID/macos: status: ok
+20:25:35.308 (loader): HID/macos: detach callback: is currently open device
+20:25:35.308 (loader): offline, waited 5
+20:25:35.308 (loader): end operation, total time = 1.153 seconds
+20:25:35.309 (loader): set background IMG_REBOOT_OK
+20:25:35.310 (loader): redraw timer set, image 14 to show for 1200 ms
+20:25:35.332 (loader): HID/macos: number of devices found = 0
+20:25:35.332 (loader): HID/macos: no devices found (empty set)
+20:25:36.511 (loader): redraw, image 9
+20:36:27.519 (post_compile 46): Begin, version=1.58
+20:36:27.519 (loader): remote connection 8 opened
+20:36:27.520 (post_compile 46): Sending command: comment: Teensyduino 1.58 - MACOSX (teensy_post_compile)
+20:36:27.520 (loader): remote cmd from 8: "comment: Teensyduino 1.58 - MACOSX (teensy_post_compile)"
+20:36:27.520 (loader): remote cmd from 8: "status"
+20:36:27.520 (loader): file changed
+20:36:27.530 (loader): File "/Users/owhite/kicad/MESC_brain_board/teensy40/brain/.pio/build/teensy40/firmware.hex", 69632 bytes
+20:36:27.530 (loader): File "firmware.hex". 69632 bytes
+20:36:27.532 (post_compile 46): Status: 1, 1, 0, 15, 0, 0, /Users/owhite/kicad/MESC_brain_board/teensy40/brain/.pio/build/teensy40/, firmware.hex
+20:36:27.532 (post_compile 46): Disconnect
+20:36:27.543 (post_compile 47): Running teensy_reboot: /Users/owhite/.platformio/packages/tool-teensy/teensy_reboot
+20:36:27.543 (loader): remote connection 8 closed
+20:36:27.543 (loader): remote connection 8 opened
+20:36:27.543 (loader): remote connection 8 closed
+20:36:27.548 (reboot 48): Begin, version=1.58
+20:36:27.548 (reboot 48): USB device add callback
+20:36:27.548 (reboot 48):   loc=14600000, vid=16C0, pid=0483, ver=0279, ser=17888890
+20:36:27.548 (reboot 48):   actual serailnum=1788889
+20:36:27.549 (loader): remote connection 8 opened
+20:36:27.549 (reboot 48): USB device remove callback
+20:36:27.549 (reboot 48): Serial add callback
+20:36:27.550 (reboot 48):   name=/dev/cu.usbmodem178888901, loc=14600000, vid=16c0, pid=0483, ver=0279
+20:36:27.560 (reboot 48): Serial remove callback
+20:36:27.573 (reboot 48): HID Manager started
+20:36:27.574 (reboot 48): usb scan found 1 devices
+20:36:27.574 (reboot 48): found Teensy Loader, version 1.58
+20:36:27.574 (reboot 48): Sending command: show:arduino_attempt_reboot
+20:36:27.574 (loader): remote cmd from 8: "show:arduino_attempt_reboot"
+20:36:27.574 (loader): got request to show arduino rebooting message
+20:36:27.575 (reboot 48): Sending command: comment: Teensyduino 1.58 - MACOSX (teensy_reboot)
+20:36:27.576 (loader): remote cmd from 8: "comment: Teensyduino 1.58 - MACOSX (teensy_reboot)"
+20:36:27.576 (loader): remote cmd from 8: "status"
+20:36:27.576 (reboot 48): Status: 1, 1, 0, 15, 0, 0, /Users/owhite/kicad/MESC_brain_board/teensy40/brain/.pio/build/teensy40/, firmware.hex
+20:36:27.576 (reboot 48): do_reset (serial) /dev/cu.usbmodem178888901
+20:36:27.578 (loader): remote cmd from 8: "status"
+20:36:27.578 (reboot 48): Status: 1, 1, 0, 15, 0, 0, /Users/owhite/kicad/MESC_brain_board/teensy40/brain/.pio/build/teensy40/, firmware.hex
+20:36:27.578 (reboot 48): status read, retry 0
+20:36:27.679 (loader): remote cmd from 8: "status"
+20:36:27.679 (reboot 48): Status: 1, 1, 0, 15, 0, 0, /Users/owhite/kicad/MESC_brain_board/teensy40/brain/.pio/build/teensy40/, firmware.hex
+20:36:27.679 (reboot 48): status read, retry 1
+20:36:27.784 (loader): remote cmd from 8: "status"
+20:36:27.785 (reboot 48): Status: 1, 1, 0, 15, 0, 0, /Users/owhite/kicad/MESC_brain_board/teensy40/brain/.pio/build/teensy40/, firmware.hex
+20:36:27.785 (reboot 48): status read, retry 2
+20:36:27.871 (loader): HID/macos: attach callback
+20:36:27.885 (loader): remote cmd from 8: "status"
+20:36:27.886 (loader): HID/macos: ser=001B4BD9
+20:36:27.886 (loader): try to read feature report
+20:36:27.886 (loader): got feature report, size = 384
+20:36:27.886 (loader): 7393CD01 00000000
+20:36:27.886 (loader): secure mode can not be locked: this is Standard Teensy
+20:36:27.886 (loader): encryption is possible on this Teensy, but not yet configured
+20:36:27.886 (loader): but without secure mode locked, encryption will NOT be secure!
+20:36:27.886 (loader): Device came online, code_size = 2031616
+20:36:27.886 (loader): Board is: Teensy 4.0 (IMXRT1062), version 1.08
+20:36:27.893 (loader): File "/Users/owhite/kicad/MESC_brain_board/teensy40/brain/.pio/build/teensy40/firmware.hex", 69632 bytes
+20:36:27.893 (loader): File "firmware.hex". 69632 bytes, 3% used
+20:36:27.905 (loader): set background IMG_ONLINE
+20:36:27.913 (loader): File "/Users/owhite/kicad/MESC_brain_board/teensy40/brain/.pio/build/teensy40/firmware.hex", 69632 bytes
+20:36:27.913 (loader): File "firmware.hex". 69632 bytes, 3% used
+20:36:27.926 (loader): elf appears to be for Teensy 4.0 (IMXRT1062) (2031616 bytes)
+20:36:27.926 (loader): elf binary data matches hex file
+20:36:27.926 (loader): elf file is for Teensy 4.0 (IMXRT1062)
+20:36:27.926 (loader): using hex file
+20:36:27.937 (loader): begin operation
+20:36:27.940 (reboot 48): Status: 1, 1, 1, 16, 0, 1, /Users/owhite/kicad/MESC_brain_board/teensy40/brain/.pio/build/teensy40/, firmware.hex
+20:36:27.944 (loader): flash, block=0, bs=1024, auto=1
+20:36:27.945 (loader): flash, block=1, bs=1024, auto=1
+20:36:27.945 (loader): flash, block=2, bs=1024, auto=1
+20:36:28.438 (loader): remote cmd from 8: "status"
+20:36:28.438 (reboot 48): Status: 1, 1, 1, 16, 0, 1, /Users/owhite/kicad/MESC_brain_board/teensy40/brain/.pio/build/teensy40/, firmware.hex
+20:36:28.438 (loader): flash, block=3, bs=1024, auto=1
+20:36:28.439 (loader): flash, block=4, bs=1024, auto=1
+20:36:28.440 (loader): flash, block=5, bs=1024, auto=1
+20:36:28.440 (loader): flash, block=6, bs=1024, auto=1
+20:36:28.441 (loader): flash, block=7, bs=1024, auto=1
+20:36:28.458 (loader): flash, block=8, bs=1024, auto=1
+20:36:28.459 (loader): flash, block=9, bs=1024, auto=1
+20:36:28.459 (loader): flash, block=10, bs=1024, auto=1
+20:36:28.476 (loader): flash, block=11, bs=1024, auto=1
+20:36:28.477 (loader): flash, block=12, bs=1024, auto=1
+20:36:28.477 (loader): flash, block=13, bs=1024, auto=1
+20:36:28.494 (loader): remote cmd from 8: "status"
+20:36:28.494 (reboot 48): Status: 1, 1, 1, 16, 0, 1, /Users/owhite/kicad/MESC_brain_board/teensy40/brain/.pio/build/teensy40/, firmware.hex
+20:36:28.494 (loader): flash, block=14, bs=1024, auto=1
+20:36:28.495 (loader): flash, block=15, bs=1024, auto=1
+20:36:28.495 (loader): flash, block=16, bs=1024, auto=1
+20:36:28.512 (loader): flash, block=17, bs=1024, auto=1
+20:36:28.513 (loader): flash, block=18, bs=1024, auto=1
+20:36:28.513 (loader): flash, block=19, bs=1024, auto=1
+20:36:28.530 (loader): flash, block=20, bs=1024, auto=1
+20:36:28.531 (loader): flash, block=21, bs=1024, auto=1
+20:36:28.531 (loader): flash, block=22, bs=1024, auto=1
+20:36:28.548 (loader): remote cmd from 8: "status"
+20:36:28.548 (reboot 48): Status: 1, 1, 1, 16, 0, 1, /Users/owhite/kicad/MESC_brain_board/teensy40/brain/.pio/build/teensy40/, firmware.hex
+20:36:28.548 (loader): flash, block=23, bs=1024, auto=1
+20:36:28.549 (loader): flash, block=24, bs=1024, auto=1
+20:36:28.549 (loader): flash, block=25, bs=1024, auto=1
+20:36:28.566 (loader): flash, block=26, bs=1024, auto=1
+20:36:28.567 (loader): flash, block=27, bs=1024, auto=1
+20:36:28.567 (loader): flash, block=28, bs=1024, auto=1
+20:36:28.584 (loader): flash, block=29, bs=1024, auto=1
+20:36:28.585 (loader): flash, block=30, bs=1024, auto=1
+20:36:28.585 (loader): flash, block=31, bs=1024, auto=1
+20:36:28.602 (loader): remote cmd from 8: "status"
+20:36:28.603 (reboot 48): Status: 1, 1, 1, 16, 0, 1, /Users/owhite/kicad/MESC_brain_board/teensy40/brain/.pio/build/teensy40/, firmware.hex
+20:36:28.603 (loader): flash, block=32, bs=1024, auto=1
+20:36:28.603 (loader): flash, block=33, bs=1024, auto=1
+20:36:28.604 (loader): flash, block=34, bs=1024, auto=1
+20:36:28.623 (loader): flash, block=35, bs=1024, auto=1
+20:36:28.624 (loader): flash, block=36, bs=1024, auto=1
+20:36:28.624 (loader): flash, block=37, bs=1024, auto=1
+20:36:28.642 (loader): flash, block=38, bs=1024, auto=1
+20:36:28.643 (loader): flash, block=39, bs=1024, auto=1
+20:36:28.643 (loader): flash, block=40, bs=1024, auto=1
+20:36:28.661 (loader): remote cmd from 8: "status"
+20:36:28.661 (reboot 48): Status: 1, 1, 1, 16, 0, 1, /Users/owhite/kicad/MESC_brain_board/teensy40/brain/.pio/build/teensy40/, firmware.hex
+20:36:28.661 (loader): flash, block=41, bs=1024, auto=1
+20:36:28.661 (loader): flash, block=42, bs=1024, auto=1
+20:36:28.662 (loader): flash, block=43, bs=1024, auto=1
+20:36:28.679 (loader): flash, block=44, bs=1024, auto=1
+20:36:28.679 (loader): flash, block=45, bs=1024, auto=1
+20:36:28.679 (loader): flash, block=46, bs=1024, auto=1
+20:36:28.697 (loader): flash, block=47, bs=1024, auto=1
+20:36:28.698 (loader): flash, block=48, bs=1024, auto=1
+20:36:28.698 (loader): flash, block=49, bs=1024, auto=1
+20:36:28.715 (reboot 48): status read, retry 3
+20:36:28.715 (reboot 48): Success
+20:36:28.715 (reboot 48): Disconnect
+20:36:28.715 (loader): flash, block=50, bs=1024, auto=1
+20:36:28.716 (loader): flash, block=51, bs=1024, auto=1
+20:36:28.717 (loader): flash, block=52, bs=1024, auto=1
+20:36:28.734 (loader): remote connection 8 closed
+20:36:28.734 (loader): flash, block=53, bs=1024, auto=1
+20:36:28.735 (loader): flash, block=54, bs=1024, auto=1
+20:36:28.735 (loader): flash, block=55, bs=1024, auto=1
+20:36:28.752 (loader): flash, block=56, bs=1024, auto=1
+20:36:28.753 (loader): flash, block=57, bs=1024, auto=1
+20:36:28.754 (loader): flash, block=58, bs=1024, auto=1
+20:36:28.770 (loader): flash, block=59, bs=1024, auto=1
+20:36:28.771 (loader): flash, block=60, bs=1024, auto=1
+20:36:28.771 (loader): flash, block=61, bs=1024, auto=1
+20:36:28.788 (loader): flash, block=62, bs=1024, auto=1
+20:36:28.789 (loader): flash, block=63, bs=1024, auto=1
+20:36:28.790 (loader): flash, block=64, bs=1024, auto=1
+20:36:28.807 (loader): flash, block=65, bs=1024, auto=1
+20:36:28.808 (loader): flash, block=66, bs=1024, auto=1
+20:36:28.809 (loader): flash, block=67, bs=1024, auto=1
+20:36:28.828 (loader): sending reboot
+20:36:28.829 (loader): begin wait_until_offline
+20:36:28.829 (loader): HID/macos: status: ok
+20:36:29.133 (loader): HID/macos: detach callback: is currently open device
+20:36:29.133 (loader): offline, waited 6
+20:36:29.133 (loader): end operation, total time = 1.196 seconds
+20:36:29.133 (loader): set background IMG_REBOOT_OK
+20:36:29.134 (loader): redraw timer set, image 14 to show for 1200 ms
+20:36:29.316 (loader): HID/macos: number of devices found = 0
+20:36:29.316 (loader): HID/macos: no devices found (empty set)
+20:36:30.335 (loader): redraw, image 9
+20:41:05.548 (post_compile 49): Begin, version=1.58
+20:41:05.548 (loader): remote connection 8 opened
+20:41:05.548 (post_compile 49): Sending command: comment: Teensyduino 1.58 - MACOSX (teensy_post_compile)
+20:41:05.549 (loader): remote cmd from 8: "comment: Teensyduino 1.58 - MACOSX (teensy_post_compile)"
+20:41:05.549 (loader): remote cmd from 8: "status"
+20:41:05.549 (loader): file changed
+20:41:05.558 (loader): File "/Users/owhite/kicad/MESC_brain_board/teensy40/brain/.pio/build/teensy40/firmware.hex", 69632 bytes
+20:41:05.559 (loader): File "firmware.hex". 69632 bytes
+20:41:05.561 (post_compile 49): Status: 1, 1, 0, 16, 0, 0, /Users/owhite/kicad/MESC_brain_board/teensy40/brain/.pio/build/teensy40/, firmware.hex
+20:41:05.561 (post_compile 49): Disconnect
+20:41:05.572 (post_compile 50): Running teensy_reboot: /Users/owhite/.platformio/packages/tool-teensy/teensy_reboot
+20:41:05.572 (loader): remote connection 8 closed
+20:41:05.572 (loader): remote connection 8 opened
+20:41:05.572 (loader): remote connection 8 closed
+20:41:05.577 (reboot 51): Begin, version=1.58
+20:41:05.577 (reboot 51): USB device add callback
+20:41:05.577 (reboot 51):   loc=14600000, vid=16C0, pid=0483, ver=0279, ser=17888890
+20:41:05.577 (reboot 51):   actual serailnum=1788889
+20:41:05.579 (loader): remote connection 8 opened
+20:41:05.579 (reboot 51): USB device remove callback
+20:41:05.579 (reboot 51): Serial add callback
+20:41:05.580 (reboot 51):   name=/dev/cu.usbmodem178888901, loc=14600000, vid=16c0, pid=0483, ver=0279
+20:41:05.589 (reboot 51): Serial remove callback
+20:41:05.602 (reboot 51): HID Manager started
+20:41:05.603 (reboot 51): usb scan found 1 devices
+20:41:05.603 (reboot 51): found Teensy Loader, version 1.58
+20:41:05.603 (reboot 51): Sending command: show:arduino_attempt_reboot
+20:41:05.603 (loader): remote cmd from 8: "show:arduino_attempt_reboot"
+20:41:05.603 (loader): got request to show arduino rebooting message
+20:41:05.603 (reboot 51): Sending command: comment: Teensyduino 1.58 - MACOSX (teensy_reboot)
+20:41:05.604 (loader): remote cmd from 8: "comment: Teensyduino 1.58 - MACOSX (teensy_reboot)"
+20:41:05.604 (loader): remote cmd from 8: "status"
+20:41:05.605 (reboot 51): Status: 1, 1, 0, 16, 0, 0, /Users/owhite/kicad/MESC_brain_board/teensy40/brain/.pio/build/teensy40/, firmware.hex
+20:41:05.605 (reboot 51): do_reset (serial) /dev/cu.usbmodem178888901
+20:41:05.607 (loader): remote cmd from 8: "status"
+20:41:05.607 (reboot 51): Status: 1, 1, 0, 16, 0, 0, /Users/owhite/kicad/MESC_brain_board/teensy40/brain/.pio/build/teensy40/, firmware.hex
+20:41:05.607 (reboot 51): status read, retry 0
+20:41:05.708 (loader): remote cmd from 8: "status"
+20:41:05.708 (reboot 51): Status: 1, 1, 0, 16, 0, 0, /Users/owhite/kicad/MESC_brain_board/teensy40/brain/.pio/build/teensy40/, firmware.hex
+20:41:05.708 (reboot 51): status read, retry 1
+20:41:05.812 (loader): remote cmd from 8: "status"
+20:41:05.812 (reboot 51): Status: 1, 1, 0, 16, 0, 0, /Users/owhite/kicad/MESC_brain_board/teensy40/brain/.pio/build/teensy40/, firmware.hex
+20:41:05.812 (reboot 51): status read, retry 2
+20:41:05.913 (loader): remote cmd from 8: "status"
+20:41:05.913 (reboot 51): Status: 1, 1, 0, 16, 0, 0, /Users/owhite/kicad/MESC_brain_board/teensy40/brain/.pio/build/teensy40/, firmware.hex
+20:41:05.913 (reboot 51): status read, retry 3
+20:41:05.915 (loader): HID/macos: attach callback
+20:41:06.013 (loader): remote cmd from 8: "status"
+20:41:06.014 (loader): HID/macos: ser=001B4BD9
+20:41:06.014 (loader): try to read feature report
+20:41:06.014 (loader): got feature report, size = 384
+20:41:06.014 (loader): 7393CD01 00000000
+20:41:06.014 (loader): secure mode can not be locked: this is Standard Teensy
+20:41:06.014 (loader): encryption is possible on this Teensy, but not yet configured
+20:41:06.014 (loader): but without secure mode locked, encryption will NOT be secure!
+20:41:06.014 (loader): Device came online, code_size = 2031616
+20:41:06.014 (loader): Board is: Teensy 4.0 (IMXRT1062), version 1.08
+20:41:06.022 (loader): File "/Users/owhite/kicad/MESC_brain_board/teensy40/brain/.pio/build/teensy40/firmware.hex", 69632 bytes
+20:41:06.022 (loader): File "firmware.hex". 69632 bytes, 3% used
+20:41:06.034 (loader): set background IMG_ONLINE
+20:41:06.042 (loader): File "/Users/owhite/kicad/MESC_brain_board/teensy40/brain/.pio/build/teensy40/firmware.hex", 69632 bytes
+20:41:06.042 (loader): File "firmware.hex". 69632 bytes, 3% used
+20:41:06.054 (loader): elf appears to be for Teensy 4.0 (IMXRT1062) (2031616 bytes)
+20:41:06.054 (loader): elf binary data matches hex file
+20:41:06.054 (loader): elf file is for Teensy 4.0 (IMXRT1062)
+20:41:06.054 (loader): using hex file
+20:41:06.066 (loader): begin operation
+20:41:06.068 (reboot 51): Status: 1, 1, 1, 17, 0, 1, /Users/owhite/kicad/MESC_brain_board/teensy40/brain/.pio/build/teensy40/, firmware.hex
+20:41:06.073 (loader): flash, block=0, bs=1024, auto=1
+20:41:06.074 (loader): flash, block=1, bs=1024, auto=1
+20:41:06.074 (loader): flash, block=2, bs=1024, auto=1
+20:41:06.590 (loader): remote cmd from 8: "status"
+20:41:06.590 (reboot 51): Status: 1, 1, 1, 17, 0, 1, /Users/owhite/kicad/MESC_brain_board/teensy40/brain/.pio/build/teensy40/, firmware.hex
+20:41:06.590 (loader): flash, block=3, bs=1024, auto=1
+20:41:06.590 (loader): flash, block=4, bs=1024, auto=1
+20:41:06.591 (loader): flash, block=5, bs=1024, auto=1
+20:41:06.591 (loader): flash, block=6, bs=1024, auto=1
+20:41:06.592 (loader): flash, block=7, bs=1024, auto=1
+20:41:06.609 (loader): flash, block=8, bs=1024, auto=1
+20:41:06.609 (loader): flash, block=9, bs=1024, auto=1
+20:41:06.610 (loader): flash, block=10, bs=1024, auto=1
+20:41:06.627 (loader): flash, block=11, bs=1024, auto=1
+20:41:06.628 (loader): flash, block=12, bs=1024, auto=1
+20:41:06.646 (loader): remote cmd from 8: "status"
+20:41:06.646 (reboot 51): Status: 1, 1, 1, 17, 0, 1, /Users/owhite/kicad/MESC_brain_board/teensy40/brain/.pio/build/teensy40/, firmware.hex
+20:41:06.646 (loader): flash, block=13, bs=1024, auto=1
+20:41:06.647 (loader): flash, block=14, bs=1024, auto=1
+20:41:06.647 (loader): flash, block=15, bs=1024, auto=1
+20:41:06.664 (loader): flash, block=16, bs=1024, auto=1
+20:41:06.665 (loader): flash, block=17, bs=1024, auto=1
+20:41:06.666 (loader): flash, block=18, bs=1024, auto=1
+20:41:06.683 (loader): flash, block=19, bs=1024, auto=1
+20:41:06.683 (loader): flash, block=20, bs=1024, auto=1
+20:41:06.684 (loader): flash, block=21, bs=1024, auto=1
+20:41:06.701 (loader): remote cmd from 8: "status"
+20:41:06.701 (reboot 51): Status: 1, 1, 1, 17, 0, 1, /Users/owhite/kicad/MESC_brain_board/teensy40/brain/.pio/build/teensy40/, firmware.hex
+20:41:06.701 (loader): flash, block=22, bs=1024, auto=1
+20:41:06.702 (loader): flash, block=23, bs=1024, auto=1
+20:41:06.702 (loader): flash, block=24, bs=1024, auto=1
+20:41:06.720 (loader): flash, block=25, bs=1024, auto=1
+20:41:06.720 (loader): flash, block=26, bs=1024, auto=1
+20:41:06.720 (loader): flash, block=27, bs=1024, auto=1
+20:41:06.738 (loader): flash, block=28, bs=1024, auto=1
+20:41:06.738 (loader): flash, block=29, bs=1024, auto=1
+20:41:06.739 (loader): flash, block=30, bs=1024, auto=1
+20:41:06.756 (loader): remote cmd from 8: "status"
+20:41:06.756 (reboot 51): Status: 1, 1, 1, 17, 0, 1, /Users/owhite/kicad/MESC_brain_board/teensy40/brain/.pio/build/teensy40/, firmware.hex
+20:41:06.756 (loader): flash, block=31, bs=1024, auto=1
+20:41:06.757 (loader): flash, block=32, bs=1024, auto=1
+20:41:06.757 (loader): flash, block=33, bs=1024, auto=1
+20:41:06.775 (loader): flash, block=34, bs=1024, auto=1
+20:41:06.775 (loader): flash, block=35, bs=1024, auto=1
+20:41:06.776 (loader): flash, block=36, bs=1024, auto=1
+20:41:06.793 (loader): flash, block=37, bs=1024, auto=1
+20:41:06.794 (loader): flash, block=38, bs=1024, auto=1
+20:41:06.795 (loader): flash, block=39, bs=1024, auto=1
+20:41:06.813 (loader): remote cmd from 8: "status"
+20:41:06.813 (reboot 51): Status: 1, 1, 1, 17, 0, 1, /Users/owhite/kicad/MESC_brain_board/teensy40/brain/.pio/build/teensy40/, firmware.hex
+20:41:06.813 (loader): flash, block=40, bs=1024, auto=1
+20:41:06.814 (loader): flash, block=41, bs=1024, auto=1
+20:41:06.814 (loader): flash, block=42, bs=1024, auto=1
+20:41:06.832 (loader): flash, block=43, bs=1024, auto=1
+20:41:06.832 (loader): flash, block=44, bs=1024, auto=1
+20:41:06.833 (loader): flash, block=45, bs=1024, auto=1
+20:41:06.850 (loader): flash, block=46, bs=1024, auto=1
+20:41:06.850 (loader): flash, block=47, bs=1024, auto=1
+20:41:06.851 (loader): flash, block=48, bs=1024, auto=1
+20:41:06.863 (reboot 51): status read, retry 4
+20:41:06.863 (reboot 51): Success
+20:41:06.863 (reboot 51): Disconnect
+20:41:06.868 (loader): flash, block=49, bs=1024, auto=1
+20:41:06.868 (loader): flash, block=50, bs=1024, auto=1
+20:41:06.868 (loader): flash, block=51, bs=1024, auto=1
+20:41:06.885 (loader): remote connection 8 closed
+20:41:06.885 (loader): flash, block=52, bs=1024, auto=1
+20:41:06.886 (loader): flash, block=53, bs=1024, auto=1
+20:41:06.886 (loader): flash, block=54, bs=1024, auto=1
+20:41:06.903 (loader): flash, block=55, bs=1024, auto=1
+20:41:06.904 (loader): flash, block=56, bs=1024, auto=1
+20:41:06.904 (loader): flash, block=57, bs=1024, auto=1
+20:41:06.921 (loader): flash, block=58, bs=1024, auto=1
+20:41:06.921 (loader): flash, block=59, bs=1024, auto=1
+20:41:06.922 (loader): flash, block=60, bs=1024, auto=1
+20:41:06.939 (loader): flash, block=61, bs=1024, auto=1
+20:41:06.939 (loader): flash, block=62, bs=1024, auto=1
+20:41:06.940 (loader): flash, block=63, bs=1024, auto=1
+20:41:06.957 (loader): flash, block=64, bs=1024, auto=1
+20:41:06.957 (loader): flash, block=65, bs=1024, auto=1
+20:41:06.958 (loader): flash, block=66, bs=1024, auto=1
+20:41:06.975 (loader): flash, block=67, bs=1024, auto=1
+20:41:06.979 (loader): sending reboot
+20:41:06.979 (loader): begin wait_until_offline
+20:41:06.979 (loader): HID/macos: status: ok
+20:41:07.282 (loader): HID/macos: detach callback: is currently open device
+20:41:07.282 (loader): offline, waited 6
+20:41:07.282 (loader): end operation, total time = 1.216 seconds
+20:41:07.282 (loader): set background IMG_REBOOT_OK
+20:41:07.283 (loader): redraw timer set, image 14 to show for 1200 ms
+20:41:07.390 (loader): HID/macos: number of devices found = 0
+20:41:07.390 (loader): HID/macos: no devices found (empty set)
+20:41:08.484 (loader): redraw, image 9
+20:42:56.100 (post_compile 52): Begin, version=1.58
+20:42:56.101 (loader): remote connection 8 opened
+20:42:56.101 (post_compile 52): Sending command: comment: Teensyduino 1.58 - MACOSX (teensy_post_compile)
+20:42:56.101 (loader): remote cmd from 8: "comment: Teensyduino 1.58 - MACOSX (teensy_post_compile)"
+20:42:56.101 (loader): remote cmd from 8: "status"
+20:42:56.101 (loader): file changed
+20:42:56.109 (loader): File "/Users/owhite/kicad/MESC_brain_board/teensy40/brain/.pio/build/teensy40/firmware.hex", 69632 bytes
+20:42:56.109 (loader): File "firmware.hex". 69632 bytes
+20:42:56.112 (post_compile 52): Status: 1, 1, 0, 17, 0, 0, /Users/owhite/kicad/MESC_brain_board/teensy40/brain/.pio/build/teensy40/, firmware.hex
+20:42:56.112 (post_compile 52): Disconnect
+20:42:56.124 (post_compile 53): Running teensy_reboot: /Users/owhite/.platformio/packages/tool-teensy/teensy_reboot
+20:42:56.124 (loader): remote connection 8 closed
+20:42:56.124 (loader): remote connection 8 opened
+20:42:56.124 (loader): remote connection 8 closed
+20:42:56.129 (reboot 54): Begin, version=1.58
+20:42:56.129 (reboot 54): USB device add callback
+20:42:56.129 (reboot 54):   loc=14600000, vid=16C0, pid=0483, ver=0279, ser=17888890
+20:42:56.129 (reboot 54):   actual serailnum=1788889
+20:42:56.130 (loader): remote connection 8 opened
+20:42:56.130 (reboot 54): USB device remove callback
+20:42:56.130 (reboot 54): Serial add callback
+20:42:56.131 (reboot 54):   name=/dev/cu.usbmodem178888901, loc=14600000, vid=16c0, pid=0483, ver=0279
+20:42:56.141 (reboot 54): Serial remove callback
+20:42:56.154 (reboot 54): HID Manager started
+20:42:56.154 (reboot 54): usb scan found 1 devices
+20:42:56.154 (reboot 54): found Teensy Loader, version 1.58
+20:42:56.154 (reboot 54): Sending command: show:arduino_attempt_reboot
+20:42:56.154 (loader): remote cmd from 8: "show:arduino_attempt_reboot"
+20:42:56.154 (loader): got request to show arduino rebooting message
+20:42:56.155 (reboot 54): Sending command: comment: Teensyduino 1.58 - MACOSX (teensy_reboot)
+20:42:56.156 (loader): remote cmd from 8: "comment: Teensyduino 1.58 - MACOSX (teensy_reboot)"
+20:42:56.156 (loader): remote cmd from 8: "status"
+20:42:56.157 (reboot 54): Status: 1, 1, 0, 17, 0, 0, /Users/owhite/kicad/MESC_brain_board/teensy40/brain/.pio/build/teensy40/, firmware.hex
+20:42:56.157 (reboot 54): do_reset (serial) /dev/cu.usbmodem178888901
+20:42:56.159 (loader): remote cmd from 8: "status"
+20:42:56.159 (reboot 54): Status: 1, 1, 0, 17, 0, 0, /Users/owhite/kicad/MESC_brain_board/teensy40/brain/.pio/build/teensy40/, firmware.hex
+20:42:56.159 (reboot 54): status read, retry 0
+20:42:56.263 (loader): remote cmd from 8: "status"
+20:42:56.264 (reboot 54): Status: 1, 1, 0, 17, 0, 0, /Users/owhite/kicad/MESC_brain_board/teensy40/brain/.pio/build/teensy40/, firmware.hex
+20:42:56.264 (reboot 54): status read, retry 1
+20:42:56.368 (loader): remote cmd from 8: "status"
+20:42:56.368 (reboot 54): Status: 1, 1, 0, 17, 0, 0, /Users/owhite/kicad/MESC_brain_board/teensy40/brain/.pio/build/teensy40/, firmware.hex
+20:42:56.368 (reboot 54): status read, retry 2
+20:42:56.454 (loader): HID/macos: attach callback
+20:42:56.472 (loader): remote cmd from 8: "status"
+20:42:56.473 (loader): HID/macos: ser=001B4BD9
+20:42:56.473 (loader): try to read feature report
+20:42:56.473 (loader): got feature report, size = 384
+20:42:56.473 (loader): 7393CD01 00000000
+20:42:56.473 (loader): secure mode can not be locked: this is Standard Teensy
+20:42:56.473 (loader): encryption is possible on this Teensy, but not yet configured
+20:42:56.473 (loader): but without secure mode locked, encryption will NOT be secure!
+20:42:56.473 (loader): Device came online, code_size = 2031616
+20:42:56.473 (loader): Board is: Teensy 4.0 (IMXRT1062), version 1.08
+20:42:56.482 (loader): File "/Users/owhite/kicad/MESC_brain_board/teensy40/brain/.pio/build/teensy40/firmware.hex", 69632 bytes
+20:42:56.482 (loader): File "firmware.hex". 69632 bytes, 3% used
+20:42:56.494 (loader): set background IMG_ONLINE
+20:42:56.502 (loader): File "/Users/owhite/kicad/MESC_brain_board/teensy40/brain/.pio/build/teensy40/firmware.hex", 69632 bytes
+20:42:56.502 (loader): File "firmware.hex". 69632 bytes, 3% used
+20:42:56.514 (loader): elf appears to be for Teensy 4.0 (IMXRT1062) (2031616 bytes)
+20:42:56.514 (loader): elf binary data matches hex file
+20:42:56.514 (loader): elf file is for Teensy 4.0 (IMXRT1062)
+20:42:56.514 (loader): using hex file
+20:42:56.526 (loader): begin operation
+20:42:56.529 (reboot 54): Status: 1, 1, 1, 18, 0, 1, /Users/owhite/kicad/MESC_brain_board/teensy40/brain/.pio/build/teensy40/, firmware.hex
+20:42:56.534 (loader): flash, block=0, bs=1024, auto=1
+20:42:56.534 (loader): flash, block=1, bs=1024, auto=1
+20:42:56.535 (loader): flash, block=2, bs=1024, auto=1
+20:42:57.048 (loader): remote cmd from 8: "status"
+20:42:57.049 (reboot 54): Status: 1, 1, 1, 18, 0, 1, /Users/owhite/kicad/MESC_brain_board/teensy40/brain/.pio/build/teensy40/, firmware.hex
+20:42:57.049 (loader): flash, block=3, bs=1024, auto=1
+20:42:57.049 (loader): flash, block=4, bs=1024, auto=1
+20:42:57.050 (loader): flash, block=5, bs=1024, auto=1
+20:42:57.051 (loader): flash, block=6, bs=1024, auto=1
+20:42:57.051 (loader): flash, block=7, bs=1024, auto=1
+20:42:57.070 (loader): flash, block=8, bs=1024, auto=1
+20:42:57.070 (loader): flash, block=9, bs=1024, auto=1
+20:42:57.071 (loader): flash, block=10, bs=1024, auto=1
+20:42:57.087 (loader): flash, block=11, bs=1024, auto=1
+20:42:57.088 (loader): flash, block=12, bs=1024, auto=1
+20:42:57.088 (loader): flash, block=13, bs=1024, auto=1
+20:42:57.105 (loader): remote cmd from 8: "status"
+20:42:57.105 (reboot 54): Status: 1, 1, 1, 18, 0, 1, /Users/owhite/kicad/MESC_brain_board/teensy40/brain/.pio/build/teensy40/, firmware.hex
+20:42:57.105 (loader): flash, block=14, bs=1024, auto=1
+20:42:57.106 (loader): flash, block=15, bs=1024, auto=1
+20:42:57.106 (loader): flash, block=16, bs=1024, auto=1
+20:42:57.124 (loader): flash, block=17, bs=1024, auto=1
+20:42:57.124 (loader): flash, block=18, bs=1024, auto=1
+20:42:57.125 (loader): flash, block=19, bs=1024, auto=1
+20:42:57.142 (loader): flash, block=20, bs=1024, auto=1
+20:42:57.142 (loader): flash, block=21, bs=1024, auto=1
+20:42:57.143 (loader): flash, block=22, bs=1024, auto=1
+20:42:57.160 (loader): remote cmd from 8: "status"
+20:42:57.160 (reboot 54): Status: 1, 1, 1, 18, 0, 1, /Users/owhite/kicad/MESC_brain_board/teensy40/brain/.pio/build/teensy40/, firmware.hex
+20:42:57.160 (loader): flash, block=23, bs=1024, auto=1
+20:42:57.160 (loader): flash, block=24, bs=1024, auto=1
+20:42:57.161 (loader): flash, block=25, bs=1024, auto=1
+20:42:57.177 (loader): flash, block=26, bs=1024, auto=1
+20:42:57.178 (loader): flash, block=27, bs=1024, auto=1
+20:42:57.178 (loader): flash, block=28, bs=1024, auto=1
