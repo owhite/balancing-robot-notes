@@ -120,9 +120,9 @@ void run_mode_set_position(Supervisor_typedef *sup,
 
 ## What I found was: 
 
-- The teensy is running control at 1 kHz but ESC sent data at 500 Hz.
+- The teensy is running its control loop at 1 kHz but my configuratino of MESC sent data at 500 Hz.
 - If you're not careful the teensy reused stale velocity samples
-- The fix was to add this to the top of the control loop:
+- The fix was to basically gate calculations, by adding this to the top of the control loop:
 
 ```c
 if (!sup->esc[0].state.alive) return;
