@@ -168,6 +168,9 @@ This aligned Teensy’s control loop with ESC data → noise and D-term chaos di
 
 ## What is actually needed is an inverted pendulum.
 
+In short: a free-spinning motor under no load is just a wiring check. An inverted pendulum on the motor shaft is a true physics test of acontroller.
+
+Because:
 - The critical state is body angle (θ) and its rate (θ̇).
 - Encoders on free-spinning wheels don’t give body tilt; an IMU is normally used.
 - The new plan: inverted pendulum test rig
@@ -187,4 +190,4 @@ Control setup:
 - D-term damps oscillations.
 - I-term only after P–D balance is stable, to cancel offsets (friction, misalignment).
 
-In short: a free-spinning motor under no load is just a wiring check. An inverted pendulum on the motor shaft is a true physics test of your controller. It’s the right next step before putting code on the robot.
+
