@@ -1,4 +1,4 @@
-# CAN Telemtry of Position and Velocity
+# Managing Position, Velocity and CAN Telemetry
 ## System Goals
 - System Goals (Teensy 4.0 “brain” + ESCs over CAN)
 - Note: the ESC uses firmware called "MESC"

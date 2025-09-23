@@ -90,7 +90,7 @@ By choosing large weight on tilt angle in \(Q\), the controller behaves with **s
 
 ---
 
-## Bottom Line
+## Next improvements
 - Current PD lacks authority.
 - Balancing will require strong corrective torque (like tightly holding a boat wheel in a current).
 - Adding an I-term can improve steady-state authority.
