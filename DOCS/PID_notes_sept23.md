@@ -1,4 +1,10 @@
+## Sept 23, 2035
 # PID Control Issues and Context for Balancing Robot
+
+At this stage: 
+- PD seems to supply reasonable control law on the motor.
+- Can send data from the control plant to a python graphing program
+- The graphing program is able to send rudimentary commands to teensy 
 
 ## 1. Motor Does Not Move With Authority
 - In the current PD setup, the motor reaches setpoint, but it does so with **low torque output**.
