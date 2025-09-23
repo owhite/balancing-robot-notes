@@ -1,11 +1,8 @@
 #!/usr/bin/env python3
-import sys
-import json
-import serial
-import math
+import sys, json, serial, math
 import matplotlib.pyplot as plt
 import matplotlib.animation as animation
-from collections import deque
+from matplotlib.widgets import TextBox, Button
 
 if len(sys.argv) < 2:
     print("Usage: python position_burst.py <serial_port>")
@@ -14,40 +11,47 @@ if len(sys.argv) < 2:
 port = sys.argv[1]
 ser = serial.Serial(port, 115200, timeout=0.1)
 
-# --- Live scrolling buffer ---
-history_len = 500  # number of points to keep in live plot
-t_live = deque(maxlen=history_len)
-pos_live = deque(maxlen=history_len)
-set_live = deque(maxlen=history_len)  # fixed setpoint (π) in idle mode
+PARAM_FILE = "params.json"
+
+# --- Load parameters from file ---
+def load_params():
+    try:
+        with open(PARAM_FILE, "r") as f:
+            return json.load(f)
+    except:
+        return {"setpoint": math.pi, "p_term": 0.07, "d_term": 0.004}
+
+params = load_params()
 
 # --- Burst data container ---
 burst_data = None
+current_position = 0.0
 
-# --- Setup figure with 3 subplots ---
-fig, (ax_live, ax_burst, ax_veltorque) = plt.subplots(3, 1, figsize=(10, 12))
+# --- Setup figure with 2 subplots ---
+fig, (ax_burst, ax_veltorque) = plt.subplots(2, 1, figsize=(10, 8))
 
-# Live plot (position + setpoint only)
-line_pos, = ax_live.plot([], [], label="Position", color="tab:green")
-line_set, = ax_live.plot([], [], label="Setpoint", color="tab:orange")
-ax_live.set_title("Live Position (Idle Mode)")
-ax_live.set_xlabel("t (us)")
-ax_live.set_ylabel("Position (rad)")
-ax_live.set_ylim(0.0, 2 * math.pi)
-ax_live.legend()
-ax_live.grid(True)
+# Shrink plot width to leave space for widgets on the right
+plt.subplots_adjust(left=0.1, right=0.75, top=0.92, bottom=0.1)
 
-# Burst plot (position + setpoint + error)
+# --- Position label (top of right column) ---
+pos_text = fig.text(
+    0.8, 0.92,
+    f"Position: {current_position:.4f} rad | Setpoint: {params['setpoint']:.4f}",
+    fontsize=12
+)
+
+# Burst plot
 line_burst_pos, = ax_burst.plot([], [], label="Position", color="tab:green")
 line_burst_set, = ax_burst.plot([], [], label="Setpoint", color="tab:orange")
 line_burst_err, = ax_burst.plot([], [], label="Error", color="tab:red")
 ax_burst.set_title("Burst Data (Position/Setpoint/Error)")
 ax_burst.set_xlabel("t (us)")
 ax_burst.set_ylabel("Value (rad)")
-ax_burst.set_ylim(-2 * math.pi, 2 * math.pi)
+ax_burst.set_ylim(-2*math.pi, 2*math.pi)
 ax_burst.legend()
 ax_burst.grid(True)
 
-# Burst velocity/torque plot with twin y-axis
+# Burst velocity/torque
 line_burst_vel, = ax_veltorque.plot([], [], label="Velocity", color="tab:blue")
 ax_veltorque.set_title("Burst Data (Velocity & Torque)")
 ax_veltorque.set_xlabel("t (us)")
@@ -56,23 +60,50 @@ ax_veltorque.tick_params(axis="y", labelcolor="tab:blue")
 ax_veltorque.grid(True)
 ax_veltorque.set_ylim(-200, 200)
 
-# Create second axis for torque & PID terms
+# Second axis for torque & PID terms
 ax_torque = ax_veltorque.twinx()
 line_burst_torque, = ax_torque.plot([], [], label="Torque", color="tab:red")
 line_pterm, = ax_torque.plot([], [], label="P-term", color="tab:green", linestyle="--")
 line_dterm, = ax_torque.plot([], [], label="D-term", color="tab:purple", linestyle="--")
 ax_torque.set_ylabel("Torque / PID terms (Nm)", color="tab:red")
 ax_torque.tick_params(axis="y", labelcolor="tab:red")
-ax_torque.set_ylim(-.2, .2)
-
-# Add legends
+ax_torque.set_ylim(-.6, .6)
 ax_veltorque.legend(loc="upper left")
 ax_torque.legend(loc="upper right")
 
-def update(frame):
-    global burst_data
+# --- UI Controls (TextBoxes + Button) ---
+axbox_set = plt.axes([0.8, 0.82, 0.15, 0.05])
+axbox_k   = plt.axes([0.8, 0.74, 0.15, 0.05])
+axbox_p   = plt.axes([0.8, 0.66, 0.15, 0.05])
+axbutton  = plt.axes([0.8, 0.56, 0.15, 0.07])
 
-    # --- Read lines from serial ---
+tb_set = TextBox(axbox_set, "Setpoint", initial=f"{params['setpoint']:.4f}")
+tb_p   = TextBox(axbox_k, "P-term", initial=str(params["p_term"]))
+tb_d   = TextBox(axbox_p, "D-term", initial=str(params["d_term"]))
+button = Button(axbutton, "Run") # this also saves to disk. 
+
+def save_and_run(event):
+    params["setpoint"] = float(tb_set.text)
+    params["p_term"] = float(tb_p.text)
+    params["d_term"] = float(tb_d.text)
+    with open(PARAM_FILE, "w") as f:
+        json.dump(params, f, indent=2)
+    # send JSON to Teensy
+    msg = {
+        "cmd": "send",
+        "setpoint": params["setpoint"],
+        "p_term": params["p_term"],
+        "d_term": params["d_term"]
+    }
+    print("SEND:", msg)
+    ser.write((json.dumps(msg) + "\n").encode("utf-8"))
+
+button.on_clicked(save_and_run)
+
+# --- Update loop ---
+def update(frame):
+    global burst_data, current_position
+
     while ser.in_waiting:
         line = ser.readline().decode("utf-8", errors="ignore").strip()
         if not line:
@@ -80,7 +111,6 @@ def update(frame):
         try:
             data = json.loads(line)
         except json.JSONDecodeError:
-            # Maybe burst block (multi-line JSON)
             if line.startswith("{") and "samples" in line:
                 buf = line
                 while True:
@@ -97,19 +127,15 @@ def update(frame):
                     burst_data = data["samples"]
             continue
 
-        # --- Live streaming data (idle mode) ---
+        # live position update
         if "pos" in data:
-            t_live.append(data["t"])
-            pos_live.append(data["pos"])
-            set_live.append(math.pi)  # always π in idle mode
+            current_position = data["pos"]
+            pos_text.set_text(f"Position: {current_position:.3f} rad")
 
-    # --- Update live plot ---
-    if t_live:
-        line_pos.set_data(t_live, pos_live)
-        line_set.set_data(t_live, set_live)
-        ax_live.set_xlim(max(t_live[0], t_live[-1] - 50000), t_live[-1])  # ~last 50ms
+        if "cmd" in data and data["cmd"] == "PRINT":
+            print("PRINT:", data)
 
-    # --- Update burst plots ---
+    # burst plots
     if burst_data:
         t_vals = [s["t"] for s in burst_data]
         pos_vals = [s["pos"] for s in burst_data]
@@ -117,42 +143,24 @@ def update(frame):
         err_vals = [s["err"] for s in burst_data]
         vel_vals = [s["vel"] for s in burst_data]
         torque_vals = [s["torque"] for s in burst_data]
-
-        # Optional: P and D terms, if logged
         p_vals = [s.get("p_term", 0.0) for s in burst_data]
         d_vals = [s.get("d_term", 0.0) for s in burst_data]
 
-        # Position/setpoint/error
         line_burst_pos.set_data(t_vals, pos_vals)
         line_burst_set.set_data(t_vals, set_vals)
         line_burst_err.set_data(t_vals, err_vals)
         ax_burst.set_xlim(min(t_vals), max(t_vals))
 
-        # Velocity/torque + terms
         line_burst_vel.set_data(t_vals, vel_vals)
         line_burst_torque.set_data(t_vals, torque_vals)
         line_pterm.set_data(t_vals, p_vals)
         line_dterm.set_data(t_vals, d_vals)
-
         ax_veltorque.set_xlim(min(t_vals), max(t_vals))
 
-        # Scale velocity axis
-        vmin, vmax = min(vel_vals), max(vel_vals)
-        vrange = vmax - vmin if vmax != vmin else 1.0
-        # ax_veltorque.set_ylim(vmin - 0.1 * vrange, vmax + 0.1 * vrange)
+        burst_data = None
 
-        # Scale torque axis (includes torque + terms)
-        all_torque = torque_vals + p_vals + d_vals
-        tmin, tmax = min(all_torque), max(all_torque)
-        trange = tmax - tmin if tmax != tmin else 1.0
-        # ax_torque.set_ylim(tmin - 0.1 * trange, tmax + 0.1 * trange)
-
-        burst_data = None  # only draw once per burst
-
-    return (line_pos, line_set,
-            line_burst_pos, line_burst_set, line_burst_err,
-            line_burst_vel, line_burst_torque, line_pterm, line_dterm)
+    return (line_burst_pos, line_burst_set, line_burst_err,
+            line_burst_vel, line_burst_torque, line_pterm, line_dterm, pos_text)
 
 ani = animation.FuncAnimation(fig, update, interval=100, blit=False, cache_frame_data=False)
-plt.tight_layout()
 plt.show()

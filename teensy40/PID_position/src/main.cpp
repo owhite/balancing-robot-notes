@@ -1,5 +1,6 @@
 #include <FlexCAN_T4.h>
 #include "LED.h"
+#include <ArduinoJson.h>
 #include "main.h"
 #include "pushbutton.h"
 #include "tone_player.h"
@@ -97,24 +98,36 @@ void loop() {
   if (now_us - last_lowprio_us >= (CONTROL_PERIOD_US * 100)) {
     last_lowprio_us = now_us;
 
-#if TELEMETRY_WRITE
+    while (Serial.available()) {
+      char c = Serial.read();
+      if (c == '\n') {
+	// Try to parse the accumulated line
+	JsonDocument doc;
+	DeserializationError err = deserializeJson(doc, input);
+	if (!err) {
+	  supervisor.user_setpoint = -1.0f;
+	  supervisor.user_p_term   = -1.0f;
+	  supervisor.user_d_term   = -1.0f;
+	  if (doc.containsKey("cmd") && doc["cmd"] == "send") {
+	    if (doc.containsKey("setpoint"))
+	      supervisor.user_setpoint = doc["setpoint"];   // update your variable
+	    if (doc.containsKey("p_term"))
+	      supervisor.user_p_term = doc["p_term"];
+	    if (doc.containsKey("d_term"))
+	      supervisor.user_d_term = doc["d_term"];
 
-    // TELEMETRY EXPORT
-    TelemetryPacket pkt;
-    loadTelemetryPacket(pkt, &supervisor);
+	    supervisor.mode = SUP_MODE_SET_POSITION;
 
-    elapsedMicros t;  // start timer
-    sendTelemetryPacket(Serial1, pkt, &supervisor);
-    uint32_t elapsed = t;
+	    Serial.printf("{\"cmd\":\"PRINT\",\"note\":\"%s\",\"p_term\":%.4f,\"d_term\":%.4f}\n",
+			  "Test run started", supervisor.user_p_term, supervisor.user_d_term);
 
-    supervisor.serial1_stats.last_block_us = elapsed;
-    if (elapsed > supervisor.serial1_stats.max_block_us) {
-      supervisor.serial1_stats.max_block_us = elapsed;
+	  }
+	}
+	input = "";  // reset buffer
+      } else {
+	input += c;  // append char to buffer
+      }
     }
-    supervisor.serial1_stats.sum_block_us += elapsed;
-    supervisor.serial1_stats.count++;
-
-#endif
 
     // LED CONTROL
     tone_update(&g_tone, now_us);

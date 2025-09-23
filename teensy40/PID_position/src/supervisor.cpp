@@ -243,9 +243,7 @@ void controlLoop(MPU6050 &imu, Supervisor_typedef *sup,
 	// --- Print motor position as JSON ---
 	float pos = sup->esc[0].state.pos_rad;   // radians
 	unsigned long t_us = micros();           // timestamp
-
-	Serial.printf("{\"t\":%lu,\"pos\":%.6f}\n", t_us, pos);
-    }
+	Serial.printf("{\"t\":%lu,\"pos\":%.6f}\n", t_us, pos);    }
 
     break;
   }

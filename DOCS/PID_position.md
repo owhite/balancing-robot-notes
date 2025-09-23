@@ -108,15 +108,15 @@ void run_mode_set_position(Supervisor_typedef *sup,
 
 ## Resulting plots are here. This a sort of good example: 
 
-<img src="IMAGES/PID_fail1.1.png" alt="Plot result" width="600"/>
+<img src="IMAGES/PID_position.1.png" alt="Plot result" width="600"/>
 
 ## And these are sucktastic:
 
-<img src="IMAGES/PID_fail1.2.png" alt="Plot result" width="600"/>
+<img src="IMAGES/PID_position.2.png" alt="Plot result" width="600"/>
 
 ----
 
-<img src="IMAGES/PID_fail1.3.png" alt="Plot result" width="600"/>
+<img src="IMAGES/PID_position.3.png" alt="Plot result" width="600"/>
 
 - very little reproducibility
 - same settings produce different results
@@ -140,9 +140,9 @@ This only updates when fresh CAN message arrives.
 
 This aligned Teensy’s control loop with ESC data → noise and D-term chaos disappeared.
 
-<img src="IMAGES/PID_fail1.4.png" alt="Plot result" width="300"/>
+<img src="IMAGES/PID_position.4.png" alt="Plot result" width="300"/>
 
 
 ## General conclusions
 
-Current code can be found here: [link](https://github.com/owhite/MESC_brain_board/tree/main/teensy40/PID_fail1)
+Current code can be found here: [link](https://github.com/owhite/MESC_brain_board/tree/main/teensy40/PID_position)

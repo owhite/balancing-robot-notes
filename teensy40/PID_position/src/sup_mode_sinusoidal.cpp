@@ -29,7 +29,7 @@ void run_mode_sinusoidal(Supervisor_typedef *sup,
         first_entry = false;
     }
 
-    const float Kp = 0.07f;
+    const float Kp = 0.2f;
     const float Kd = 0.002f;
 
     float t_now = micros() / 1e6f - sinusoid_t0;
