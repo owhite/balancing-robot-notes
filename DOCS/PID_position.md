@@ -185,9 +185,9 @@ Sensor setup:
 - Define “relative zero” at the upright top position.
 
 Control setup:
-- Start with PD control:
+- Start with PD control. 
 - P-term provides restoring torque to pull arm upright.
 - D-term damps oscillations.
 - I-term only after P–D balance is stable, to cancel offsets (friction, misalignment).
-
+- The move on to LQR
 
