@@ -2,11 +2,7 @@
 #include <string.h>
 #include "main.h"
 #pragma once
-#include "sup_mode_sinusoidal.h"
 
-
-void run_mode_sinusoidal(Supervisor_typedef *sup,
-                         FlexCAN_T4<CAN1, RX_SIZE_256, TX_SIZE_16> &can);
 void run_mode_set_position(Supervisor_typedef *sup,
 			   FlexCAN_T4<CAN1, RX_SIZE_256, TX_SIZE_16> &can);
 
@@ -250,10 +246,6 @@ void controlLoop(MPU6050 &imu, Supervisor_typedef *sup,
  
   case SUP_MODE_SET_POSITION: {
     run_mode_set_position(sup, can);
-    break;
- }
-  case SUP_MODE_SINUSOIDAL: {
-    run_mode_sinusoidal(sup, can);
     break;
  }
   default: {
