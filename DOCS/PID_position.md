@@ -172,13 +172,12 @@ This aligned Teensy’s control loop with ESC data → noise and D-term chaos di
 - Encoders on free-spinning wheels don’t give body tilt; an IMU is normally used.
 - The new plan: inverted pendulum test rig
 
-## Mechanical setup:
-
+Mechanical setup:
 - Mount an arm rigidly on the motor shaft, with a weight at the end.
 - Motor shaft horizontal, arm pointing up → defines the unstable equilibrium.
 - Add stops or bumpers so the arm can’t swing 360°.
 
-Sensor setup
+Sensor setup:
 - Use the motor’s encoder to measure arm angle.
 - Define “relative zero” at the upright top position.
 
