@@ -101,6 +101,7 @@ struct Supervisor_typedef {
 
   float user_setpoint = M_PI;
   float user_p_term = -1.0f;
+  float user_i_term = -1.0f; 
   float user_d_term = -1.0f; 
 
   SerialStats serial1_stats;                               // Telemetry serial performance stats

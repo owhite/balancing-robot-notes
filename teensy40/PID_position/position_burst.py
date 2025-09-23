@@ -45,7 +45,7 @@ line_burst_pos, = ax_burst.plot([], [], label="Position", color="tab:green")
 line_burst_set, = ax_burst.plot([], [], label="Setpoint", color="tab:orange")
 line_burst_err, = ax_burst.plot([], [], label="Error", color="tab:red")
 ax_burst.set_title("Burst Data (Position/Setpoint/Error)")
-ax_burst.set_xlabel("t (us)")
+ax_burst.set_xlabel("t (seconds)")
 ax_burst.set_ylabel("Value (rad)")
 ax_burst.set_ylim(-2*math.pi, 2*math.pi)
 ax_burst.legend()
@@ -54,7 +54,7 @@ ax_burst.grid(True)
 # Burst velocity/torque
 line_burst_vel, = ax_veltorque.plot([], [], label="Velocity", color="tab:blue")
 ax_veltorque.set_title("Burst Data (Velocity & Torque)")
-ax_veltorque.set_xlabel("t (us)")
+ax_veltorque.set_xlabel("t seconds")
 ax_veltorque.set_ylabel("Velocity (rad/s)", color="tab:blue")
 ax_veltorque.tick_params(axis="y", labelcolor="tab:blue")
 ax_veltorque.grid(True)
@@ -73,18 +73,21 @@ ax_torque.legend(loc="upper right")
 
 # --- UI Controls (TextBoxes + Button) ---
 axbox_set = plt.axes([0.8, 0.82, 0.15, 0.05])
-axbox_k   = plt.axes([0.8, 0.74, 0.15, 0.05])
-axbox_p   = plt.axes([0.8, 0.66, 0.15, 0.05])
-axbutton  = plt.axes([0.8, 0.56, 0.15, 0.07])
+axbox_p   = plt.axes([0.8, 0.74, 0.15, 0.05])
+axbox_i   = plt.axes([0.8, 0.66, 0.15, 0.05])
+axbox_d   = plt.axes([0.8, 0.56, 0.15, 0.05])
+axbutton  = plt.axes([0.8, 0.44, 0.15, 0.07])
 
-tb_set = TextBox(axbox_set, "Setpoint", initial=f"{params['setpoint']:.4f}")
-tb_p   = TextBox(axbox_k, "P-term", initial=str(params["p_term"]))
-tb_d   = TextBox(axbox_p, "D-term", initial=str(params["d_term"]))
+tb_set = TextBox(axbox_set, "Setpnt", initial=f"{params['setpoint']:.4f}")
+tb_p   = TextBox(axbox_p, "P-term", initial=str(params["p_term"]))
+tb_i   = TextBox(axbox_i, "I-term", initial=str(params["i_term"]))
+tb_d   = TextBox(axbox_d, "D-term", initial=str(params["d_term"]))
 button = Button(axbutton, "Run") # this also saves to disk. 
 
 def save_and_run(event):
     params["setpoint"] = float(tb_set.text)
     params["p_term"] = float(tb_p.text)
+    params["i_term"] = float(tb_i.text)
     params["d_term"] = float(tb_d.text)
     with open(PARAM_FILE, "w") as f:
         json.dump(params, f, indent=2)
@@ -93,9 +96,10 @@ def save_and_run(event):
         "cmd": "send",
         "setpoint": params["setpoint"],
         "p_term": params["p_term"],
+        "i_term": params["i_term"],
         "d_term": params["d_term"]
     }
-    print("SEND:", msg)
+    # print("SEND:", msg)
     ser.write((json.dumps(msg) + "\n").encode("utf-8"))
 
 button.on_clicked(save_and_run)
@@ -132,8 +136,10 @@ def update(frame):
             current_position = data["pos"]
             pos_text.set_text(f"Position: {current_position:.3f} rad")
 
+        # debuggy stuff
         if "cmd" in data and data["cmd"] == "PRINT":
-            print("PRINT:", data)
+            pass
+            # print("PRINT:", data)
 
     # burst plots
     if burst_data:

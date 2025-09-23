@@ -107,19 +107,22 @@ void loop() {
 	if (!err) {
 	  supervisor.user_setpoint = -1.0f;
 	  supervisor.user_p_term   = -1.0f;
+	  supervisor.user_i_term   = -1.0f;
 	  supervisor.user_d_term   = -1.0f;
 	  if (doc.containsKey("cmd") && doc["cmd"] == "send") {
 	    if (doc.containsKey("setpoint"))
 	      supervisor.user_setpoint = doc["setpoint"];   // update your variable
 	    if (doc.containsKey("p_term"))
 	      supervisor.user_p_term = doc["p_term"];
+	    if (doc.containsKey("i_term"))
+	      supervisor.user_i_term = doc["i_term"];
 	    if (doc.containsKey("d_term"))
 	      supervisor.user_d_term = doc["d_term"];
 
 	    supervisor.mode = SUP_MODE_SET_POSITION;
 
-	    Serial.printf("{\"cmd\":\"PRINT\",\"note\":\"%s\",\"p_term\":%.4f,\"d_term\":%.4f}\n",
-			  "Test run started", supervisor.user_p_term, supervisor.user_d_term);
+	    Serial.printf("{\"cmd\":\"PRINT\",\"note\":\"%s\",\"p_term\":%.4f,\"i_term\":%.4f,\"d_term\":%.4f}\n",
+			  "Test run started", supervisor.user_p_term, supervisor.user_i_term, supervisor.user_d_term);
 
 	  }
 	}

@@ -146,11 +146,46 @@ This aligned Teensy’s control loop with ESC data → noise and D-term chaos di
 ## Parameterizing
 
 - Checkout this hash a5a77bc746598f7f1fc24ee28c335967a3400e68 to reproduce.
-- Load code [link](https://github.com/owhite/MESC_brain_board/tree/main/teensy40/PID_position) on to teensy, then run:
-  - $ python3 ./position_burst.py /dev/cu.usbmodem178888901
 - Load on to teensy.
+- Load code [link](https://github.com/owhite/MESC_brain_board/tree/main/teensy40/PID_position) on to teensy
+- Then run on the command line:
+  - $ python3 ./position_burst.py /dev/cu.usbmodem178888901
 - Set motor position.
 - Hit button on brain board, or hit run on python interface.
 - Changing PD settings saves to disk and sends start command to control plant. 
 - Current outcome is discussed [here](sept23_PID_notes.md)
 
+## Unfortunately, these have been simple no-load motor tests. 
+
+- When the motor is spun with no load, the controller looks unstable and oscillatory even with small gains.
+- No inertia or resisting torque — the rotor accelerates instantly, overshoots. 
+- The feedback loop chases its own tail.
+- Integral action is meaningless here (no steady disturbance to fight).
+- This has been useful to verify plumbing: 
+  - CAN messaging, encoder direction, logging
+  - Confirming that P, I, and D terms work in principle.
+- It tells you almost nothing about how the system will behave when stabilizing a real unstable plant like a balancing robot.
+
+## What is actually needed is an inverted pendulum.
+
+- The critical state is body angle (θ) and its rate (θ̇).
+- Encoders on free-spinning wheels don’t give body tilt; an IMU is normally used.
+- The new plan: inverted pendulum test rig
+
+## Mechanical setup:
+
+- Mount an arm rigidly on the motor shaft, with a weight at the end.
+- Motor shaft horizontal, arm pointing up → defines the unstable equilibrium.
+- Add stops or bumpers so the arm can’t swing 360°.
+
+Sensor setup
+- Use the motor’s encoder to measure arm angle.
+- Define “relative zero” at the upright top position.
+
+Control setup:
+- Start with PD control:
+- P-term provides restoring torque to pull arm upright.
+- D-term damps oscillations.
+- I-term only after P–D balance is stable, to cancel offsets (friction, misalignment).
+
+In short: a free-spinning motor under no load is just a wiring check. An inverted pendulum on the motor shaft is a true physics test of your controller. It’s the right next step before putting code on the robot.
