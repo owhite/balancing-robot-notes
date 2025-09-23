@@ -120,7 +120,7 @@ void run_mode_set_position(Supervisor_typedef *sup,
 
 - very little reproducibility
 - same settings produce different results
-- major risk: going down rabbit holes you can consider all the issues [here](torque_nonlinearity.md)
+- major risk: going down rabbit holes you can consider all the issues [here](sept19_torque_nonlinearity.md)
 
 ## The good news is this, what I found was: 
 
