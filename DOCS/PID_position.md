@@ -168,7 +168,7 @@ This aligned Teensy’s control loop with ESC data → noise and D-term chaos di
 
 ## An inverted pendulum would be far better for testing
 
-The fact is that a free-spinning motor under no load is just a wiring check. An inverted pendulum on the motor shaft is a true physics test of acontroller.
+The fact is that a free-spinning motor under no load is just a wiring check. An inverted pendulum on the motor shaft is a true physics test of a controller.
 
 Because:
 - The critical state is body angle (θ) and its rate (θ̇).
