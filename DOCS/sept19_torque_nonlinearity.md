@@ -1,4 +1,4 @@
-## ## Sept 19, 2035
+## Sept 19, 2035
 # Torque Control in MESC: Issues & Solutions
 
 ## 1. Torque Control Concept
