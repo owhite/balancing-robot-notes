@@ -1,4 +1,4 @@
-# Examples of PID not working at this point. 
+# Examples of PID working and not working
 
 The way the code is set up is if the user hits the button we switch to a supervisor mode that sets the position
 ```c
