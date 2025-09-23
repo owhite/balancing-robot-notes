@@ -145,14 +145,12 @@ This aligned Teensy’s control loop with ESC data → noise and D-term chaos di
 
 ## Parameterizing
 
+- Checkout this hash a5a77bc746598f7f1fc24ee28c335967a3400e68 to reproduce.
 - Load code [link](https://github.com/owhite/MESC_brain_board/tree/main/teensy40/PID_position) on to teensy, then run:
 
 ```
 $ python3 ./position_burst.py /dev/cu.usbmodem178888901
 ```
-
-- Checkout this hash a5a77bc746598f7f1fc24ee28c335967a3400e68 to reproduce.
-- Use code in [in this folder](https://github.com/owhite/MESC_brain_board/tree/main/teensy40/PID_position).
 - Load on to teensy.
 - Set motor position.
 - Hit button on brain board, or hit run on python interface.
