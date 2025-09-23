@@ -166,9 +166,9 @@ This aligned Teensy’s control loop with ESC data → noise and D-term chaos di
   - Confirming that P, I, and D terms work in principle.
 - It tells you almost nothing about how the system will behave when stabilizing a real unstable plant like a balancing robot.
 
-## What is actually needed is an inverted pendulum.
+## An inverted pendulum would be far better for testing
 
-In short: a free-spinning motor under no load is just a wiring check. An inverted pendulum on the motor shaft is a true physics test of acontroller.
+The fact is that a free-spinning motor under no load is just a wiring check. An inverted pendulum on the motor shaft is a true physics test of acontroller.
 
 Because:
 - The critical state is body angle (θ) and its rate (θ̇).
