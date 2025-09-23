@@ -1,25 +1,7 @@
-# Project Summary and Next Steps
+## sept 12, 2025
+# Attempts at position hold
 
-## 🔹 Project Context
-- You are building a **balancing robot brain board** on a Teensy 4.0.  
-- The Teensy runs a **1 kHz control loop** (`controlLoop_isr`) with strong focus on **determinism** (jitter monitoring, ISR timing).  
-- An **ESP32** is connected via **Serial1** for telemetry and higher-level functions.  
-- **ESCs** (motor controllers) communicate over CAN. Each ESC provides position/velocity feedback from its encoder.  
-
-## 🔹 Instrumentation & Determinism
-- Supervisor collects timing stats:
-  - `dt_us` (loop period between ISR ticks).  
-  - `exec_time_us` (work done inside loop).  
-  - `min_dt_us`, `max_dt_us`, `sum_dt_us` → statistics.  
-- Display/debug done on a **USB VT100 terminal**, showing timing, position, velocity, etc.  
-- Debugging revealed:
-  - USB `Serial.printf` adds jitter.  
-  - **Telemetry at 1 kHz** (Serial1) also added jitter, especially since ESP32 wasn’t consuming data.  
-  - With telemetry off, timing is nearly perfect (`avg_dt ≈ 1000 µs, max_dt ≈ 1007 µs`).  
-
-✅ You now have clear visibility into jitter sources.  
-
-## 🔹 Next Development Step
+## Next thing
 You want to implement a **motor position-hold test**:  
 - Detect RC input stick deflection on channel 0.  
 - When deflected beyond ±100 µs from center (1500 µs), capture the current motor position as a target.  
