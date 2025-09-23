@@ -189,5 +189,5 @@ Control setup:
 - P-term provides restoring torque to pull arm upright.
 - D-term damps oscillations.
 - I-term only after P–D balance is stable, to cancel offsets (friction, misalignment).
-- The move on to LQR
+- If this works, great, then move on to LQR
 
