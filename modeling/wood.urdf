@@ -1,0 +1,35 @@
+<?xml version="1.0"?>
+<robot name="wood_model">
+
+  <!-- Root link -->
+  <link name="base_link"/>
+
+  <!-- Wood link -->
+  <link name="wood_link">
+    <inertial>
+      <origin xyz="X Y Z" rpy="0 0 0"/>
+      <mass value="MASS_OF_WOOD"/>
+      <inertia ixx="IXX" iyy="IYY" izz="IZZ" ixy="IXY" ixz="IXZ" iyz="IYZ"/>
+    </inertial>
+    <visual>
+      <origin xyz="0 0 -0.06934502337333134" rpy="0 0 0"/>
+      <geometry>
+        <mesh filename="wood.stl" scale="0.001 0.001 0.001"/>
+      </geometry>
+    </visual>
+    <collision>
+      <origin xyz="0 0 -0.06934502337333134" rpy="0 0 0"/>
+      <geometry>
+        <mesh filename="wood.stl" scale="0.001 0.001 0.001"/>
+      </geometry>
+    </collision>
+  </link>
+
+  <!-- Fixed joint to attach wood_link to base_link -->
+  <joint name="wood_fixed" type="fixed">
+    <parent link="base_link"/>
+    <child link="wood_link"/>
+    <origin xyz="0 0 0" rpy="0 0 0"/>
+  </joint>
+
+</robot>

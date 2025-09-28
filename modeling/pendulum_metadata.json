@@ -1,0 +1,32 @@
+{
+  "meshes": {
+    "neodynium": {
+      "density": 7500.0
+    }, 
+    "wood": {
+      "density": 471.0
+    }, 
+    "housing": {
+      "density": 5280.0
+    }, 
+    "steel": {
+      "density": 7850.0
+    }, 
+    "aluminum": {
+      "density": 2700.0
+    }
+  }, 
+  "file_path": "/Users/owhite/Downloads/", 
+  "joint1": {
+    "p2": [
+      0.0, 
+      50.0, 
+      50.0
+    ], 
+    "p1": [
+      0.0, 
+      0.0, 
+      50.0
+    ]
+  }
+}
