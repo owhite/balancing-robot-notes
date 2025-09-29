@@ -1,3 +1,6 @@
+# This code resides in the Rhino 3d scripts directory:
+#  /Users/USERNAME/Library/Application Support/McNeel/Rhinoceros/7.0/scripts
+
 # -*- coding: utf-8 -*-
 import os
 import Rhino

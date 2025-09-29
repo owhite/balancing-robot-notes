@@ -28,3 +28,10 @@ fp-info-cache
 # Exported BOM files
 *.xml
 *.csv
+
+# movies
+*.mp4
+
+# venv
+venv/
+.venv/

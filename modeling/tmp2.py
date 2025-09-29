@@ -56,7 +56,7 @@ Kp = 5.0
 Kd = 0.5
 
 dt = 1./240.
-for step in range(4000):
+for step in range(400):
     t = step * dt
 
     # Desired trajectory
