@@ -1,4 +1,18 @@
 #!/usr/bin/env python3
+
+# This consumes the output of dump_stls.py that is launched from Rhino3D
+#
+# Invoke using:
+# ./pybullet_generator.py pendulum_metadata.json
+#
+#✅Output should include:
+# pendulum_metadata.xml
+# pendulum.urdf 
+# model_debug.json
+#
+# Inspect output carefully, compare moments of intertia, densities, CoMs
+#  to see if they're similar to analysis tools in Rhino
+
 import os, sys, json
 import numpy as np
 import trimesh

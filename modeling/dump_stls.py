@@ -1,5 +1,18 @@
 # This code resides in the Rhino 3d scripts directory:
 #  /Users/USERNAME/Library/Application Support/McNeel/Rhinoceros/7.0/scripts
+#
+# For parts of different densities. Select all parts, right mouse click
+#  select "object properties" and fill in the name. The name then corresponds to
+#  "Window->Floating panels->Document user text panel". Go to
+#  document user text tab, fill in key value pairs with name and
+#  density in (kg/m³). (e.g., steel is 7850). Pybullet also needs a hinge
+#  create a two point curve at hinge location and name it joint1
+# Also include a "file_path" in the user text panel
+#
+# Output will be one STL for all polysurfaces that are named the same
+#  and a filename_metadata.json that has densities and hinge. 
+#  These are consumed later by other modeling scripts. 
+# Note that pybullet only likes binary STLs
 
 # -*- coding: utf-8 -*-
 import os
@@ -26,7 +39,7 @@ def export_stls_and_metadata():
             if key == "file_path":
                 continue
             try:
-                densities[key] = float(rs.GetDocumentUserText(key))  # g/mm^3
+                densities[key] = float(rs.GetDocumentUserText(key))  # kg/m^3
             except:
                 pass
 
