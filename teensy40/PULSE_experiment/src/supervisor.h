@@ -71,6 +71,7 @@ enum SupervisorMode {
   SUP_MODE_IDLE = 0,   // System idle, no active control
   SUP_MODE_ACTIVE,     // Normal operation / balancing
   SUP_MODE_SINUSOIDAL,
+  SUP_MODE_TORQUE_RESPONSE,
   SUP_MODE_HOLD_POSITION,
   SUP_MODE_SET_POSITION,
   SUP_MODE_SIN_TORQUE,
