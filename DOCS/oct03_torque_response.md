@@ -30,7 +30,7 @@ $ ./torque_raise.py  /dev/cu.usbmodem178888901
 
 <img src="IMAGES/torque_raise2.png" alt="Plot result" width="600"/>
 
-** Main outcome **
+**Main outcome**
 - shows amount of time to get the pendulum to 9 o'clock position. 
 - shows torque is assymetric. 
 
