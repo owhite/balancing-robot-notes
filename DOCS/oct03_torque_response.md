@@ -13,6 +13,7 @@ See: [least_squares](sept30_least_squares.md)
 
 ### Testing the physical system
 - Sends current commands to the ESC (via serial JSON messages).
+- See [this video](https://youtube.com/shorts/aiBLkrTjKmU)
 - Data from the Teensy logs torque, position, and velocity.
 - Live plotting using Matplotlib animation:
 - User sets: 
