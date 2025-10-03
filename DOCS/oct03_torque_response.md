@@ -12,6 +12,14 @@ See: [least_squares](sept30_least_squares.md)
 - Result: the simulation predicted ~150–220 ms to swing through a quarter turn with ~0.6 Nm
 
 <iframe width="560" height="315" 
+    src="https://www.youtube.com/embed/dQw4w9WgXcQ" 
+    title="YouTube video player" 
+    frameborder="0" 
+    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+    allowfullscreen>
+</iframe>
+
+<iframe width="560" height="315" 
     src="https://youtube.com/shorts/aiBLkrTjKmU"
     title="YouTube video player" 
     frameborder="0" 
