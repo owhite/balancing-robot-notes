@@ -30,6 +30,10 @@ $ ./torque_raise.py  /dev/cu.usbmodem178888901
 
 <img src="IMAGES/torque_raise2.png" alt="Plot result" width="600"/>
 
+Main outcome 
+- shows amount of time to get the pendulum to 9 o'clock position. 
+- shows torque is assymetric. 
+
 ### A full workflow!
 - Create 3D objects in Rhino3d. 
 - Export STLs to disk. 
