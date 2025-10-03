@@ -74,24 +74,21 @@ void run_mode_torque_response(Supervisor_typedef *sup,
 
     // ---------------- End condition ----------------
     if (elapsed >= total_us) {
-        // Dump JSON log
-        Serial.println("{ \"samples\":[");
-        for (int i = 0; i < logIndex; i++) {
-            Serial.printf(
-                "{\"t\":%lu,\"torque\":%.4f,\"pos\":%.4f,\"vel\":%.4f}%s\r\n",
-                logBuffer[i].t_us,
-                logBuffer[i].torque,
-                logBuffer[i].pos,
-                logBuffer[i].vel,
-                (i < logIndex - 1) ? "," : ""
-            );
-        }
-        Serial.println("]}\r\n");
+      // Dump JSON log
+      Serial.println("{ \"samples\":[");
+      for (int i = 0; i < logIndex; i++) {
+	Serial.printf("{\"t\":%lu,\"torque\":%.4f,\"pos\":%.4f,\"vel\":%.4f}%s\r\n",
+		      logBuffer[i].t_us,
+		      logBuffer[i].torque,
+		      logBuffer[i].pos,
+		      logBuffer[i].vel,
+		      (i < logIndex - 1) ? "," : "");
+      }
+      Serial.println("]}\r\n");
 
-        // Reset and exit to idle
-        sup->mode = SUP_MODE_IDLE;
-        first_entry = true;
+      // Reset and exit to idle
+      sup->mode = SUP_MODE_IDLE;
+      first_entry = true;
     }
-
     sup->esc[0].state.alive = false;
 }

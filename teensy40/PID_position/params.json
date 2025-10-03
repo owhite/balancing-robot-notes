@@ -1,6 +1,6 @@
 {
   "setpoint": 3.0,
-  "p_term": 0.07,
+  "p_term": 0.08,
   "i_term": 0.005,
   "d_term": 0.0015
 }

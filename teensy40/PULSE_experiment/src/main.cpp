@@ -109,7 +109,13 @@ void loop() {
 	  supervisor.user_p_term   = -1.0f;
 	  supervisor.user_i_term   = -1.0f;
 	  supervisor.user_d_term   = -1.0f;
+
+	  supervisor.user_pulse_torque = 0.0f;
+	  supervisor.user_pulse_us = 0;
+	  supervisor.user_total_us = 0;
+
 	  if (doc.containsKey("cmd") && doc["cmd"] == "send") {
+	    // PID Control experiments
 	    if (doc.containsKey("setpoint"))
 	      supervisor.user_setpoint = doc["setpoint"];   // update your variable
 	    if (doc.containsKey("p_term"))
@@ -119,10 +125,21 @@ void loop() {
 	    if (doc.containsKey("d_term"))
 	      supervisor.user_d_term = doc["d_term"];
 
+	    // Torque response experiments
+	    if (doc.containsKey("pulse_torque"))
+	      supervisor.user_pulse_torque = doc["pulse_torque"];
+	    if (doc.containsKey("pulse_us"))
+	      supervisor.user_pulse_us = doc["pulse_us"];
+	    if (doc.containsKey("total_us"))
+	      supervisor.user_total_us = doc["total_us"];
+
 	    supervisor.mode = SUP_MODE_TORQUE_RESPONSE;
 
-	    Serial.printf("{\"cmd\":\"PRINT\",\"note\":\"%s\",\"p_term\":%.4f,\"i_term\":%.4f,\"d_term\":%.4f}\n",
-			  "Test run started", supervisor.user_p_term, supervisor.user_i_term, supervisor.user_d_term);
+	    Serial.printf("{\"cmd\":\"PRINT\",\"note\":\"%s\",\"pulse_torque\":%.3f,\"pulse_us\":%lu,\"total_us\":%lu}\n",
+			  "Torque response run started",
+			  supervisor.user_pulse_torque,
+			  supervisor.user_pulse_us,
+			  supervisor.user_total_us);
 
 	  }
 	}

@@ -83,6 +83,8 @@ void handleCANMessage(const CAN_message_t &msg) {
 	    esc->state.vel_rad_s = vel;
 #endif
 	    esc->state.alive     = true;
+	    // Serial.printf("{\"cmd\": \"PRINT\", \"note\": \"Torque response received CAN\"}\n");
+
 	    // Serial.printf("[CAN RX] POSVEL sender=%u pos=%.3f rad vel=%.3f rad/s\r\n", sender_id, pos, vel);
 
             break;

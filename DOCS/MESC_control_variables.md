@@ -54,7 +54,12 @@ A listing of variables in the [MESC firmware](https://github.com/davidmolony/MES
     Created for this project. Notice this code addition:
     ```c
 	#ifdef POSVEL_PLANE
-	_motor->FOC.abs_position = ( (uint16_t)(_motor->enctimer->Instance->CNT) - (uint16_t)(_motor->enctimer->Instance->CCR3) ) & 0x0FFF; // for 12-bit encoder
+    if(_motor->FOC.encoder_polarity_invert){
+        // Invert direction for abs_position as well
+        _motor->FOC.abs_position = ((uint16_t)(_motor->enctimer->Instance->CCR3) - (uint16_t)(_motor->enctimer->Instance->CNT)) & 0x0FFF; // 12-bit wrap
+    } else {
+        _motor->FOC.abs_position = ((uint16_t)(_motor->enctimer->Instance->CNT)  - (uint16_t)(_motor->enctimer->Instance->CCR3)) & 0x0FFF; // 12-bit wrap
+    }
     #endif
     ```
   - The raw mechanical encoder position (0–4096) adjusted to an absolute reference using the Z-pulse (`CCR3`)
