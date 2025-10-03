@@ -12,8 +12,7 @@ See: [least_squares](sept30_least_squares.md)
 - Result: the simulation predicted ~150–220 ms to swing through a quarter turn with ~0.6 Nm
 
 ### Testing the physical system
-- Sends current commands to the ESC (via serial JSON messages).
-- See [this video](https://youtube.com/shorts/aiBLkrTjKmU)
+- Sends current commands to the ESC (via serial JSON messages), see: [this video](https://youtube.com/shorts/aiBLkrTjKmU)
 - Data from the Teensy logs torque, position, and velocity.
 - Live plotting using Matplotlib animation:
 - User sets: 
