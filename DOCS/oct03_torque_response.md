@@ -31,9 +31,11 @@ $ ./torque_raise.py  /dev/cu.usbmodem178888901
 <img src="IMAGES/torque_raise2.png" alt="Plot result" width="600"/>
 
 ### A full workflow!
-- Models the pendulum’s mass/inertia in PyBullet.
+- Create 3D objects in Rhino3d. 
+- Export STLs to disk. 
+- Model the parts mass/inertia in PyBullet.
 - Predict torque requirements and timing in simulation.
-- Run the real pendulum with ESC commands.
+- Drive the real pendulum by sending commands to MESC.
 - Collects real data via serial.
 
 
