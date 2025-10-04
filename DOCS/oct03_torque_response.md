@@ -32,6 +32,7 @@ $ ./torque_raise.py  /dev/cu.usbmodem178888901
 
 Main outcome: 
 - shows amount of time to get the pendulum to 9 o'clock position. 
+- note: in this case I added extra weight to the pendulum
 - shows torque is assymetric. note:
   - (-0.6) Nm takes 303 ms to get to position
   - (+0.6) Nm takes 342 ms to get to position
