@@ -18,8 +18,8 @@
 - Torque simulations uses PyBullet to life the pendulum
 - Result: the simulation predicted ~150–220 ms to swing through a quarter turn with ~0.6 Nm
 
-### Testing the physical system
-- Sends current commands to the ESC (via serial JSON messages), see: [this video](https://youtube.com/shorts/aiBLkrTjKmU)
+### Testing the physical system:
+- Send current commands to the ESC (via serial JSON messages), see: [this video](https://youtube.com/shorts/aiBLkrTjKmU)
 - Data from the Teensy logs torque, position, and velocity.
 - Live plotting using Matplotlib animation:
 - User sets: 
@@ -45,7 +45,7 @@ $ ./torque_raise.py  /dev/cu.usbmodem178888901
   - (+0.6) Nm takes 342 ms to get to position
 
 
-### Theory v. real-world testing
+### Theory v. real-world testing:
 
 **Theoretical rates** for moving the pendulum from downward position
 - I=0.00229kg⋅m^2
@@ -78,7 +78,7 @@ So let's look at what we get:
 <img src="IMAGES/torque_raise3.png" alt="Plot result" width="600"/>
 
 ---
-### Deets
+### Deets:
 - **Teensy code:** [PULSE_experiment](https://github.com/owhite/MESC_brain_board/tree/main/teensy40/PULSE_experiment)
 - **Teensy commit hashID:** 98ba801e7c58266692fff25def08ca7ed19e4dcc
 - **MESC commit hashID:** 897ecbbf53e138eaccb2659f24c9760d0add2297
