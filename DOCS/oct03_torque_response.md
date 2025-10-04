@@ -67,7 +67,7 @@ $ ./torque_raise.py  /dev/cu.usbmodem178888901
 - Pendulum geometry, air drag
 - Measurement lag
 
-According to chatGPT these factors are in play: 
+**According to chatGPT** these factors are in play: 
 
 <img src="IMAGES/torque_raise4.png" alt="Plot result" width="600"/>
 
