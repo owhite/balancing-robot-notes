@@ -32,7 +32,9 @@ $ ./torque_raise.py  /dev/cu.usbmodem178888901
 
 Main outcome: 
 - shows amount of time to get the pendulum to 9 o'clock position. 
-- shows torque is assymetric. 
+- shows torque is assymetric. note:
+  - (-0.6) Nm takes 303 ms to get to position
+  - (+0.6) Nm takes 342 ms to get to position
 
 ### A full workflow!
 - Create 3D objects in Rhino3d. 
