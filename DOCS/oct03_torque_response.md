@@ -79,7 +79,10 @@ So let's look at what we get:
 
 ---
 **Teensy code:** [PULSE_experiment](https://github.com/owhite/MESC_brain_board/tree/main/teensy40/PULSE_experiment)
+
 **Commit hashID:** 98ba801e7c58266692fff25def08ca7ed19e4dcc
+
 **MESC voltage:** 30V 
+
 **Pendulum Rhino3D model:** [LINK](https://github.com/owhite/MESC_brain_board/blob/main/modeling/pendulum.3dm)
 
