@@ -1,7 +1,14 @@
 ## Oct 03, 2025
 ## Modeling the Pendulum in PyBullet
 
-See: [least_squares](sept30_least_squares.md)
+### We have a full workflow:
+- Create 3D objects in Rhino3d. 
+- Export STLs to disk. 
+- Model the parts mass/inertia in PyBullet.
+- Predict torque requirements and timing in simulation.
+- Drive the real pendulum by sending commands to MESC.
+- Collects real data via serial.
+- See: [least_squares](sept30_least_squares.md)
 
 ### STL meshes were exported from Rhino3D and built a URDF description of the pendulum, including:
 - Mass and inertia tensors (computed from STL volume/density).
@@ -30,20 +37,12 @@ $ ./torque_raise.py  /dev/cu.usbmodem178888901
 
 <img src="IMAGES/torque_raise2.png" alt="Plot result" width="600"/>
 
-Main outcome: 
-- shows amount of time to get the pendulum to 9 o'clock position. 
+### Outcome: 
+- the plot shows amount of time to get the pendulum to 9 o'clock position. 
 - note: in this case I added extra weight to the pendulum
 - shows torque is assymetric. note:
   - (-0.6) Nm takes 303 ms to get to position
   - (+0.6) Nm takes 342 ms to get to position
-
-### A full workflow!
-- Create 3D objects in Rhino3d. 
-- Export STLs to disk. 
-- Model the parts mass/inertia in PyBullet.
-- Predict torque requirements and timing in simulation.
-- Drive the real pendulum by sending commands to MESC.
-- Collects real data via serial.
 
 
 ### Theory v. real-world testing
