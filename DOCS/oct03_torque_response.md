@@ -68,6 +68,7 @@ Real-world factors that will influence theory
 - Measurement lag
 
 According to chatGPT these factors are in play: 
+
 <img src="IMAGES/torque_raise4.png" alt="Plot result" width="600"/>
 
 Which is to say, **Predicted realistic time ≈ 240–260 ms**
