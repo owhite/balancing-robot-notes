@@ -3,16 +3,24 @@
 
 ## 1. Geometry Design in Rhino
 - Create the pendulum or robot parts as 3D CAD geometry in **Rhino**.
+- Use Rhino to include densities of each part:
+   - "Window->Floating panels->Document user text panel".
 - Keep geometry clean and simplified (avoid unnecessary detail that would inflate the mesh).
+<img src="IMAGES/least_squares1.png" alt="Plot result" width="200"/>
 
 ## 2. Export to STL
 - Export each part as an **STL file** in Rhino using dump_stls.py
 - Use consistent units (e.g., meters) to avoid scale mismatches in PyBullet.
 - Check mesh orientation (positive Z usually up in PyBullet).
-
+- 
 ```
 $ ./pybullet_generator.py pendulum_metadata.json 
 ```
+
+- Output should include:
+  - pendulum_metadata.xml
+  - pendulum.urdf 
+  - model_debug.json
 
 ## 3. Load Meshes in PyBullet
 - Import STL files into PyBullet via `createCollisionShape` and `createVisualShape`.
