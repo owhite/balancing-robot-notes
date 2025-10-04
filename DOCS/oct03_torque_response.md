@@ -45,3 +45,33 @@ Main outcome:
 - Collects real data via serial.
 
 
+### 
+
+Theoretical rates for moving the pendulum from downward position
+- I=0.00229kg⋅m^2
+- τ=0.6Nm
+- Ideal time to reach π/2 radians ≈ 0.11 s
+- assumes:
+  - Constant torque of exactly 0.6 Nm
+  - No friction, delay, current limiting, or voltage drop
+  - Torque instantaneously applied
+- Therefore 110 ms is the ballistic lower bound
+
+Real-world factors that will influence theory
+- At low speed, friction and cogging are significant relative to the small inertia.
+- Motor over-coming dead stop threshold before moving.
+- ESC current-loop bandwidth
+  - current controller (PI loop) 
+  - CAN command update rate
+  - Voltage sag and back-EMF
+- Pendulum geometry, air drag
+- Measurement lag
+
+According to chatGPT these factors are in play: 
+<img src="IMAGES/torque_raise4.png" alt="Plot result" width="600"/>
+
+Which is to say, **Predicted realistic time ≈ 240–260 ms**
+
+So let's look at what we get: 
+
+<img src="IMAGES/torque_raise3.png" alt="Plot result" width="600"/>
