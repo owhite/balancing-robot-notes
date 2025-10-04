@@ -125,6 +125,11 @@ We will use a Python + matplotlib GUI to:
 4. Run the experiment.  
 5. Retrieve JSON logs and overlay experimental response with PyBullet predictions.  
 
+Launch the graphing program
+```
+$ ./torque_raise.py  /dev/cu.usbmodem178888901
+```
+
 ---
 
 ## Modeling & Validation
