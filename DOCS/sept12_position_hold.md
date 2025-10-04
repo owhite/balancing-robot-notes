@@ -24,11 +24,6 @@ You want to implement a **motor position-hold test**:
 ## 🔹 Position Hold (definition)
 “Position hold” = when the robot detects an RC input deflection, it captures the motor’s current encoder position as a reference, and uses a PD controller to apply torque so that the motor resists being moved away from that reference (like an electronic spring-damper lock).  
 
-## 🔹 Resume Instructions
-In a future session, paste this summary and say:  
-> “We were at the point of implementing position-hold control in supervisor.cpp. Please continue from here.”  
-
-That will re-establish context so you can continue development without re-explaining everything.  
 
 ---
 
@@ -79,6 +74,9 @@ Insert this into `supervisor.cpp` where you see `// Core control loop body`:
     }
 ```
 
+## Bottom line
+
+This works like shit. Nothing to see here. Move on. 
 ---
 
 ### DEETS
