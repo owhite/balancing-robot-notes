@@ -12,7 +12,6 @@
 - Export each part as an **STL file** in Rhino using dump_stls.py
 - Use consistent units (e.g., meters) to avoid scale mismatches in PyBullet.
 - Check mesh orientation (positive Z usually up in PyBullet).
-- 
 ```
 $ ./pybullet_generator.py pendulum_metadata.json 
 ```
