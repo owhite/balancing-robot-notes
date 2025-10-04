@@ -80,3 +80,7 @@ so what am I thinking about now?
 ### Iteration
 - Adjust experimental design (inputs, sampling) as needed.
 - Refine model complexity (linear vs nonlinear terms) if discrepancies remain.
+
+### Deets
+- **commit hashID:** 98ba801e7c58266692fff25def08ca7ed19e4dcc
+- **Pendulum Rhino3D model:** [LINK](https://github.com/owhite/MESC_brain_board/blob/main/modeling/pendulum.3dm)
