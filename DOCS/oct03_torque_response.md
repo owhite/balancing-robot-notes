@@ -38,9 +38,9 @@ $ ./torque_raise.py  /dev/cu.usbmodem178888901
 <img src="IMAGES/torque_raise2.png" alt="Plot result" width="600"/>
 
 ### Outcome: 
-- the plot shows amount of time to get the pendulum to 9 o'clock position. 
-- note: in this case I added extra weight to the pendulum
-- shows torque is assymetric. note:
+- The plot shows amount of time to get the pendulum to 9 o'clock position. 
+- Note: in this case I added extra weight to the pendulum
+- Shows torque is assymetric. note:
   - (-0.6) Nm takes 303 ms to get to position
   - (+0.6) Nm takes 342 ms to get to position
 
@@ -71,7 +71,7 @@ $ ./torque_raise.py  /dev/cu.usbmodem178888901
 
 <img src="IMAGES/torque_raise4.png" alt="Plot result" width="600"/>
 
-Which is to say, **Predicted realistic time ≈ 240–260 ms**
+Which is to say, **predicted realistic time ≈ 240–260 ms**
 
 So let's look at what we get: 
 
