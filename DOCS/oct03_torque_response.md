@@ -45,9 +45,9 @@ Main outcome:
 - Collects real data via serial.
 
 
-### 
+### Theory v. real-world testing
 
-Theoretical rates for moving the pendulum from downward position
+**Theoretical rates** for moving the pendulum from downward position
 - I=0.00229kg⋅m^2
 - τ=0.6Nm
 - Ideal time to reach π/2 radians ≈ 0.11 s
@@ -57,7 +57,7 @@ Theoretical rates for moving the pendulum from downward position
   - Torque instantaneously applied
 - Therefore 110 ms is the ballistic lower bound
 
-Real-world factors that will influence theory
+**Real-world factors** that influence theory
 - At low speed, friction and cogging are significant relative to the small inertia.
 - Motor over-coming dead stop threshold before moving.
 - ESC current-loop bandwidth
