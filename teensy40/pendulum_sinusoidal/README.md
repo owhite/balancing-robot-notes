@@ -6,6 +6,15 @@ This document summarizes the complete pendulum modeling and parameter identifica
 
 ## 🧭 Overview of the Workflow
 
+<img src="torque_sinewave1.png"     alt="torque sinewave output" width = "400">
+
+<img src="fit_model_from_sweep.png" alt="frequency sweep" width = "400">
+
+<img src="bode_plot_avg.png"        alt="" width = "400">
+
+<img src="bode_fit.png"             alt="" width = "400">
+
+
 Your process measures and models the pendulum’s dynamic response through **four key programs**, forming a complete experimental → analytical → model-fitting pipeline:
 
 | Step | Script | Purpose | Primary Output |
