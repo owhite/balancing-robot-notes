@@ -6,20 +6,27 @@ This document summarizes the complete pendulum modeling and parameter identifica
 
 ## 🧭 Overview of the Workflow
 
-<img src="torque_sinewave1.png"     alt="torque sinewave output" width = "400">
-
 Your process measures and models the pendulum’s dynamic response through **four key programs**, forming a complete experimental → analytical → model-fitting pipeline:
 
 | Step | Script | Purpose | Primary Output |
 |------|---------|----------|----------------|
-| 1️⃣ | `torque_sinewave.py` | Run a single-frequency sine torque test | Real-time plots (torque, position, velocity) |
-| 2️⃣ | `frequency_sweep.py` | Automate tests over many frequencies | `results_sweep.json` + `bode_plot_avg.png` |
+| 1️⃣ | `torque_raise.py` | Test torque-to-angle behavior (step response) | Real-time plot + π/2 crossing time |
+| 2️⃣ | `torque_sinewave.py` | Run a single-frequency sine torque test | Real-time plots (torque, position, velocity) |
+| 3️⃣ | `frequency_sweep.py` | Automate tests over many frequencies | `results_sweep.json` + `bode_plot_avg.png` |
 | 3️⃣ | `fit_model_from_sweep.py` | Fit physical parameters (J, b, k) | Fitted parameters + `rotational_i_viscous.json` |
-| 4️⃣ | *(Optional)* `torque_raise.py` | Test torque-to-angle behavior (step response) | Real-time plot + π/2 crossing time |
 
 ---
 
-## ⚙️ Step 1 — `torque_sinewave.py`
+## ⚙️ Step 1 — `torque_raise.py` 
+
+<img src="../../DOCS/IMAGES/torque_raise1.png"     alt="torque raise" width = "400">
+
+### Purpose
+Applies a *torque pulse* and measures how long the pendulum takes to swing through 90° (π/2). This serves as a **time-domain check** for torque calibration and inertia estimation.
+
+## ⚙️ Step 2 — `torque_sinewave.py`
+
+<img src="torque_sinewave.png"        alt="torque_sinewave" width = "400">
 
 ### Purpose
 Generates a *single-frequency sinusoidal torque command* to the pendulum and plots the measured response. It’s mainly used for **manual inspection** of how the pendulum moves at a given amplitude and frequency.
@@ -51,7 +58,7 @@ These plots confirm that the pendulum moves approximately 1.8 rad (~104°) for a
 
 ---
 
-## ⚙️ Step 2 — `frequency_sweep.py`
+## ⚙️ Step 3 — `frequency_sweep.py`
 
 <img src="bode_plot_avg.png"        alt="frequency sweep" width = "400">
 
@@ -97,7 +104,7 @@ Runs a sequence of sinusoidal tests at increasing frequencies (e.g., 0.3 → 8 H
 
 ---
 
-## ⚙️ Step 3 — `fit_model_from_sweep.py`
+## ⚙️ Step 4 — `fit_model_from_sweep.py`
 
 <img src="fit_model_from_sweep.png" alt="fit model" width = "400">
 
@@ -144,22 +151,6 @@ Residual RMS: 0.115
 
 ---
 
-## ⚙️ Step 4 — `torque_raise.py` (Optional Validation)
-
-### Purpose
-Applies a *torque pulse* and measures how long the pendulum takes to swing through 90° (π/2). This serves as a **time-domain check** for torque calibration and inertia estimation.
-
-### Inputs
-`params.json` example:
-```json
-{
-  "Kt": 0.056,
-  "Nm": 0.2,
-  "pulse_ms": 85000,
-  "total_ms": 170000
-}
-```
-
 ### Output Graphs
 - Torque (red), Position (green), Velocity (blue) vs. time  
 - π/2 crossing shown as red crosshairs with elapsed time label  
@@ -171,13 +162,13 @@ This validates that the torque-to-current conversion is correct.
 ## 🔄 Data Flow Summary
 
 ```
+torque_raise.py → shows torque scaling/time-domain behavior
+     ↓
 torque_sinewave.py  → (visual test)
      ↓
 frequency_sweep.py  → results_sweep.json + bode_plot_avg.png
      ↓
 fit_model_from_sweep.py → rotational_i_viscous.json + fitted overlay
-     ↓
-(optional) torque_raise.py → validate torque scaling/time-domain behavior
 ```
 
 ---
@@ -199,10 +190,10 @@ fit_model_from_sweep.py → rotational_i_viscous.json + fitted overlay
 
 Each program in the workflow plays a distinct role:
 
+- **`torque_raise.py`**: torque calibration validation  
 - **`torque_sinewave.py`**: single-frequency visual test  
 - **`frequency_sweep.py`**: automated multi-frequency data collection  
 - **`fit_model_from_sweep.py`**: model fitting and parameter extraction  
-- **`torque_raise.py`**: torque calibration validation  
 
 Together, these tools form a closed experimental–modeling loop that verifies the pendulum’s real-world dynamics and accurately extracts physical parameters **J**, **b**, and **k** for use in control design.
 
