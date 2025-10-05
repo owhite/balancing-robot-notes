@@ -76,7 +76,11 @@ Insert this into `supervisor.cpp` where you see `// Core control loop body`:
 
 ## Bottom line
 
-This works like shit. Nothing to see here. Move on. 
+- This works like shit. 
+- Nothing to see here. 
+- Move on. 
+- What you learned [here](sept18_controller_issues.md) and elsewhere is PID on an unloaded motor sucks
+
 ---
 
 ### DEETS
