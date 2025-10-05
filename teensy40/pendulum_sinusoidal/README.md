@@ -8,11 +8,6 @@ This document summarizes the complete pendulum modeling and parameter identifica
 
 <img src="torque_sinewave1.png"     alt="torque sinewave output" width = "400">
 
-<img src="fit_model_from_sweep.png" alt="frequency sweep" width = "400">
-
-<img src="bode_plot_avg.png"        alt="" width = "400">
-
-
 Your process measures and models the pendulum’s dynamic response through **four key programs**, forming a complete experimental → analytical → model-fitting pipeline:
 
 | Step | Script | Purpose | Primary Output |
@@ -58,6 +53,8 @@ These plots confirm that the pendulum moves approximately 1.8 rad (~104°) for a
 
 ## ⚙️ Step 2 — `frequency_sweep.py`
 
+<img src="bode_plot_avg.png"        alt="frequency sweep" width = "400">
+
 ### Purpose
 Runs a sequence of sinusoidal tests at increasing frequencies (e.g., 0.3 → 8 Hz). Each run measures the **steady-state amplitude and phase** of pendulum motion relative to torque.
 
@@ -101,6 +98,8 @@ Runs a sequence of sinusoidal tests at increasing frequencies (e.g., 0.3 → 8 H
 ---
 
 ## ⚙️ Step 3 — `fit_model_from_sweep.py`
+
+<img src="fit_model_from_sweep.png" alt="fit model" width = "400">
 
 ### Purpose
 Fits a **second-order physical model** to the measured Bode data.
