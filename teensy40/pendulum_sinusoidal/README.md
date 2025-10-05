@@ -12,8 +12,6 @@ This document summarizes the complete pendulum modeling and parameter identifica
 
 <img src="bode_plot_avg.png"        alt="" width = "400">
 
-<img src="bode_fit.png"             alt="" width = "400">
-
 
 Your process measures and models the pendulum’s dynamic response through **four key programs**, forming a complete experimental → analytical → model-fitting pipeline:
 
