@@ -113,5 +113,6 @@ When running PRBS tests on the pendulum:
 | **Channel** | A specific input–output relationship (e.g., torque→velocity or torque→angle). |
 | **Torque→Velocity** | Measures how torque changes rotational speed — dominated by damping. |
 | **Torque→Angle** | Measures how torque changes position — dominated by stiffness and inertia. |
-| **Practical Impact** | Focus on the torque→velocity channel for model fitting and damping estimation; refine torque→angle later using quasi-static or longer tests. |
+
+**Practical Impact** Focus on the torque→velocity channel for model fitting and damping estimation; refine torque→angle later using quasi-static or longer tests.
 
