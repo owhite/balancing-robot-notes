@@ -57,7 +57,9 @@ This hybrid approach — physical modeling first, data refinement later — will
 
 ## New terms
 
-**pole** is a mathematical point that describes how your system behaves over time — basically, how it responds to changes.
+## pole
+
+A pole is a mathematical point that describes how your system behaves over time — basically, how it responds to changes.
 
 - Each pole corresponds to one natural behavior — like an oscillation, decay, or instability.
 - Where the poles sit in the complex plane tells you how stable and how fast your system is.
@@ -66,7 +68,7 @@ This hybrid approach — physical modeling first, data refinement later — will
 
 Why “pole shift” matters: when you apply feedback control (like LQR), the controller moves those poles — literally shifting them in the complex plane.
 
-## Channel?
+## Channel
 
 In control systems, a **channel** refers to a specific **input–output relationship** within a system — essentially, the *path* by which one variable affects another.
 
