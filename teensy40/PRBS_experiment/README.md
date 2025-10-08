@@ -57,7 +57,7 @@ This hybrid approach — physical modeling first, data refinement later — will
 
 ## New terms
 
-## pole
+## Pole
 
 A pole is a mathematical point that describes how your system behaves over time — basically, how it responds to changes.
 
