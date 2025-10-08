@@ -107,24 +107,41 @@ void loop() {
 	if (!err) {
 
 	  supervisor.user_amp_command = 0.0f;
-	  supervisor.user_freq_hz = 0;
-	  supervisor.user_duration_us = 0;
+	  supervisor.user_max_angle = 0.0;
+	  supervisor.user_duration_ms = 0;
+	  supervisor.user_bit_time_ms = 0;
 
 	  // where the external python code receives values to the teensy
 	  //  expected command:
-	  //    {"cmd": "send", "mode": "sinewave", "amp_command": 0.1, "freq_hz": 1.0, "duration_us": 5000000}
+	  //    {"cmd": "send", "mode": "PRBS", "amp_command": 0.1, "max_angle": 0.4, "duration_ms": 5000, "bit_time_ms": 30}
 	  if (doc.containsKey("cmd") && doc["cmd"] == "send") {
 
-	    // Torque response experiments
 	    if (doc.containsKey("amp_command"))
 	      supervisor.user_amp_command = doc["amp_command"];
-	    if (doc.containsKey("freq_hz"))
-	      supervisor.user_freq_hz = doc["freq_hz"];
-	    if (doc.containsKey("duration_us"))
-	      supervisor.user_duration_us = doc["duration_us"];
-
-	    supervisor.mode = SUP_MODE_TORQUE_SINEWAVE;
+	    if (doc.containsKey("max_angle"))
+	      supervisor.user_max_angle = doc["max_angle"];
+	    if (doc.containsKey("duration_ms"))
+	      supervisor.user_duration_ms = doc["duration_ms"];
+	    if (doc.containsKey("bit_time_ms"))
+	      supervisor.user_bit_time_ms = doc["bit_time_ms"];
+	    supervisor.mode = SUP_MODE_PRBS;
 	  }
+	  /*
+	  Serial.printf(
+			"PRBS command received:\n"
+			"  amp_command     = %.4f\n"
+			"  max_angle       = %.4f rad\n"
+			"  duration_ms     = %lu ms\n"
+			"  bit_time_ms     = %u ms\n"
+			"  mode            = %d\n",
+			supervisor.user_amp_command,
+			supervisor.user_max_angle,
+			supervisor.user_duration_ms,
+			supervisor.user_bit_time_ms,
+			supervisor.mode
+			);
+
+	  */
 	}
 	input = "";  // reset buffer
       } else {
@@ -155,7 +172,7 @@ void loop() {
       else if (pb_state == PB_RELEASED && g_button.isArmed()) {
 
 	// User can switch mode by pressing button
-	SupervisorMode test_mode = SUP_MODE_TORQUE_SINEWAVE;
+	SupervisorMode test_mode = SUP_MODE_PRBS;
 
 	if (supervisor.mode == test_mode) {
 	  supervisor.mode = SUP_MODE_IDLE;

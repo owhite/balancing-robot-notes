@@ -15,7 +15,6 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 # --- ESC Configuration ---
-I_MAX = 30.0  # Amps, max current limit configured in ESC
 PARAM_FILE = "sweep_params.json"
 
 # --- Load parameters from file ---
@@ -26,7 +25,8 @@ def load_params():
     except:
         return {
             "Kt": 0.056,            # Nm/A, torque constant
-            "amp_torque": 0.1,      # Torque amplitude [N·m]
+            "I_MAX": 30.0,          # Max amps used by ESC controller
+            "torque": 0.1,          # Torque amplitude [N·m]
             "freq_start": 0.3,      # Start frequency [Hz]
             "freq_end": 8.0,        # End frequency [Hz]
             "freq_step": 0.5,       # Step between test frequencies [Hz]
@@ -64,19 +64,16 @@ for freq in freqs:
         samples = []
 
         # Compute normalized ESC command amplitude
-        I = params["amp_torque"] / params["Kt"]
-        cmd_amp = I / I_MAX
+        cmd_amp = params["torque"] / (params["I_MAX"] * params["Kt"])
 
         msg = {
             "cmd": "send",
-            "amp_torque": params["amp_torque"],  # physical torque [N·m]
             "amp_command": cmd_amp,              # normalized ESC command [-1..1]
-            "freq_hz": freq,
+            "freq_hz": float(freq),
             "duration_us": params["duration_ms"] * 1000
         }
 
         print(f"→ TX: {msg}")
-        print(f"   => I = {I:.3f} A, cmd = {cmd_amp:.3f}")
         ser.write((json.dumps(msg) + "\n").encode("utf-8"))
 
         # --- Wait for data to arrive ---
@@ -112,7 +109,7 @@ for freq in freqs:
 
         t_vals = np.array([s["t"] * 1e-6 for s in samples])  # µs → s
         pos_vals = np.array([s["pos"] for s in samples])
-        torque_vals = np.array([s["torque"] * params["Kt"] * I_MAX for s in samples])  # [Nm]
+        torque_vals = np.array([s["torque"] * params["Kt"] * params["I_MAX"] for s in samples])  # [Nm]
 
         # Compute FFT-based amplitude and phase
         n = len(pos_vals)
@@ -162,7 +159,9 @@ with open("results_sweep.json", "w") as f:
 freqs_plot = [r["freq_hz"] for r in results]
 amp_plot = [r["amp_rad"] for r in results]
 
-# --- Unwrap phase smoothly across all frequencies ---
+# Unwrap phase to remove 360° jumps (e.g., from –179° → +180°) so the phase varies smoothly and reflects true continuous lag
+#  Unwrap across all frequencies 
+
 phase_raws = [r["phase_deg"] for r in results]
 phase_unwrapped = np.unwrap(np.radians(phase_raws))
 phase_plot = np.degrees(phase_unwrapped)

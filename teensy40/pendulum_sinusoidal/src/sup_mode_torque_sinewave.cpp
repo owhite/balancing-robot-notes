@@ -5,7 +5,7 @@
 #include <math.h>
 
 // ---------------- Defaults ----------------
-const float    DEFAULT_AMP_TORQUE   = 0.2f;
+const float    DEFAULT_AMP_COMMAND   = 0.2f;
 const uint32_t DEFAULT_FREQ_HZ      = 85000;  
 const uint32_t DEFAULT_DURATION_US  = 170000;  
 
@@ -38,17 +38,6 @@ void run_mode_torque_sinewave(Supervisor_typedef *sup,
         start_time = micros();
         logIndex = 0;
         start_angle = sup->esc[0].state.pos_rad;
-
-	/*
-        Serial.printf(
-            "{\"cmd\":\"PRINT\",\"note\":\"Sinewave start\",\"amp_torque\":%.3f,"
-            "\"freq_hz\":%.3f,\"duration_us\":%lu,\"start_pos\":%.4f}\n",
-            sup->user_amp_torque,
-            sup->user_freq_hz,
-            sup->user_duration_us,
-            start_angle
-        );
-	*/
     }
 
     // --- Timing ---
@@ -60,7 +49,7 @@ void run_mode_torque_sinewave(Supervisor_typedef *sup,
     float cmd_torque = 0.0f;
     if (elapsed_us < sup->user_duration_us) {
         float omega = 2.0f * M_PI * sup->user_freq_hz;
-        cmd_torque = sup->user_amp_torque * sinf(omega * elapsed_s);
+        cmd_torque = sup->user_amp_command * sinf(omega * elapsed_s);
     } else {
         cmd_torque = 0.0f;
     }

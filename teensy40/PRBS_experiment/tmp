@@ -1,0 +1,52 @@
+Estimating discrete-time 2nd order transfer function...
+Estimated TF coefficients:
+  Numerator: [0.00434]
+  Denominator: [ 1.      -0.70064 -0.25864]
+
+Converting to continuous-time via bilinear transform...
+Continuous-time approximate model:
+  num = [0.10653]
+  den = [1.00000000e+00 3.52306431e+03 1.15036228e+05]
+
+Estimated parameters (2nd-order fit):
+  Inertia J ≈ 9.3874e+00
+  Damping b ≈ 3.3072e+04
+  Stiffness k ≈ 1.0799e+06
+
+Designing LQR controller...
+
+LQR gain matrix K = [[5.0e-05 1.5e-04]]
+
+✅ Final continuous-time model and LQR summary:
+  G(s) =  [0.10653] / [1.00000000e+00 3.52306431e+03 1.15036228e+05]
+  LQR gains K = [[5.0e-05 1.5e-04]]
+numc: [0.1065255]
+denc: [1.00000000e+00 3.52306431e+03 1.15036228e+05]
+DC gain: 9.260169587732551e-07
+
+----------------------------------------
+Estimating discrete-time 2nd order transfer function...
+Estimated TF coefficients:
+  Numerator: [0.00369]
+  Denominator: [ 1.      -0.72383 -0.2546 ]
+
+Converting to continuous-time via bilinear transform...
+Continuous-time approximate model:
+  num = [0.1711]
+  den = [1.00000000e+00 3.43630399e+03 5.94270744e+04]
+
+Estimated parameters (2nd-order fit):
+  Inertia J ≈ 5.8445e+00
+  Damping b ≈ 2.0083e+04
+  Stiffness k ≈ 3.4732e+05
+
+Designing LQR controller...
+
+LQR gain matrix K = [[0.00014 0.00025]]
+
+✅ Final continuous-time model and LQR summary:
+  G(s) =  [0.1711] / [1.00000000e+00 3.43630399e+03 5.94270744e+04]
+  LQR gains K = [[0.00014 0.00025]]
+numc: [0.17110089]
+denc: [1.00000000e+00 3.43630399e+03 5.94270744e+04]
+DC gain: 2.8791741193184934e-06

@@ -1,0 +1,8 @@
+{
+  "amps": 0.06,
+  "max_angle": 0.4,
+  "duration_ms": 5000,
+  "bit_time_ms": 30,
+  "I_MAX": 30.0,
+  "port": "/dev/cu.usbmodem178888901"
+}

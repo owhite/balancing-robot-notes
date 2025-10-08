@@ -1,55 +1,78 @@
 #!/usr/bin/env python3
-#!/usr/bin/env python3
+"""
+torque_sinewave_with_model.py
+
+Runs a sinewave torque experiment on the Teensy-controlled pendulum and overlays
+real measured data with simulated model data computed from rotational_i_viscous.json.
+
+Usage:
+    python torque_sinewave_with_model.py <serial_port> rotational_i_viscous.json
+"""
+
 import sys, json, serial, math
+import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.animation as animation
 from matplotlib.widgets import TextBox, Button
+from scipy.integrate import solve_ivp
+from scipy.interpolate import interp1d
 
 PARAM_FILE = "params.json"
 
-# --- Load parameters from file ---
+# --- Load experimental parameters ---
 def load_params():
     try:
         with open(PARAM_FILE, "r") as f:
             return json.load(f)
     except:
-        # Default parameters if file missing
         return {
-            "Kt": 0.056,          # Nm/A, torque constant
-            "torque": 0.1,    # Nm
+            "Kt": 0.056,          # Nm/A
+            "torque": 0.1,        # Nm
             "I_MAX": 30.0,
             "freq_hz": 1.0,
-            "duration_ms": 5000, 
+            "duration_ms": 5000,
             "port": "/dev/cu.usbmodem178888901"
         }
 
 params = load_params()
-port = sys.argv[1] if len(sys.argv) > 1 else params["port"]
+
+model_file = sys.argv[1]
+
+with open(model_file, "r") as f:
+    model = json.load(f)
+J = model["J"]
+b = model["b"]
+k = model["k"]
+
+# --- Open serial connection ---
+port = params["port"]
 ser = serial.Serial(port, 115200, timeout=0.1)
 
-# --- Burst data container ---
 burst_data = None
 
 # --- Setup figure with 3 subplots ---
 fig, (ax_torque, ax_pos, ax_vel) = plt.subplots(3, 1, figsize=(10, 10), sharex=True)
 plt.subplots_adjust(left=0.1, right=0.75, top=0.92, bottom=0.1)
 
-# Torque input
-line_torque, = ax_torque.plot([], [], color="tab:red", label="Torque Command")
+# Torque
+line_torque, = ax_torque.plot([], [], color="tab:red", label="Measured Torque")
+line_torque_sim, = ax_torque.plot([], [], color="tab:pink", linestyle="--", label="Simulated Torque")
 ax_torque.set_title("Torque Input vs Time")
 ax_torque.set_ylabel("Torque (Nm)")
 ax_torque.grid(True)
 ax_torque.legend()
 
 # Position
-line_pos, = ax_pos.plot([], [], color="tab:green", label="Position")
+line_pos, = ax_pos.plot([], [], color="tab:green", label="Measured Position")
+line_pos_sim, = ax_pos.plot([], [], color="tab:olive", linestyle="--", label="Simulated Position")
 ax_pos.set_title("Pendulum Position vs Time")
 ax_pos.set_ylabel("Position (rad)")
 ax_pos.grid(True)
 ax_pos.legend()
 
 # Velocity
-line_vel, = ax_vel.plot([], [], color="tab:blue", label="Velocity")
+line_vel, = ax_vel.plot([], [], color="tab:blue", label="Measured Velocity")
+line_vel_sim, = ax_vel.plot([], [], color="tab:cyan", linestyle="--", label="Simulated Velocity")
 ax_vel.set_title("Pendulum Velocity vs Time")
 ax_vel.set_xlabel("t (ms)")
 ax_vel.set_ylabel("Velocity (rad/s)")
@@ -63,7 +86,6 @@ axbox_freq     = plt.axes([0.8, 0.74, 0.15, 0.05])
 axbox_duration = plt.axes([0.8, 0.66, 0.15, 0.05])
 axbutton       = plt.axes([0.8, 0.54, 0.15, 0.07])
 
-# TextBoxes with labels above
 tb_Kt = TextBox(axbox_Kt, "", initial=str(params["Kt"]))
 axbox_Kt.set_title("Kt (Nm/A)", fontsize=10)
 
@@ -80,22 +102,13 @@ button = Button(axbutton, "Run")
 
 # --- Button handler ---
 def save_and_run(event):
-    # Update params from textboxes
     params["Kt"] = float(tb_Kt.text)
     params["torque"] = float(tb_torque.text)
     params["freq_hz"] = float(tb_freq.text)
     params["duration_ms"] = int(tb_duration.text)
 
-    # Save params to file
     with open(PARAM_FILE, "w") as f:
         json.dump(params, f, indent=2)
-
-    # Compute equivalent ESC command amplitude
-    # if i want to request .1 Nm torque, I should send
-    # I = T / Kt = .1 / 0.56 = 1.79 amps.
-    # The motor is at 30 A max, normalizing for a range of 1 <--> -1 that's:
-    # amp_command = T / (Kt x Imax)
-    # amp_command = .1 / (0.56 * 30) = .0595
 
     cmd_amp = params["torque"] / (params["I_MAX"] * params["Kt"])
 
@@ -138,37 +151,54 @@ def update(frame):
                     burst_data = data["samples"]
             continue
 
-        if "cmd" in data and data["cmd"] == "PRINT":
-            if "note" in data:
-                print("RX:", data["note"])
+        if "cmd" in data and data["cmd"] == "PRINT" and "note" in data:
+            print("RX:", data["note"])
 
     if burst_data:
-        # Use Teensy timestamps for x-axis
+        # --- Convert to arrays ---
         t0 = burst_data[0]["t"]
-        t_vals = [(s["t"] - t0) * 1e-3 for s in burst_data]  # µs → ms
+        t_vals = np.array([(s["t"] - t0) * 1e-3 for s in burst_data])  # µs → ms
+        torque_vals = np.array([s["torque"] * params["Kt"] * params["I_MAX"] for s in burst_data])
+        pos_vals = np.array([s["pos"] for s in burst_data])
+        vel_vals = np.array([s["vel"] for s in burst_data])
 
-        torque_vals = [s["torque"] * params["Kt"] * params["I_MAX"] for s in burst_data]  # Nm
-        pos_vals = [s["pos"] for s in burst_data]
-        vel_vals = [s["vel"] for s in burst_data]
+        # --- Simulate response using fitted model ---
+        tau_func = interp1d(t_vals * 1e-3, torque_vals, fill_value="extrapolate")  # seconds
+        def dynamics(t, y):
+            theta, theta_dot = y
+            theta_ddot = (tau_func(t) - b * theta_dot - k * theta) / J
+            return [theta_dot, theta_ddot]
 
-        # Plot data
-        line_torque.set_data(t_vals, torque_vals)
+        y0 = [pos_vals[0], vel_vals[0]]
+        sol = solve_ivp(dynamics, [t_vals[0]*1e-3, t_vals[-1]*1e-3], y0, t_eval=t_vals*1e-3)
+        theta_sim, theta_dot_sim = sol.y
+
+        # --- Update plots (measured + simulated) ---
+        # line_torque.set_data(t_vals, torque_vals)
+        line_torque_sim.set_data(t_vals, torque_vals)  # identical torque input
         line_pos.set_data(t_vals, pos_vals)
+        line_pos_sim.set_data(t_vals, theta_sim)
         line_vel.set_data(t_vals, vel_vals)
+        line_vel_sim.set_data(t_vals, theta_dot_sim)
 
-        # Axis scaling
-        ax_torque.set_xlim(min(t_vals), max(t_vals))
-        ax_pos.set_xlim(min(t_vals), max(t_vals))
-        ax_vel.set_xlim(min(t_vals), max(t_vals))
+        # --- Autoscale axes based on simulation range (and measured data for context) ---
+        ax_torque.set_xlim(np.min(t_vals), np.max(t_vals))
+        ax_pos.set_xlim(np.min(t_vals), np.max(t_vals))
+        ax_vel.set_xlim(np.min(t_vals), np.max(t_vals))
 
-        for ax, vals in [(ax_torque, torque_vals), (ax_pos, pos_vals), (ax_vel, vel_vals)]:
-            ymin, ymax = min(vals), max(vals)
+        for ax, measured, simulated in [
+                (ax_torque, torque_vals, torque_vals),
+                (ax_pos, pos_vals, theta_sim),
+                (ax_vel, vel_vals, theta_dot_sim)
+        ]:
+            combined = np.concatenate((measured, simulated))
+            ymin, ymax = np.min(combined), np.max(combined)
             margin = 0.1 * (ymax - ymin) if ymax > ymin else 1.0
             ax.set_ylim(ymin - margin, ymax + margin)
 
         burst_data = None
 
-    return (line_torque, line_pos, line_vel)
+    return (line_torque, line_pos, line_vel, line_torque_sim, line_pos_sim, line_vel_sim)
 
 ani = animation.FuncAnimation(fig, update, interval=100, blit=False, cache_frame_data=False)
 plt.show()

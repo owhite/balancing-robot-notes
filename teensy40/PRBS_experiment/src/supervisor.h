@@ -71,8 +71,7 @@ enum SupervisorMode {
   SUP_MODE_IDLE = 0,   // System idle, no active control
   SUP_MODE_ACTIVE,     // Normal operation / balancing
   SUP_MODE_SINUSOIDAL,
-  SUP_MODE_TORQUE_RESPONSE,
-  SUP_MODE_TORQUE_SINEWAVE,
+  SUP_MODE_PRBS,
   SUP_MODE_HOLD_POSITION,
   SUP_MODE_SET_POSITION,
   SUP_MODE_SIN_TORQUE,
@@ -102,9 +101,12 @@ struct Supervisor_typedef {
   uint32_t       last_imu_update_us;                       // Timestamp of last IMU update
 
   // these get passed in from external python program
-  float    user_amp_command = -0.0f;
-  float    user_freq_hz = -1.0f; 
-  uint32_t user_duration_us    = 170000;
+  float    user_amp_command = 0.0f;
+  float    user_max_angle   = 0.0f; 
+  uint16_t user_bit_time_us = 0;
+  uint16_t user_bit_time_ms = 0;
+  uint32_t user_duration_us = 0;
+  uint32_t user_duration_ms = 0;
 
   SerialStats serial1_stats;                               // Telemetry serial performance stats
 

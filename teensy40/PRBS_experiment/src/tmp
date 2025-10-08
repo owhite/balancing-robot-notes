@@ -1,0 +1,139 @@
+This code is run once the teensy has received a command from the host computer. 
+The teensy will be sending and receiving commands to controller. The teensy uses the arduino framework with a typical setup() and loop() arrangement. 
+
+The json string the teensy will receive from the computer is: 
+{"cmd": "send", "mode": "PRBS", "amp_command": 0.1, "max_angle": 0.4, "duration_ms": 5000}
+
+these are the variables that it uses:
+amp_command: normalized torque amplitude +/- full scale
+max_angle:   angle limit ranging from 0 to 2PI
+duration_ms: number of milliseconds for the run
+
+the teensy code stores these values in:
+sup->user_amp_command
+sup->user_max_angle
+sup->user_duration_ms
+
+Upon receiving that command we will enter into the run_mode_PRBS() in every loop() of the teensy.
+
+Note that program flow return from run_mode_PRBS() if we have not received a CAN message from the controller because of this statement:
+
+    if (!sup->esc[0].state.alive) {
+        return;
+    }
+
+the teensy hold position and velocity collected by CAN from the controller in these variables
+sup->esc[0].state.pos_rad
+sup->esc[0].state.vel_rad_s
+
+There is a comment "--- End condition ---" that shows where to dump the data from the PRBS run. I believe that code is handled.
+
+Generate the code that is needed for the PBRS run at the comment: "--- Initialization ---"
+Generate the torque that is required at the comment: "Generate torque for this iteration of PBRS"
+
+The code for run_mode_PRBS is below:
+
+#include "supervisor.h"
+#include "sup_mode_PRBS.h"
+#include <Arduino.h>
+#include <FlexCAN_T4.h>
+#include <math.h>
+
+// ---------------- Defaults ----------------
+const float    DEFAULT_AMP_COMMAND   = 0.2f;
+const uint32_t DEFAULT_MAX_ANGLE     = 0.6f;  
+const uint32_t DEFAULT_DURATION_MS   = 5000;  
+
+// ---------------- Logging ----------------
+struct LogEntry {
+  unsigned long t_us;
+  float torque;
+  float pos;
+  float vel;
+};
+
+#define LOGLEN 3000
+static LogEntry logBuffer[LOGLEN];
+static int logIndex = 0;
+
+// ---------------- PRBS Experiment ----------------
+void run_mode_PRBS(Supervisor_typedef *sup,
+		   FlexCAN_T4<CAN1, RX_SIZE_256, TX_SIZE_16> &can) {
+  // only enter loop if we got a CAN command, otherwise return
+  if (!sup->esc[0].state.alive) {
+    return;
+  }
+
+  static bool first_entry = true;
+  static unsigned long start_time = 0;
+  static float start_angle = 0.0f;
+
+  // --- Initialization ---
+  //   first entry into case statement
+  //   initialize variables for PBRS run
+  if (first_entry) {
+    first_entry = false;
+    start_time = micros();
+    logIndex = 0;
+    start_angle = sup->esc[0].state.pos_rad;
+  }
+
+  // --- Timing ---
+  unsigned long now_time = micros();
+  unsigned long elapsed_us = now_time - start_time;
+  float elapsed_s = elapsed_us * 1e-6f;
+
+  // --- Generate torque for this iteration of PBRS ---
+  float cmd_torque = 0.0f;
+
+  // --- Send torque command via CAN ---
+  CAN_message_t msg;
+  msg.id = canMakeExtId(CAN_ID_IQREQ, TEENSY_NODE_ID, sup->esc[0].config.node_id);
+  msg.len = 8;
+  msg.flags.extended = 1;
+  canPackFloat(cmd_torque, msg.buf);
+  canPackFloat(0.0f, msg.buf + 4);
+  can.write(msg);
+
+  // --- Logging ---
+  if (logIndex < LOGLEN) {
+    logBuffer[logIndex++] = {
+      elapsed_us,
+      cmd_torque,
+      sup->esc[0].state.pos_rad,
+      sup->esc[0].state.vel_rad_s
+    };
+  }
+
+  // --- End condition ---
+  //  JSON log when we reach this condition
+  if (elapsed_us >= sup->user_duration_us) {
+
+    Serial.println("{\"samples\":[");
+    for (int i = 0; i < logIndex; i++) {
+      Serial.printf(
+		    "{\"t\":%lu,\"torque\":%.4f,\"pos\":%.4f,\"vel\":%.4f}%s\r\n",
+		    logBuffer[i].t_us,
+		    logBuffer[i].torque,
+		    logBuffer[i].pos,
+		    logBuffer[i].vel,
+		    (i < logIndex - 1) ? "," : ""
+		    );
+    }
+    Serial.println("]}");
+
+    // --- Reset and exit to idle ---
+    sup->mode = SUP_MODE_IDLE;
+    first_entry = true;
+  }
+
+  sup->esc[0].state.alive = false;
+}
+
+
+
+
+
+
+
+
