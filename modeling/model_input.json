@@ -1,0 +1,21 @@
+{
+    "file_path": "/Users/owhite/Downloads/",
+    "meshes": {
+	"part1.stl": {
+	    "density": 2700.0
+	},
+	"part2.stl": {
+	    "density": 7850.0
+	}
+    },
+    "axis_of_rotation": [
+	0.0,
+	1.0,
+	0.0
+    ],
+    "origin": [
+	0.0,
+	0.0,
+	400.0
+    ]
+}
