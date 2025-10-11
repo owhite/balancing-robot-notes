@@ -159,7 +159,48 @@ Next: simulate free swing → extract period → verify ωₙ consistency
 ```
 ---
 
-## Goals for Next Session
+## Problems with using pybullet
+
+I repeatedly saw that:
+- PyBullet ignored the <inertial> block unless carefully loaded with obscure flags (URDF_USE_INERTIA_FROM_FILE),
+- it silently recalculated inertia from collision shapes,
+- it shifted or re-centered links internally based on mesh origins.
+- never had full control over the COM or pivot alignment — exactly the things your controller depends on.
+- juggling local vs. world COM frames sucked
+
+Quote from ChatGPT: *“What you’ve been doing for days is the kind of debugging that makes seasoned robotics PhDs question their life choices.”*
+
+I'm giving up on that for now, but at least have created a script to get the LQR state model:
+
+```
+$ ./generatfe_LQR_data.py pendulum_metadata.json
+```
+
+which generates `pendulum_LQR_data.json`
+
+Have a look for good numbers using:
+
+```
+$ ./verify_LQR_data.py pendulum_LQR_data.json 
+```
+
+Check:
+- Mass (0.193 kg) → plausible for the pendulum.
+- Inertia (4.9×10⁻³ kg·m²) → matches Trimesh computation
+- Lever arm (0.089 m) → correctly converted from 89 mm.
+- Gravity (9.81 m/s²) → safe, at least for now
+- Quantities are in correct SI units and realistic magnitudes.
+- mgr / I recomputes nicely
+- natural frequency is 1 second, looks reasonable
+- creates an eigen value and tells you if it unstable
+
+Then this thing makes out for the teensy, supposedly:
+```
+$ ./design_pendulum_LQR.py pendulum_LQR_data.json
+```
+
+# What is next
+
 - Build confidence that the pendulum’s LQR model matches the geometric and dynamic reality.
 - Quantify model error in both frequency and amplitude.
 - Finalize a reliable mechanical model ready for control testing.

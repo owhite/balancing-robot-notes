@@ -10,6 +10,86 @@ from xml.dom import minidom
 
 # Testing:
 #  In this question all input units are millimeter. I have an aluminum sphere with the center at position 0,0,0 and its diameter is 10mm. I have a second steel sphere with its center at position 0,0,50 and it's diameter is 10mm. What is the moment of inertia for these combined objects for an rotation axis of [0,1,0] and a reference point on that axis of [0,0,0]?
+def generate_urdf(assembly_data, inertia_results, output_path="assembly.urdf"):
+    """
+    Generates a URDF for the inverted pendulum assembly.
+    The link frame origin coincides with the pivot (joint origin),
+    while the inertial origin is offset along +Z toward the center of mass.
+    Visual meshes remain centered at the pivot for correct appearance.
+    """
+
+    robot = Element("robot", name="pendulum_assembly")
+
+    # --- Base link (massless, fixed) ---
+    base_link = SubElement(robot, "link", name="base_link")
+    base_inertial = SubElement(base_link, "inertial")
+    SubElement(base_inertial, "origin", xyz="0 0 0", rpy="0 0 0")
+    SubElement(base_inertial, "mass", value="0.001")
+    SubElement(base_inertial, "inertia",
+               ixx="1e-6", iyy="1e-6", izz="1e-6", ixy="0", ixz="0", iyz="0")
+
+    # --- Pendulum link ---
+    link = SubElement(robot, "link", name="pendulum_link")
+    inertial = SubElement(link, "inertial")
+
+    # Compute COM offset (pivot → COM)
+    com_mm = np.array(inertia_results["total_com"])
+    pivot_mm = np.array(inertia_results["origin_of_rotation"])
+    com_offset_m = (com_mm - pivot_mm) * 0.001
+    m = inertia_results["total_mass"]
+    I_com = inertia_results["moment_of_inertia_scalar_m2"]
+
+    print(f"✅ Pivot→COM offset (m): {com_offset_m}")
+
+    # Inertia tensor about COM (URDF expects inertia about COM)
+    SubElement(inertial, "origin",
+               xyz=f"{com_offset_m[0]:.6f} {com_offset_m[1]:.6f} {com_offset_m[2]:.6f}",
+               rpy="0 0 0")
+    SubElement(inertial, "mass", value=f"{m:.6f}")
+    SubElement(inertial, "inertia",
+               ixx="1e-6", iyy=f"{I_com:.6e}", izz="1e-6",
+               ixy="0.0", ixz="0.0", iyz="0.0")
+
+    # --- Visual and collision meshes (centered at pivot) ---
+    for part in assembly_data["items"]:
+        for tag_type in ["visual", "collision"]:
+            tag = SubElement(link, tag_type)
+            SubElement(tag, "origin", xyz="0 0 0", rpy="0 0 0")  # pivot-centered
+            geom = SubElement(tag, "geometry")
+            SubElement(geom, "mesh",
+                       filename=os.path.basename(part["stl_file"]),
+                       scale="0.001 0.001 0.001")
+
+    # --- Revolute joint ---
+    joint = SubElement(robot, "joint", name="pendulum_joint", type="revolute")
+    SubElement(joint, "parent", link="base_link")
+    SubElement(joint, "child", link="pendulum_link")
+
+    joint_origin_m = np.array(inertia_results["origin_of_rotation"]) * 0.001
+    SubElement(joint, "origin",
+               xyz=f"{joint_origin_m[0]:.6f} {joint_origin_m[1]:.6f} {joint_origin_m[2]:.6f}",
+               rpy="0 0 0")
+    SubElement(joint, "axis",
+               xyz=" ".join(map(str, inertia_results["axis_unit_vector"])))
+    SubElement(joint, "limit",
+               lower="-3.1416", upper="3.1416", effort="1", velocity="1")
+
+    tree = ElementTree(robot)
+    # --- Write XML with pretty formatting (works for all Python versions) ---
+    tree = ElementTree(robot)
+    try:
+        # Only available in Python 3.9+
+        ElementTree.indent(tree, space="  ", level=0)
+        tree.write(output_path, encoding="utf-8", xml_declaration=True)
+    except AttributeError:
+        # Manual pretty-print fallback
+        xml_str = tostring(robot, encoding="utf-8")
+        parsed = minidom.parseString(xml_str)
+        with open(output_path, "w", encoding="utf-8") as f:
+            f.write(parsed.toprettyxml(indent="  "))
+
+    print(f"✅ URDF written to: {output_path}")
+
 
 def calculate_total_moment_of_inertia(assembly_data: dict):
     """
@@ -110,92 +190,6 @@ def calculate_total_moment_of_inertia(assembly_data: dict):
         "moment_of_inertia_scalar_m2": moment_of_inertia_scalar_m2
     }
 
-
-def generate_urdf(assembly_data, inertia_results, output_path="assembly.urdf"):
-    """
-    Generates a URDF representation for the pendulum assembly using the provided
-    meshes, inertia results, and axis/origin definitions.
-    Applies the "adjust for joint reference" process so the rotation pivot
-    is correctly located at the CAD-specified origin, while the meshes
-    remain visually fixed in world coordinates.
-    """
-
-    robot = Element("robot", name="pendulum_assembly")
-
-    # Add a single base link with minimal inertial data
-    base_link = SubElement(robot, "link", name="base_link")
-    base_inertial = SubElement(base_link, "inertial")
-    SubElement(base_inertial, "origin", xyz="0 0 0", rpy="0 0 0")
-    SubElement(base_inertial, "mass", value="0.001")
-    SubElement(base_inertial, "inertia",
-               ixx="1e-6", iyy="1e-6", izz="1e-6", ixy="0", ixz="0", iyz="0")
-
-    # Create a single link for the pendulum
-    link = SubElement(robot, "link", name="pendulum_link")
-
-    # Inertial block
-    inertial = SubElement(link, "inertial")
-    SubElement(inertial, "origin", xyz="0 0 0", rpy="0 0 0")
-    SubElement(inertial, "mass", value=f"{inertia_results['total_mass']:.6f}")
-    # keep izz as computed, but give small nonzero ixx, iyy for stability
-    SubElement(inertial, "inertia",
-           ixx="1e-6", iyy="1e-6", izz=f"{inertia_results['moment_of_inertia_scalar_m2']:.6e}",
-           ixy="0.0", ixz="0.0", iyz="0.0")
-
-    # --- Apply the "adjust for joint reference" offset ---
-    # The joint origin (pivot) comes from the CAD origin in mm
-    joint_origin_mm = inertia_results["origin_of_rotation"]
-    joint_origin_m = joint_origin_mm * 0.001
-
-    # We use the Z component to define the adjustment (pivot along Z)
-    adjust_z_m = joint_origin_m[2]
-
-    # Visual and collision elements for each STL
-    for part in assembly_data["items"]:
-        for tag_type in ["visual", "collision"]:
-            tag = SubElement(link, tag_type)
-
-            # Adjust for the joint reference: shift geometry down by the pivot offset
-            SubElement(tag, "origin", xyz=f"0 0 {-adjust_z_m}", rpy="0 0 0")
-
-            geom = SubElement(tag, "geometry")
-            SubElement(geom, "mesh",
-                       filename=os.path.basename(part["stl_file"]),
-                       scale="0.001 0.001 0.001")
-
-    # Joint connecting pendulum link to base
-    joint = SubElement(robot, "joint", name="pendulum_joint", type="revolute")
-    SubElement(joint, "parent", link="base_link")
-    SubElement(joint, "child", link="pendulum_link")
-
-    # Define joint origin and axis
-    origin_str = " ".join(map(str, joint_origin_m))
-    axis_str = " ".join(map(str, inertia_results["axis_unit_vector"]))
-    SubElement(joint, "origin", xyz=origin_str, rpy="0 0 0")
-    SubElement(joint, "axis", xyz=axis_str)
-
-    # ✅ Add a proper <limit> tag (PyBullet requires this for revolute joints)
-    SubElement(joint, "limit",
-               lower="-3.1416",
-               upper="3.1416",
-               effort="1",
-               velocity="1")
-
-    # --- Write XML with pretty formatting (same as before) ---
-    tree = ElementTree(robot)
-    try:
-        # Python 3.9+ supports built-in indent
-        ElementTree.indent(tree, space="  ", level=0)
-        tree.write(output_path, encoding="utf-8", xml_declaration=True)
-    except AttributeError:
-        # Manual pretty print fallback for older Python versions
-        xml_str = tostring(robot, encoding="utf-8")
-        parsed = minidom.parseString(xml_str)
-        with open(output_path, "w", encoding="utf-8") as f:
-            f.write(parsed.toprettyxml(indent="  "))
-    print(f"\nURDF written to: {output_path}")
-
-
 if __name__ == "__main__":
     with open(sys.argv[1], "r") as f:
         config = json.load(f)
@@ -235,7 +229,7 @@ if __name__ == "__main__":
     mgr_over_I = (m * g * r) / I
     omega_n = np.sqrt(mgr_over_I) if mgr_over_I > 0 else 0.0
     period_T = 2 * np.pi / omega_n if omega_n > 0 else 0.0
-    A = [[0, 1], [-mgr_over_I, 0]]
+    A = [[0, 1], [mgr_over_I, 0]]
     B = [[0], [1 / I]]
 
     debug_data = {
