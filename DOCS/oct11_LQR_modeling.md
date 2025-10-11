@@ -1,3 +1,4 @@
+## Oct 11, 2025
 # Pendulum Model Validation – Continuation Session Prompt
 
 ## Context Recap
@@ -156,3 +157,13 @@ display_urdf.py (PyBullet)
    ↓
 Next: simulate free swing → extract period → verify ωₙ consistency
 ```
+---
+
+## Goals for Next Session
+- Build confidence that the pendulum’s LQR model matches the geometric and dynamic reality.
+- Quantify model error in both frequency and amplitude.
+- Finalize a reliable mechanical model ready for control testing.
+
+---
+## DEETS
+- git hash ID: 57efa223f15b6a0a454531ebcfd7cc58b7a34232
