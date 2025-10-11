@@ -1,188 +1,262 @@
 #!/usr/bin/env python3
 
-# This consumes the output of dump_stls.py that is launched from Rhino3D
-#
-# Invoke using:
-# ./pybullet_generator.py pendulum_metadata.json
-#
-#✅Output should include:
-# pendulum_metadata.xml
-# pendulum.urdf 
-# model_debug.json
-#
-# Inspect output carefully, compare moments of intertia, densities, CoMs
-#  to see if they're similar to analysis tools in Rhino
-
-import os, sys, json
-import numpy as np
 import trimesh
-from lxml import etree as ET
+import numpy as np
+import sys
+import json
+import os
+from xml.etree.ElementTree import Element, SubElement, tostring, ElementTree
+from xml.dom import minidom
 
-def parallel_axis(I, m, d):
-    """Shift inertia tensor by parallel axis theorem."""
-    d = np.array(d)
-    return I + m * (np.dot(d, d) * np.eye(3) - np.outer(d, d))
+# Testing:
+#  In this question all input units are millimeter. I have an aluminum sphere with the center at position 0,0,0 and its diameter is 10mm. I have a second steel sphere with its center at position 0,0,50 and it's diameter is 10mm. What is the moment of inertia for these combined objects for an rotation axis of [0,1,0] and a reference point on that axis of [0,0,0]?
 
-def generate_mjcf(meta, total_mass, com_rel, inertia, p1, axis, output_dir):
-    mjcf = ET.Element("mujoco", model="rhino_export")
-    asset = ET.SubElement(mjcf, "asset")
+def calculate_total_moment_of_inertia(assembly_data: dict):
+    """
+    Calculates the total moment of inertia for an assembly of parts,
+    handling multiple disconnected meshes within an STL file and
+    different densities for each specified part.
 
-    for name in meta["meshes"]:
-        ET.SubElement(asset, "mesh",
-            name=f"{name}_mesh",
-            file=f"{name}.stl",
-            scale="0.001 0.001 0.001")
-
-    worldbody = ET.SubElement(mjcf, "worldbody")
-
-    body = ET.SubElement(worldbody, "body",
-        name="pendulum",
-        pos="{} {} {}".format(*p1))
-
-    ET.SubElement(body, "inertial",
-        mass=str(total_mass),
-        pos="{} {} {}".format(*com_rel),
-        diaginertia="{} {} {}".format(inertia[0,0], inertia[1,1], inertia[2,2]),
-        quat="0 0 0 1")
-
-    ET.SubElement(body, "joint",
-        name="hinge", type="hinge",
-        axis="{} {} {}".format(*axis))
-
-    for name in meta["meshes"]:
-        ET.SubElement(body, "geom", type="mesh", mesh=f"{name}_mesh")
-
-    actuator = ET.SubElement(mjcf, "actuator")
-    ET.SubElement(actuator, "motor", joint="hinge", ctrlrange="-1 1", gear="1")
-
-    tree = ET.ElementTree(mjcf)
-    tree.write(os.path.join(output_dir, "pendulum_metadata.xml"),
-               pretty_print=True, xml_declaration=True, encoding="UTF-8")
-
-def generate_urdf(meta, total_mass, com_rel, inertia, p1, axis, output_dir):
-    robot = ET.Element("robot", name="pendulum")
-
-    # Fixed base
-    ET.SubElement(robot, "link", name="base_link")
-
-    # Pendulum link
-    link = ET.SubElement(robot, "link", name="pendulum_link")
-
-    inertial = ET.SubElement(link, "inertial")
-    ET.SubElement(inertial, "origin",
-        xyz="{} {} {}".format(*com_rel), rpy="0 0 0")
-
-    ET.SubElement(inertial, "mass", value=str(total_mass))
-    ET.SubElement(inertial, "inertia",
-        ixx=str(inertia[0,0]), iyy=str(inertia[1,1]), izz=str(inertia[2,2]),
-        ixy=str(inertia[0,1]), ixz=str(inertia[0,2]), iyz=str(inertia[1,2]))
-
-    # Visuals and collisions — shift mesh by -p1
-    for name in meta["meshes"]:
-        visual = ET.SubElement(link, "visual")
-        ET.SubElement(visual, "origin",
-            xyz="{} {} {}".format(*(-p1)), rpy="0 0 0")
-        geom = ET.SubElement(visual, "geometry")
-        ET.SubElement(geom, "mesh",
-            filename=f"{name}.stl", scale="0.001 0.001 0.001")
-
-        collision = ET.SubElement(link, "collision")
-        ET.SubElement(collision, "origin",
-            xyz="{} {} {}".format(*(-p1)), rpy="0 0 0")
-        geomc = ET.SubElement(collision, "geometry")
-        ET.SubElement(geomc, "mesh",
-            filename=f"{name}.stl", scale="0.001 0.001 0.001")
-
-    # Hinge joint
-    joint = ET.SubElement(robot, "joint", name="hinge", type="revolute")
-    ET.SubElement(joint, "parent", link="base_link")
-    ET.SubElement(joint, "child", link="pendulum_link")
-    ET.SubElement(joint, "origin",
-        xyz="{} {} {}".format(*p1), rpy="0 0 0")
-    ET.SubElement(joint, "axis",
-        xyz="{} {} {}".format(*axis))
-    ET.SubElement(joint, "limit",
-        lower="-3.14", upper="3.14", effort="1000", velocity="1000")
-
-    tree = ET.ElementTree(robot)
-    tree.write(os.path.join(output_dir, "pendulum.urdf"),
-               pretty_print=True, xml_declaration=True, encoding="UTF-8")
-
-def write_debug_json(parts, total_mass, com, total_inertia, output_dir):
-    debug = {
-        "total_mass": float(total_mass),
-        "center_of_mass": com.tolist(),
-        "inertia_tensor": total_inertia.tolist(),
-        "parts": {
-            name: {
-                "mass": float(p["mass"]),
-                "com": p["com"].tolist(),
-                "inertia": p["inertia"].tolist()
-            } for name, p in parts.items()
-        }
-    }
-    with open(os.path.join(output_dir, "model_debug.json"), "w") as f:
-        json.dump(debug, f, indent=2)
-
-def main():
-    if len(sys.argv) < 2:
-        print("Usage: pybullet_generator.py rhino_export.json")
-        sys.exit(1)
-
-    with open(sys.argv[1]) as f:
-        meta = json.load(f)
-
-    output_dir = meta["file_path"]
-
+    Args:
+        assembly_data: A dictionary containing the parameters for the entire assembly,
+                       including the list of parts, axis, and origin of rotation.
+    """
+    total_scalar_moment_of_inertia = 0.0
     total_mass = 0.0
-    total_com = np.zeros(3)
-    total_inertia = np.zeros((3,3))
-    parts = {}
+    weighted_com_sum = np.zeros(3)
 
-    # Process each STL
-    for name, props in meta["meshes"].items():
-        density = props["density"]
-        stl_path = os.path.join(output_dir, f"{name}.stl")
+    # Extract assembly-wide parameters
+    axis_of_rotation = np.array(assembly_data["axis_of_rotation"])
+    origin_of_rotation = np.array(assembly_data["origin_of_rotation"])
 
-        mesh = trimesh.load(stl_path, force='mesh')
-        mesh.apply_scale(0.001)  # mm → m
+    # Ensure the axis of rotation is a unit vector
+    axis_unit_vector = axis_of_rotation / np.linalg.norm(axis_of_rotation)
 
-        if not mesh.is_volume:
-            mesh = mesh.convex_hull
+    # --- 1. Calculate mass and inertia for each individual part file ---
+    for part in assembly_data["items"]:
+        stl_file_path = part["stl_file"]
+        print("STL file: ", stl_file_path)
 
-        volume = mesh.volume
-        mass = density * volume
-        com = mesh.center_mass
-        inertia = mesh.moment_inertia
+        try:
+            full_mesh = trimesh.load_mesh(stl_file_path)
+        except FileNotFoundError:
+            print(f"Error: STL file not found at '{stl_file_path}'. Exiting gracefully.")
+            sys.exit(1)
 
-        parts[name] = dict(mass=mass, com=com, inertia=inertia)
+        # Split the mesh into its constituent sub-parts
+        sub_meshes = full_mesh.split(only_watertight=False)
+        count = 0
+        sub_mass = 0.0
+        sub_weighted_com_sum = np.zeros(3)
 
-        total_mass += mass
-        total_com += mass * com
+        for sub_mesh in sub_meshes:
+            # Apply any additional intended position translation to each sub-part.
+            sub_mesh.apply_translation(part.get("part_position_mm", np.zeros(3)))
 
-    # Composite COM (world frame)
-    com = total_com / total_mass
+            # Calculate properties for this sub-part
+            density = part["density_kg_per_mm3"]
+            mass_kg = sub_mesh.volume * density
+            inertia_tensor_com = sub_mesh.moment_inertia * density
+            center_of_mass_mm = sub_mesh.center_mass
 
-    # Extract joint info
-    p1 = np.array(meta["joint1"]["p1"]) * 0.001  # mm → m
-    p2 = np.array(meta["joint1"]["p2"]) * 0.001
-    axis = p2 - p1
-    axis = axis / np.linalg.norm(axis)
+            # Project the part's inertia tensor (relative to its own COM) onto the axis direction.
+            scalar_inertia_com = axis_unit_vector.T @ inertia_tensor_com @ axis_unit_vector
 
-    # COM relative to hinge
-    com_rel = com - p1
+            # Calculate the perpendicular distance from the part's COM to the rotation axis
+            # The rotation axis is defined by origin_of_rotation and axis_unit_vector
+            com_to_axis_origin = center_of_mass_mm - origin_of_rotation
+            distance_vector = com_to_axis_origin - (com_to_axis_origin @ axis_unit_vector) * axis_unit_vector
+            distance_mm = np.linalg.norm(distance_vector)
+            
+            # Apply the scalar parallel axis theorem
+            scalar_inertia_part = scalar_inertia_com + mass_kg * (distance_mm ** 2)
 
-    # Composite inertia
-    for name, props in parts.items():
-        d = props["com"] - com
-        total_inertia += parallel_axis(props["inertia"], props["mass"], d)
+            # Sum up the properties for the sub-parts within this STL file
+            sub_mass += mass_kg
+            sub_weighted_com_sum += center_of_mass_mm * mass_kg
 
-    # Emit files
-    generate_mjcf(meta, total_mass, com_rel, total_inertia, p1, axis, output_dir)
-    generate_urdf(meta, total_mass, com_rel, total_inertia, p1, axis, output_dir)
-    write_debug_json(parts, total_mass, com, total_inertia, output_dir)
+            # Sum the properties for the entire assembly
+            total_mass += mass_kg
+            weighted_com_sum += center_of_mass_mm * mass_kg
+            total_scalar_moment_of_inertia += scalar_inertia_part
+            count += 1
+        
+        sub_com = sub_weighted_com_sum / sub_mass if sub_mass > 0 else np.zeros(3)
+        print(f"Sub-parts in STL: {count} total mass: {sub_mass * 1000:.4f} (gram) total CoM: {sub_com}")
 
-    print("✅ Wrote pendulum_metadata.xml, pendulum.urdf, and model_debug.json to", output_dir)
+    # --- 2. Calculate the overall center of mass ---
+    if total_mass > 0:
+        total_com = weighted_com_sum / total_mass
+    else:
+        print("mass problem encountered: Total mass is zero.")
+        total_com = np.zeros(3)
+
+    # --- 3. Output the final results ---
+    moment_of_inertia_scalar_m2 = total_scalar_moment_of_inertia * 1e-6
+    
+    print("\n--- Total Inertia Calculation for all parts ---")
+    print(f"Total mass (in kg): {total_mass}")
+    print(f"Total center of mass (in mm): {total_com}")
+    print(f"Origin of rotation (in mm): {origin_of_rotation}")
+    print(f"Axis of rotation (unit vector): {axis_unit_vector}")
+    print(f"\nCalculated Total Moment of Inertia about the axis (in kg·m²): {moment_of_inertia_scalar_m2}")
+
+    # Return useful data for URDF generation
+    return {
+        "total_mass": total_mass,
+        "total_com": total_com,
+        "origin_of_rotation": origin_of_rotation,
+        "axis_unit_vector": axis_unit_vector,
+        "moment_of_inertia_scalar_m2": moment_of_inertia_scalar_m2
+    }
+
+
+def generate_urdf(assembly_data, inertia_results, output_path="assembly.urdf"):
+    """
+    Generates a URDF representation for the pendulum assembly using the provided
+    meshes, inertia results, and axis/origin definitions.
+    Applies the "adjust for joint reference" process so the rotation pivot
+    is correctly located at the CAD-specified origin, while the meshes
+    remain visually fixed in world coordinates.
+    """
+
+    robot = Element("robot", name="pendulum_assembly")
+
+    # Add a single base link with minimal inertial data
+    base_link = SubElement(robot, "link", name="base_link")
+    base_inertial = SubElement(base_link, "inertial")
+    SubElement(base_inertial, "origin", xyz="0 0 0", rpy="0 0 0")
+    SubElement(base_inertial, "mass", value="0.001")
+    SubElement(base_inertial, "inertia",
+               ixx="1e-6", iyy="1e-6", izz="1e-6", ixy="0", ixz="0", iyz="0")
+
+    # Create a single link for the pendulum
+    link = SubElement(robot, "link", name="pendulum_link")
+
+    # Inertial block
+    inertial = SubElement(link, "inertial")
+    SubElement(inertial, "origin", xyz="0 0 0", rpy="0 0 0")
+    SubElement(inertial, "mass", value=f"{inertia_results['total_mass']:.6f}")
+    # keep izz as computed, but give small nonzero ixx, iyy for stability
+    SubElement(inertial, "inertia",
+           ixx="1e-6", iyy="1e-6", izz=f"{inertia_results['moment_of_inertia_scalar_m2']:.6e}",
+           ixy="0.0", ixz="0.0", iyz="0.0")
+
+    # --- Apply the "adjust for joint reference" offset ---
+    # The joint origin (pivot) comes from the CAD origin in mm
+    joint_origin_mm = inertia_results["origin_of_rotation"]
+    joint_origin_m = joint_origin_mm * 0.001
+
+    # We use the Z component to define the adjustment (pivot along Z)
+    adjust_z_m = joint_origin_m[2]
+
+    # Visual and collision elements for each STL
+    for part in assembly_data["items"]:
+        for tag_type in ["visual", "collision"]:
+            tag = SubElement(link, tag_type)
+
+            # Adjust for the joint reference: shift geometry down by the pivot offset
+            SubElement(tag, "origin", xyz=f"0 0 {-adjust_z_m}", rpy="0 0 0")
+
+            geom = SubElement(tag, "geometry")
+            SubElement(geom, "mesh",
+                       filename=os.path.basename(part["stl_file"]),
+                       scale="0.001 0.001 0.001")
+
+    # Joint connecting pendulum link to base
+    joint = SubElement(robot, "joint", name="pendulum_joint", type="revolute")
+    SubElement(joint, "parent", link="base_link")
+    SubElement(joint, "child", link="pendulum_link")
+
+    # Define joint origin and axis
+    origin_str = " ".join(map(str, joint_origin_m))
+    axis_str = " ".join(map(str, inertia_results["axis_unit_vector"]))
+    SubElement(joint, "origin", xyz=origin_str, rpy="0 0 0")
+    SubElement(joint, "axis", xyz=axis_str)
+
+    # ✅ Add a proper <limit> tag (PyBullet requires this for revolute joints)
+    SubElement(joint, "limit",
+               lower="-3.1416",
+               upper="3.1416",
+               effort="1",
+               velocity="1")
+
+    # --- Write XML with pretty formatting (same as before) ---
+    tree = ElementTree(robot)
+    try:
+        # Python 3.9+ supports built-in indent
+        ElementTree.indent(tree, space="  ", level=0)
+        tree.write(output_path, encoding="utf-8", xml_declaration=True)
+    except AttributeError:
+        # Manual pretty print fallback for older Python versions
+        xml_str = tostring(robot, encoding="utf-8")
+        parsed = minidom.parseString(xml_str)
+        with open(output_path, "w", encoding="utf-8") as f:
+            f.write(parsed.toprettyxml(indent="  "))
+    print(f"\nURDF written to: {output_path}")
+
 
 if __name__ == "__main__":
-    main()
+    with open(sys.argv[1], "r") as f:
+        config = json.load(f)
+
+    base_path = config["file_path"]
+    items = []        
+    assembly_data = []
+
+    # note that axis_of_rotation is a vector, it is not a line going through space.
+    #   origin_of_rotation is a point in space
+
+    assembly_data = {
+        "axis_of_rotation": np.array(config["axis_of_rotation"]),
+        "origin_of_rotation": np.array(config["origin"]),
+        "items": items
+    }
+
+    for filename, mesh_info in config["meshes"].items():
+        items.append({
+            "stl_file": os.path.join(base_path, filename),
+            "density_kg_per_mm3": mesh_info["density"] * 1e-9  # kg/m³ → kg/mm³
+        })
+
+    inertia_results = calculate_total_moment_of_inertia(assembly_data)
+
+    # --- Generate URDF file in same folder ---
+    output_urdf_path = os.path.join(base_path, "pendulum_assembly.urdf")
+    generate_urdf(assembly_data, inertia_results, output_path=output_urdf_path)
+
+    # --- Generate JSON file with variables for LQR and debugging ---
+    m = inertia_results["total_mass"]
+    I = inertia_results["moment_of_inertia_scalar_m2"]
+    total_com = inertia_results["total_com"]
+    origin = inertia_results["origin_of_rotation"]
+    r = np.linalg.norm(total_com - origin) * 1e-3  # mm→m
+    g = 9.81
+    mgr_over_I = (m * g * r) / I
+    omega_n = np.sqrt(mgr_over_I) if mgr_over_I > 0 else 0.0
+    period_T = 2 * np.pi / omega_n if omega_n > 0 else 0.0
+    A = [[0, 1], [-mgr_over_I, 0]]
+    B = [[0], [1 / I]]
+
+    debug_data = {
+        "mass_kg": m,
+        "moment_of_inertia_kg_m2": I,
+        "total_com_mm": total_com.tolist(),
+        "origin_of_rotation_mm": origin.tolist(),
+        "r_m": r,
+        "g_m_per_s2": g,
+        "mgr_over_I": mgr_over_I,
+        "omega_n_rad_per_s": omega_n,
+        "expected_period_s": period_T,
+        "axis_unit_vector": inertia_results["axis_unit_vector"].tolist(),
+        "A_matrix": A,
+        "B_matrix": B,
+        "urdf_file": output_urdf_path
+    }
+
+    json_output_path = os.path.join(base_path, "pendulum_LQR_data.json")
+    with open(json_output_path, "w") as f:
+        json.dump(debug_data, f, indent=2)
+
+    print(f"\nLQR variable data written to: {json_output_path}")
+    print(f"\nComputed ω_n = {omega_n:.3f} rad/s, T = {period_T:.3f} s, mgr/I = {mgr_over_I:.3f}")

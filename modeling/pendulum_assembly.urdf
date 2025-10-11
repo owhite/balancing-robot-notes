@@ -1,0 +1,84 @@
+<?xml version="1.0" ?>
+<robot name="pendulum_assembly">
+  <link name="base_link">
+    <inertial>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <mass value="0.001"/>
+      <inertia ixx="1e-6" iyy="1e-6" izz="1e-6" ixy="0" ixz="0" iyz="0"/>
+    </inertial>
+  </link>
+  <link name="pendulum_link">
+    <inertial>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <mass value="0.193058"/>
+      <inertia ixx="1e-6" iyy="1e-6" izz="4.923982e-03" ixy="0.0" ixz="0.0" iyz="0.0"/>
+    </inertial>
+    <visual>
+      <origin xyz="0 0 -0.045138" rpy="0 0 0"/>
+      <geometry>
+        <mesh filename="housing.stl" scale="0.001 0.001 0.001"/>
+      </geometry>
+    </visual>
+    <collision>
+      <origin xyz="0 0 -0.045138" rpy="0 0 0"/>
+      <geometry>
+        <mesh filename="housing.stl" scale="0.001 0.001 0.001"/>
+      </geometry>
+    </collision>
+    <visual>
+      <origin xyz="0 0 -0.045138" rpy="0 0 0"/>
+      <geometry>
+        <mesh filename="wood.stl" scale="0.001 0.001 0.001"/>
+      </geometry>
+    </visual>
+    <collision>
+      <origin xyz="0 0 -0.045138" rpy="0 0 0"/>
+      <geometry>
+        <mesh filename="wood.stl" scale="0.001 0.001 0.001"/>
+      </geometry>
+    </collision>
+    <visual>
+      <origin xyz="0 0 -0.045138" rpy="0 0 0"/>
+      <geometry>
+        <mesh filename="steel.stl" scale="0.001 0.001 0.001"/>
+      </geometry>
+    </visual>
+    <collision>
+      <origin xyz="0 0 -0.045138" rpy="0 0 0"/>
+      <geometry>
+        <mesh filename="steel.stl" scale="0.001 0.001 0.001"/>
+      </geometry>
+    </collision>
+    <visual>
+      <origin xyz="0 0 -0.045138" rpy="0 0 0"/>
+      <geometry>
+        <mesh filename="aluminum.stl" scale="0.001 0.001 0.001"/>
+      </geometry>
+    </visual>
+    <collision>
+      <origin xyz="0 0 -0.045138" rpy="0 0 0"/>
+      <geometry>
+        <mesh filename="aluminum.stl" scale="0.001 0.001 0.001"/>
+      </geometry>
+    </collision>
+    <visual>
+      <origin xyz="0 0 -0.045138" rpy="0 0 0"/>
+      <geometry>
+        <mesh filename="neodynium.stl" scale="0.001 0.001 0.001"/>
+      </geometry>
+    </visual>
+    <collision>
+      <origin xyz="0 0 -0.045138" rpy="0 0 0"/>
+      <geometry>
+        <mesh filename="neodynium.stl" scale="0.001 0.001 0.001"/>
+      </geometry>
+    </collision>
+  </link>
+  <joint name="pendulum_joint" type="revolute">
+    <parent link="base_link"/>
+    <child link="pendulum_link"/>
+    <origin xyz="0.0 0.0 0.045138" rpy="0 0 0"/>
+    <axis xyz="0.0 1.0 0.0"/>
+    <limit lower="-3.1416" upper="3.1416" effort="1" velocity="1"/>
+  </joint>
+</robot>

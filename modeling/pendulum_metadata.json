@@ -1,32 +1,30 @@
 {
   "meshes": {
-    "neodynium": {
-      "density": 7500.0
-    }, 
-    "wood": {
-      "density": 471.0
-    }, 
-    "housing": {
+    "housing.stl": {
       "density": 5280.0
     }, 
-    "steel": {
+    "wood.stl": {
+      "density": 471.0
+    }, 
+    "steel.stl": {
       "density": 7850.0
     }, 
-    "aluminum": {
+    "aluminum.stl": {
       "density": 2700.0
+    }, 
+    "neodynium.stl": {
+      "density": 7500.0
     }
   }, 
-  "file_path": "/Users/owhite/kicad/MESC_brain_board/modeling/", 
-  "joint1": {
-    "p2": [
-      -1.6047283079967633e-15, 
-      59.699999999988719, 
-      400.0
-    ], 
-    "p1": [
-      -1.6047283079967633e-15, 
-      9.6999999999887194, 
-      400.0
-    ]
-  }
+  "origin": [
+    0.0, 
+    0.0, 
+    45.137999999999998
+  ], 
+  "axis_of_rotation": [
+    0.0, 
+    1.0, 
+    0.0
+  ], 
+  "file_path": "/Users/owhite/MESC_brain_board/modeling/"
 }

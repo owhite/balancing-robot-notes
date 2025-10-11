@@ -1,67 +1,41 @@
 #!/usr/bin/env python3
-# Compare pendulum swing under 0.2 Nm vs 0.4 Nm torque
+import numpy as np
 import pybullet as p
 import pybullet_data
-import math
-import matplotlib.pyplot as plt
 
-def run_sim(torque_mag, sim_time=1.0):
-    p.resetSimulation()
-    p.setGravity(0, 0, -9.81)
-    p.setAdditionalSearchPath(pybullet_data.getDataPath())
-    p.loadURDF("plane.urdf")
-    pendulum_id = p.loadURDF("pendulum.urdf", useFixedBase=True)
+p.connect(p.GUI)
+p.configureDebugVisualizer(p.COV_ENABLE_GUI, 0)
+p.setAdditionalSearchPath(pybullet_data.getDataPath())
+p.resetDebugVisualizerCamera(cameraDistance=0.6, cameraYaw=90, cameraPitch=-30, cameraTargetPosition=[0, 0, 0])
 
-    # disable default motor
-    p.setJointMotorControl2(pendulum_id, 0,
-                            controlMode=p.VELOCITY_CONTROL, force=0)
+pendulum_id = p.loadURDF("/Users/owhite/MESC_brain_board/modeling/pendulum_assembly.urdf", useFixedBase=True)
 
-    dt = 1.0/240.0
-    steps = int(sim_time / dt)
-    t_data, theta_data = [], []
+# find your joint
+joint_index = 0  # since you only have one, pendulum_joint
 
-    reached = False
-    for step in range(steps):
-        t = step * dt
-        theta, theta_dot = p.getJointState(pendulum_id, 0)[0:2]
+# get joint info
+joint_info = p.getJointInfo(pendulum_id, joint_index)
+joint_name = joint_info[1].decode("utf-8")
 
-        if not reached:
-            if theta < math.pi/2:
-                torque = torque_mag
-            else:
-                reached = True
-                torque = 0.0
-        else:
-            torque = 0.0
+# the joint frame relative to parent (in URDF)
+joint_pos_parent = np.array(joint_info[14])  # position in parent link frame
+joint_axis_local = np.array(joint_info[13])  # axis in parent link frame
 
-        p.setJointMotorControl2(pendulum_id, 0,
-                                controlMode=p.TORQUE_CONTROL,
-                                force=torque)
-        p.stepSimulation()
+# get base (parent) transform in world frame
+base_pos, base_orn = p.getBasePositionAndOrientation(pendulum_id)
 
-        if step % 10 == 0:  # log at ~24 Hz
-            t_data.append(t)
-            theta_data.append(theta)
+# convert joint frame to world coordinates
+joint_origin_world, _ = p.multiplyTransforms(
+    base_pos, base_orn, joint_pos_parent.tolist(), [0, 0, 0, 1]
+)
+joint_axis_world = p.rotateVector(base_orn, joint_axis_local)
 
-    return t_data, theta_data
+print("Joint origin (world):", joint_origin_world)
+print("Joint axis (world):", joint_axis_world)
 
-# Connect PyBullet in DIRECT mode (no GUI)
-p.connect(p.DIRECT)
-
-# Run 0.2 Nm and 0.4 Nm
-t1, th1 = run_sim(0.2)
-t2, th2 = run_sim(0.4)
-
-p.disconnect()
-
-# Plot
-plt.figure()
-plt.plot(t1, th1, label="0.2 Nm")
-plt.plot(t2, th2, label="0.4 Nm")
-plt.axhline(math.pi/2, color='gray', linestyle='--', label="π/2 rad")
-plt.xlabel("Time (s)")
-plt.ylabel("Angle θ (rad)")
-plt.legend()
-plt.title("Pendulum response: 0.2 Nm vs 0.4 Nm")
-plt.grid(True)
-plt.show()
+# draw the yellow line correctly at the hinge
+axis_len = 0.2
+start = np.array(joint_origin_world) - np.array(joint_axis_world) * axis_len / 2
+end = np.array(joint_origin_world) + np.array(joint_axis_world) * axis_len / 2
+p.addUserDebugLine(start.tolist(), end.tolist(), [1, 1, 0], 3)
+p.addUserDebugText("joint", joint_origin_world, [1, 1, 0], textSize=1.5)

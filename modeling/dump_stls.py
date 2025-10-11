@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+#
 # This code resides in the Rhino 3d scripts directory:
 #  /Users/USERNAME/Library/Application Support/McNeel/Rhinoceros/7.0/scripts
 #
@@ -5,16 +7,18 @@
 #  select "object properties" and fill in the name. The name then corresponds to
 #  "Window->Floating panels->Document user text panel". Go to
 #  document user text tab, fill in key value pairs with name and
-#  density in (kg/m³). (e.g., steel is 7850). Pybullet also needs a hinge
-#  create a two point curve at hinge location and name it joint1
-# Also include a "file_path" in the user text panel
+#  density in (kg/m³). (e.g., steel is 7850). 
+# Also include:
+#   "file_path" in the user text panel
+#   "origin"
+#   "axis_of_rotation"
+# in the document. 
 #
 # Output will be one STL for all polysurfaces that are named the same
 #  and a filename_metadata.json that has densities and hinge. 
 #  These are consumed later by other modeling scripts. 
 # Note that pybullet only likes binary STLs
 
-# -*- coding: utf-8 -*-
 import os
 import Rhino
 import rhinoscriptsyntax as rs
@@ -55,7 +59,7 @@ def export_stls_and_metadata():
         by_name.setdefault(name, []).append(obj_id)
 
     metadata = {
-        "file_path": file_path,  # ✅ now included
+        "file_path": file_path,  # ✅ included
         "meshes": {}
     }
 
@@ -66,25 +70,34 @@ def export_stls_and_metadata():
 
         rs.SelectObjects(members)
         # silent binary STL export
-        rs.Command('_-Export "{}" _ExportFileAs=_Binary _Enter _Binary _Enter'.format(stl_path), echo=False)
+        rs.Command('_-Export "{}" _Enter _Binary _Enter'.format(stl_path), echo=False)
         rs.UnselectAllObjects()
 
         density = densities.get(name, None)
-        metadata["meshes"][name] = {"density": density}
+        metadata["meshes"][name + ".stl"] = {"density": density}
 
-    # --- Look for a joint curve named "joint1" ---
-    joint_obj = None
-    for obj_id in objs:
-        if rs.ObjectName(obj_id) == "joint1":
-            joint_obj = obj_id
-            break
-    if joint_obj:
-        pts = rs.CurvePoints(joint_obj)
-        if len(pts) == 2:
-            metadata["joint1"] = {
-                "p1": [pts[0].X, pts[0].Y, pts[0].Z],
-                "p2": [pts[1].X, pts[1].Y, pts[1].Z]
-            }
+    # --- add axis_of_rotation ---
+    axis_str = rs.GetDocumentUserText("axis_of_rotation")
+    if axis_str:
+        try:
+            # split string like "0, 1, 0" → [0.0, 1.0, 0.0]
+            axis_vals = [float(v.strip()) for v in axis_str.split(",")]
+            metadata["axis_of_rotation"] = axis_vals
+        except:
+            print("Warning: Could not parse 'axis_of_rotation' string.")
+    else:
+        print("No 'axis_of_rotation' key set in document user text.")
+
+    # --- add origin (optional, if present) ---
+    origin_str = rs.GetDocumentUserText("origin")
+    if origin_str:
+        try:
+            origin_vals = [float(v.strip()) for v in origin_str.split(",")]
+            metadata["origin"] = origin_vals
+        except:
+            print("Warning: Could not parse 'origin' string.")
+    else:
+        print("No 'origin' key set in document user text.")
 
     # --- Save metadata JSON ---
     cad_filename = rs.DocumentName() or "model"

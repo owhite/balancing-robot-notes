@@ -1,0 +1,43 @@
+{
+  "mass_kg": 0.19305833560304014,
+  "moment_of_inertia_kg_m2": 0.0049239823124133985,
+  "total_com_mm": [
+    -1.3013726911580212e-05,
+    -11.221291564138271,
+    133.44720546843993
+  ],
+  "origin_of_rotation_mm": [
+    0.0,
+    0.0,
+    45.138
+  ],
+  "r_m": 0.08901928529725854,
+  "g_m_per_s2": 9.81,
+  "mgr_over_I": 34.23932418988005,
+  "omega_n_rad_per_s": 5.851437788260254,
+  "expected_period_s": 1.0737848601561735,
+  "axis_unit_vector": [
+    0.0,
+    1.0,
+    0.0
+  ],
+  "A_matrix": [
+    [
+      0,
+      1
+    ],
+    [
+      -34.23932418988005,
+      0
+    ]
+  ],
+  "B_matrix": [
+    [
+      0
+    ],
+    [
+      203.08765071698005
+    ]
+  ],
+  "urdf_file": "/Users/owhite/MESC_brain_board/modeling/pendulum_assembly.urdf"
+}
