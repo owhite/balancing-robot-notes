@@ -201,10 +201,15 @@ $ ./design_pendulum_LQR.py pendulum_LQR_data.json
 
 # What is next
 
-- Build confidence that the pendulum’s LQR model matches the geometric and dynamic reality.
-- Quantify model error in both frequency and amplitude.
-- Finalize a reliable mechanical model ready for control testing.
+- Tune and test
+- Adjust 𝑄 and 𝑅 in the Python script,
+- Regenerate K, add to embedded firmware
+  - If it’s too jittery: increase R.
+  - If it’s too sluggish: increase the top-left entry in Q.
+- *"No guesswork. No PID voodoo."* says ChatG. 
+
+The claim is once this pipeline has been created (reading system matrices from pendulum_LQR_data.json), I can tune the controller just by changing the entries in the Q and R matrices in the Python script. 
 
 ---
 ## DEETS
-- git hash ID: c1471c7c4f9a4261f4b4818f33e15c2056688fba
+- git hash ID: 8828f4791f1a91ec465516a10674097731f44bcf
