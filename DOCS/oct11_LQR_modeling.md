@@ -150,7 +150,7 @@ pybullet_generator.py
    ├── generates URDF (adjusted for joint reference)
    └── writes LQR + validation JSON
    ↓
-display_urdf.py (PyBullet)
+display_urdf.py (PyBullet) NOTE: this was tossed out later
    ├── loads URDF
    ├── visualizes pivot and CoM alignment
    └── prepares for dynamic validation
@@ -194,7 +194,7 @@ Check:
 - natural frequency is 1 second, looks reasonable
 - creates an eigen value and tells you if it unstable
 
-Then this thing makes out for the teensy, supposedly:
+Then this thing makes input for the teensy, supposedly:
 ```
 $ ./design_pendulum_LQR.py pendulum_LQR_data.json
 ```
@@ -207,4 +207,4 @@ $ ./design_pendulum_LQR.py pendulum_LQR_data.json
 
 ---
 ## DEETS
-- git hash ID: 57efa223f15b6a0a454531ebcfd7cc58b7a34232
+- git hash ID: c1471c7c4f9a4261f4b4818f33e15c2056688fba

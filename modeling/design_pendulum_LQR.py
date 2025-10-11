@@ -33,12 +33,17 @@ def main():
     with open(input_path, "r") as f:
         data = json.load(f)
 
-    # Extract system matrices
+    # Extract system matrices and parameters
     A = np.array(data["A_matrix"])
     B = np.array(data["B_matrix"])
     m = data["mass_kg"]
     I = data["moment_of_inertia_kg_m2"]
     r = data["r_m"]
+
+    print("\n📘 Loaded system parameters:")
+    print(f"  Mass m = {m:.6f} kg")
+    print(f"  Moment of inertia I = {I:.6e} kg·m²")
+    print(f"  Lever arm r = {r:.6f} m")
 
     # LQR weights
     Q = np.diag([10.0, 1.0])
@@ -52,11 +57,16 @@ def main():
     print("  Gain K =", K)
     print("  Closed-loop eigenvalues =", eigvals)
 
+    # Additional derived metrics
+    dominant_time_constant = -1.0 / np.min(np.real(eigvals))
+    print(f"  ⇒ Dominant time constant ≈ {dominant_time_constant:.3f} s")
+    print(f"  ⇒ Fastest pole ≈ {np.max(np.abs(np.real(eigvals))):.2f} s⁻¹")
+
     # Simulate closed-loop response
     x0 = np.array([0.1, 0.0])  # initial angle 0.1 rad (~5.7°)
     t, x, u = simulate_response(A, B, K, x0, t_final=3.0)
 
-    # Plot
+    # Plot results
     plt.figure(figsize=(7,4))
     plt.plot(t, x[:,0], label="Angle θ (rad)")
     plt.plot(t, x[:,1], label="Angular velocity θ̇ (rad/s)")
@@ -68,7 +78,7 @@ def main():
     plt.tight_layout()
     plt.show()
 
-    # Export results
+    # Export results (including gain K and eigenvalues)
     out_data = {
         "K_gain": K.tolist(),
         "closed_loop_eigenvalues": [complex(ev).real for ev in eigvals],
@@ -82,13 +92,15 @@ def main():
         "R": R.tolist(),
         "mass_kg": m,
         "moment_of_inertia_kg_m2": I,
-        "lever_arm_m": r
+        "lever_arm_m": r,
+        "dominant_time_constant_s": dominant_time_constant
     }
 
     out_path = os.path.join(os.path.dirname(input_path), "lqr_sim_output.json")
     with open(out_path, "w") as f:
         json.dump(out_data, f, indent=2)
     print(f"\n✅ Exported LQR data and simulation results to: {out_path}")
+    print(f"✅ Controller gain K saved for firmware use: {K.tolist()}")
 
 if __name__ == "__main__":
     main()
