@@ -8,7 +8,9 @@ import os
 from xml.etree.ElementTree import Element, SubElement, tostring, ElementTree
 from xml.dom import minidom
 
-# Testing:
+# generates stuff for pybullet which I now hate for modeling
+#
+# ChatG Testing:
 #  In this question all input units are millimeter. I have an aluminum sphere with the center at position 0,0,0 and its diameter is 10mm. I have a second steel sphere with its center at position 0,0,50 and it's diameter is 10mm. What is the moment of inertia for these combined objects for an rotation axis of [0,1,0] and a reference point on that axis of [0,0,0]?
 def generate_urdf(assembly_data, inertia_results, output_path="assembly.urdf"):
     """

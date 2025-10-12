@@ -1,5 +1,7 @@
 #!/usr/bin/env python3
 
+# generates stuff for pybullet which I now hate for modeling
+
 import pybullet as p
 import pybullet_data
 import numpy as np
