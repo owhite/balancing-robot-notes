@@ -1,14 +1,14 @@
 ## Oct 11, 2025
 # Pendulum Model Validation – Continuation Session Prompt
 
-## Context Recap
+## Context Recap -- of a system that failed:
 
-We are working on a Python + Trimesh + PyBullet workflow to:
+For a while I tried working on a Python + Trimesh + PyBullet workflow to:
 - Calculate the **total mass**, **center of mass**, and **moment of inertia** for a pendulum assembly.
 - Export a **URDF** with correct joint reference alignment.
 - Generate a **JSON file** with all derived quantities for **LQR control** and **physics verification**.
 
-### Current Program Outputs
+### Program Outputs
 
 From CAD → JSON input, the script now produces:
 - ✅ `pendulum_assembly.urdf`  
@@ -28,9 +28,9 @@ From CAD → JSON input, the script now produces:
 
 ---
 
-## Verification Focus for Next Session
+## If successful verification would have been
 
-We will **verify and challenge the model’s accuracy**.
+**verify and challenge the model’s accuracy**.
 
 ### 1. Analytical Validation
 - Confirm \( I \approx m r^2 \) is within a reasonable range.
@@ -57,13 +57,7 @@ We will **verify and challenge the model’s accuracy**.
 
 ---
 
-## Goals for Next Session
-- Build confidence that the pendulum’s LQR model matches the geometric and dynamic reality.
-- Quantify model error in both frequency and amplitude.
-- Finalize a reliable mechanical model ready for control testing.
-
----
-# 🧩 Pendulum Project Program Inventory
+# Inventory of tools:
 
 ## 1. Geometry & Input Stage
 | Program/File | Purpose | Notes |
@@ -114,21 +108,7 @@ Example input JSON:
 
 ---
 
-## 4. Verification & Analysis Stage
-| Program | Purpose |
-|----------|----------|
-| **LQR JSON Analyzer** | Reads `pendulum_LQR_data.json` <br>Computes A/B matrices, `mgr_over_I`, `ωₙ`, `T` | Confirms small-angle dynamics consistency |
-| **Simulation Verification Script** *(next session)* | Will perform a free-swing test in PyBullet | Compares simulated period `T_sim` to theoretical `T_expected` |
-
-### Expected Outputs
-- Theoretical frequency and period
-- PyBullet-measured oscillation data
-- Ratio `T_sim / T_expected`
-- Validation plots or printed results
-
----
-
-## 5. Environment Setup
+## 4. Environment Setup for pybullet
 | Tool | Purpose |
 |------|----------|
 | **Conda Environment** (`pybullet-env`) | Isolated Python environment containing:  <br>`pybullet`, `trimesh`, `numpy`, `matplotlib` |
@@ -159,9 +139,9 @@ Next: simulate free swing → extract period → verify ωₙ consistency
 ```
 ---
 
-## Problems with using pybullet
+## So anyway, ignore all that:
 
-I repeatedly saw that:
+There are many problems with using pybullet, I repeatedly saw that:
 - PyBullet ignored the <inertial> block unless carefully loaded with obscure flags (URDF_USE_INERTIA_FROM_FILE),
 - it silently recalculated inertia from collision shapes,
 - it shifted or re-centered links internally based on mesh origins.
