@@ -1,143 +1,94 @@
 #!/usr/bin/env python3
 """
-Compute the physical parameters and linearized state-space model
-for an inverted pendulum from its CAD-derived JSON configuration.
+Plot discrete-time LQR closed-loop response from pendulum_LQR_data.json
 
-This script produces pendulum_LQR_data.json containing:
-  - mass, moment of inertia, COM, lever arm
-  - mgr/I term
-  - natural frequency and period
-  - A and B matrices for LQR design
+Usage:
+    python plot_lqr_response.py pendulum_LQR_data.json [sample_period_s]
 
-All distances in the input are in millimeters.
+If no sample period is provided, defaults to Ts = 1/500 s (500 Hz).
 """
 
 import json
-import numpy as np
-import os
 import sys
-import trimesh
-
-def calculate_total_moment_of_inertia(assembly_data: dict):
-    """Compute total mass, center of mass, and moment of inertia about the given axis."""
-    total_scalar_inertia = 0.0
-    total_mass = 0.0
-    weighted_com_sum = np.zeros(3)
-
-    axis = np.array(assembly_data["axis_of_rotation"], dtype=float)
-    origin = np.array(assembly_data["origin_of_rotation"], dtype=float)
-    axis_unit = axis / np.linalg.norm(axis)
-
-    for part in assembly_data["items"]:
-        stl_path = part["stl_file"]
-        print(f"🔹 Loading {stl_path}")
-        mesh = trimesh.load_mesh(stl_path)
-        sub_meshes = mesh.split(only_watertight=False)
-
-        for sub_mesh in sub_meshes:
-            sub_mesh.apply_translation(part.get("part_position_mm", np.zeros(3)))
-            density = part["density_kg_per_mm3"]
-            mass_kg = sub_mesh.volume * density
-            I_tensor = sub_mesh.moment_inertia * density
-            com_mm = sub_mesh.center_mass
-
-            # Inertia projected along rotation axis
-            I_axis_com = axis_unit @ I_tensor @ axis_unit
-
-            # Parallel-axis term
-            r_vec = com_mm - origin
-            r_perp = r_vec - (r_vec @ axis_unit) * axis_unit
-            d = np.linalg.norm(r_perp)
-            I_axis = I_axis_com + mass_kg * (d ** 2)
-
-            total_mass += mass_kg
-            weighted_com_sum += com_mm * mass_kg
-            total_scalar_inertia += I_axis
-
-    if total_mass == 0:
-        raise ValueError("Total mass is zero; check densities or STL paths.")
-
-    total_com = weighted_com_sum / total_mass
-    I_total_m2 = total_scalar_inertia * 1e-6  # mm² → m²
-    print(f"✅ Total mass: {total_mass:.6f} kg")
-    print(f"✅ Total COM:  {total_com} mm")
-    print(f"✅ I_total:    {I_total_m2:.6e} kg·m²")
-
-    return {
-        "total_mass": total_mass,
-        "total_com": total_com,
-        "origin_of_rotation": origin,
-        "axis_unit_vector": axis_unit,
-        "moment_of_inertia_scalar_m2": I_total_m2
-    }
+import numpy as np
+import matplotlib.pyplot as plt
+from scipy.linalg import expm
 
 
-def compute_lqr_parameters(inertia_results, base_path):
-    """Compute all values that go into pendulum_LQR_data.json."""
-    m = inertia_results["total_mass"]
-    I = inertia_results["moment_of_inertia_scalar_m2"]
-    com = inertia_results["total_com"]
-    origin = inertia_results["origin_of_rotation"]
-    r = np.linalg.norm(com - origin) * 1e-3  # mm → m
-    g = 9.81
-    mgr_over_I = (m * g * r) / I
-    omega_n = np.sqrt(mgr_over_I)
-    period_T = 2 * np.pi / omega_n if omega_n > 0 else np.inf
+def simulate_discrete_response(A, B, K, Ts, x0, t_final):
+    """Simulate x[k+1] = (A_d - B_d K) x[k] for a given sample time Ts."""
+    # Discretize continuous-time system
+    M = np.block([[A, B],
+                  [np.zeros((1, 3))]])
+    Md = expm(M * Ts)
+    Ad = Md[:2, :2]
+    Bd = Md[:2, 2:]
 
-    A = [[0, 1], [mgr_over_I, 0]]
-    B = [[0], [1 / I]]
+    steps = int(t_final / Ts)
+    x = np.zeros((steps, 2))
+    u = np.zeros(steps)
+    x[0] = x0
 
-    print("\n--- Computed LQR parameters ---")
-    print(f"mass m = {m:.6f} kg")
-    print(f"I = {I:.6e} kg·m²")
-    print(f"r = {r:.6f} m")
-    print(f"mgr/I = {mgr_over_I:.6f}")
-    print(f"ω_n = {omega_n:.6f} rad/s,  T = {period_T:.6f} s")
+    for k in range(steps - 1):
+        u[k] = -K @ x[k]
+        x[k + 1] = (Ad - Bd @ K) @ x[k]
 
-    return {
-        "mass_kg": m,
-        "moment_of_inertia_kg_m2": I,
-        "total_com_mm": com.tolist(),
-        "origin_of_rotation_mm": origin.tolist(),
-        "r_m": r,
-        "g_m_per_s2": g,
-        "mgr_over_I": mgr_over_I,
-        "omega_n_rad_per_s": omega_n,
-        "expected_period_s": period_T,
-        "axis_unit_vector": inertia_results["axis_unit_vector"].tolist(),
-        "A_matrix": A,
-        "B_matrix": B,
-        "urdf_file": os.path.join(base_path, "pendulum_assembly.urdf")
-    }
+    t = np.arange(steps) * Ts
+    return t, x, u
+
+
+def main():
+    if len(sys.argv) < 2:
+        print("Usage: python plot_lqr_response.py pendulum_LQR_data.json [sample_period_s]")
+        sys.exit(1)
+
+    json_path = sys.argv[1]
+    Ts = float(sys.argv[2]) if len(sys.argv) > 2 else 1 / 500  # default 500 Hz loop
+
+    # Load parameters from JSON
+    with open(json_path, "r") as f:
+        data = json.load(f)
+
+    A = np.array(data["A_matrix"])
+    B = np.array(data["B_matrix"])
+    K = np.array(data["K_gain"])
+    m = data["mass_kg"]
+    I = data["moment_of_inertia_kg_m2"]
+    r = data["r_m"]
+
+    print("\n📘 Loaded parameters from JSON:")
+    print(f"  A = {A}")
+    print(f"  B = {B}")
+    print(f"  K = {K}")
+    print(f"  Ts = {Ts*1000:.2f} ms")
+    print(f"  m = {m:.4f} kg, I = {I:.6e} kg·m², r = {r:.4f} m")
+    # Initial condition (5.7°)
+    x0 = np.array([0.1, 0.0])
+    t, x, u = simulate_discrete_response(A, B, K, Ts, x0, t_final=3.0)
+
+    # Plot states
+    plt.figure(figsize=(7, 4))
+    plt.plot(t, x[:, 0], label="Angle θ [rad]")
+    plt.plot(t, x[:, 1], label="Angular velocity θ̇ [rad/s]")
+    plt.xlabel("Time [s]")
+    plt.ylabel("State")
+    plt.title(f"LQR Closed-Loop Response (Discrete, {1/Ts:.0f} Hz loop)")
+    plt.grid(True)
+    plt.legend()
+    plt.tight_layout()
+    plt.show()
+
+    # Optional torque plot
+    plt.figure(figsize=(7, 3))
+    plt.plot(t, u, label="Control torque [N·m]")
+    plt.xlabel("Time [s]")
+    plt.ylabel("Torque [N·m]")
+    plt.title("Control Effort")
+    plt.grid(True)
+    plt.legend()
+    plt.tight_layout()
+    plt.show()
 
 
 if __name__ == "__main__":
-    if len(sys.argv) != 2:
-        print("Usage: ./generate_pendulum_LQR_data.py <assembly_config.json>")
-        sys.exit(1)
-
-    with open(sys.argv[1], "r") as f:
-        config = json.load(f)
-
-    base_path = config["file_path"]
-    items = []
-    for filename, mesh_info in config["meshes"].items():
-        items.append({
-            "stl_file": os.path.join(base_path, filename),
-            "density_kg_per_mm3": mesh_info["density"] * 1e-9  # convert kg/m³ → kg/mm³
-        })
-
-    assembly_data = {
-        "axis_of_rotation": np.array(config["axis_of_rotation"]),
-        "origin_of_rotation": np.array(config["origin"]),
-        "items": items
-    }
-
-    inertia_results = calculate_total_moment_of_inertia(assembly_data)
-    data = compute_lqr_parameters(inertia_results, base_path)
-
-    out_path = os.path.join(base_path, "pendulum_LQR_data.json")
-    with open(out_path, "w") as f:
-        json.dump(data, f, indent=2)
-
-    print(f"\n✅ pendulum_LQR_data.json written to {out_path}")
+    main()

@@ -1,20 +1,22 @@
 #!/usr/bin/env python3
 """
-Compute the physical parameters and linearized state-space model
-for an inverted pendulum from its CAD-derived JSON configuration.
+Compute the physical parameters, linearized state-space model,
+and LQR gain for an inverted pendulum from its CAD-derived JSON configuration.
 
-This script produces pendulum_LQR_data.json containing:
-  - mass, moment of inertia, COM, lever arm
-  - mgr/I term
-  - natural frequency and period
-  - A and B matrices for LQR design (with motor damping)
+Usage:
+    ./generate_pendulum_LQR_data.py -i <assembly_config.json> -k <Kv> -p <R_phase> -r <R_value>
+
+Example:
+    ./generate_pendulum_LQR_data.py -i config.json -k 170 -p 0.07 -r 0.1
 """
 
 import json
 import numpy as np
 import os
 import sys
+import argparse
 import trimesh
+from scipy.linalg import solve_continuous_are
 
 
 def calculate_total_moment_of_inertia(assembly_data: dict):
@@ -73,11 +75,10 @@ def calculate_total_moment_of_inertia(assembly_data: dict):
 
 def compute_motor_damping(Kv_rpm_per_V, R_phase_ohm, connection="wye"):
     """Estimate motor damping coefficient b = (Kt * Ke) / Rm."""
-    # Convert Kv → Ke, Kt in SI
     Ke = 60 / (2 * np.pi * Kv_rpm_per_V)  # V·s/rad
     Kt = Ke                                # N·m/A (in SI)
     if connection.lower() == "wye":
-        Rm = R_phase_ohm / 2.0  # per-phase winding resistance
+        Rm = R_phase_ohm / 2.0
     else:
         Rm = R_phase_ohm
     b = (Kt * Ke) / Rm
@@ -89,8 +90,8 @@ def compute_motor_damping(Kv_rpm_per_V, R_phase_ohm, connection="wye"):
     return {"Kv": Kv_rpm_per_V, "Ke": Ke, "Kt": Kt, "Rm": Rm, "b_Nm_s_per_rad": b}
 
 
-def compute_lqr_parameters(inertia_results, base_path, motor_params):
-    """Compute all values that go into pendulum_LQR_data.json."""
+def compute_lqr_parameters(inertia_results, base_path, motor_params, R_value):
+    """Compute physical parameters, matrices, and LQR gain."""
     m = inertia_results["total_mass"]
     I = inertia_results["moment_of_inertia_scalar_m2"]
     com = inertia_results["total_com"]
@@ -103,8 +104,10 @@ def compute_lqr_parameters(inertia_results, base_path, motor_params):
 
     # Include damping term (from motor)
     b = motor_params["b_Nm_s_per_rad"]
-    A = [[0, 1], [mgr_over_I, -b / I]]
-    B = [[0], [1 / I]]
+    b = 0
+    A = np.array([[0, 1], [mgr_over_I, -b / I]])
+    B = np.array([[0], [1 / I]])
+    B *= 1.5
 
     print("\n--- Computed LQR parameters ---")
     print(f"mass m = {m:.6f} kg")
@@ -113,6 +116,21 @@ def compute_lqr_parameters(inertia_results, base_path, motor_params):
     print(f"mgr/I = {mgr_over_I:.6f}")
     print(f"ω_n = {omega_n:.6f} rad/s,  T = {period_T:.6f} s")
     print(f"b/I = {b / I:.6f}  (damping term in A[1,1])")
+
+    # --- Compute LQR gain ---
+    Q = np.diag([10.0, 1.0])
+    R = np.array([[R_value]])
+    P = solve_continuous_are(A, B, Q, R)
+    K = np.linalg.inv(R) @ (B.T @ P)
+    eigvals, _ = np.linalg.eig(A - B @ K)
+    print("\n--- LQR Design ---")
+    print(f"Q = {Q}")
+    print(f"R = {R}")
+    print(f"A = {A}")
+    print(f"B = {B}")
+    print(f"K = {K}")
+    print(f"b = {b}")
+    print(f"Closed-loop eigenvalues = {eigvals}")
 
     return {
         "mass_kg": m,
@@ -126,18 +144,23 @@ def compute_lqr_parameters(inertia_results, base_path, motor_params):
         "expected_period_s": period_T,
         "axis_unit_vector": inertia_results["axis_unit_vector"].tolist(),
         "motor_params": motor_params,
-        "A_matrix": A,
-        "B_matrix": B,
+        "A_matrix": A.tolist(),
+        "B_matrix": B.tolist(),
+        "K_gain": K.tolist(),
+        "closed_loop_eigenvalues": [float(ev.real) for ev in eigvals],
         "urdf_file": os.path.join(base_path, "pendulum_assembly.urdf")
     }
 
 
 if __name__ == "__main__":
-    if len(sys.argv) != 2:
-        print("Usage: ./generate_pendulum_LQR_data.py <assembly_config.json>")
-        sys.exit(1)
+    parser = argparse.ArgumentParser(description="Generate pendulum_LQR_data.json from CAD and motor parameters.")
+    parser.add_argument("-i", "--input", required=True, help="Input assembly_config.json file")
+    parser.add_argument("-k", "--kv", required=True, type=float, help="Motor Kv in rpm/V")
+    parser.add_argument("-p", "--rphase", required=True, type=float, help="Motor phase-to-phase resistance in ohms")
+    parser.add_argument("-r", "--rvalue", required=True, type=float, help="LQR R value (scalar)")
+    args = parser.parse_args()
 
-    with open(sys.argv[1], "r") as f:
+    with open(args.input, "r") as f:
         config = json.load(f)
 
     base_path = config["file_path"]
@@ -145,7 +168,7 @@ if __name__ == "__main__":
     for filename, mesh_info in config["meshes"].items():
         items.append({
             "stl_file": os.path.join(base_path, filename),
-            "density_kg_per_mm3": mesh_info["density"] * 1e-9  # kg/m³ → kg/mm³
+            "density_kg_per_mm3": mesh_info["density"] * 1e-9
         })
 
     assembly_data = {
@@ -156,16 +179,12 @@ if __name__ == "__main__":
 
     inertia_results = calculate_total_moment_of_inertia(assembly_data)
 
-    # Motor constants (edit here or pull from JSON later)
-    Kv = 170.0       # rpm/V
-    R_phase = 0.07   # ohm (phase-to-phase)
-    motor_params = compute_motor_damping(Kv, R_phase, connection="wye")
+    motor_params = compute_motor_damping(args.kv, args.rphase, connection="wye")
 
-    data = compute_lqr_parameters(inertia_results, base_path, motor_params)
+    data = compute_lqr_parameters(inertia_results, base_path, motor_params, args.rvalue)
 
     out_path = os.path.join(base_path, "pendulum_LQR_data.json")
     with open(out_path, "w") as f:
         json.dump(data, f, indent=2)
 
-    print("Caution: there are hardcoded values for Kv and R_phase in this program")
     print(f"\n✅ pendulum_LQR_data.json written to {out_path}")

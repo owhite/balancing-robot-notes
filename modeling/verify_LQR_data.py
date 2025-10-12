@@ -15,6 +15,7 @@ import json
 import numpy as np
 import sys
 import math
+import matplotlib.pyplot as plt
 
 def controllability_matrix(A, B):
     n = A.shape[0]
@@ -135,6 +136,7 @@ def verify_pendulum_data(json_path):
             print("  ✅ Model verified (no damping term).")
     else:
         print("  ⚠️  One or more checks failed — verify JSON generation or model parameters.")
+
 
 
 if __name__ == "__main__":
