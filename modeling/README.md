@@ -1,6 +1,6 @@
 # Pendulum State-space Model Generation and Validation
 
-## 🧠 Current Workflow
+## Current Workflow 🧠 
 ```plaintext
 dump_stls.py CAD Export JSON from Rhino
    ↓
