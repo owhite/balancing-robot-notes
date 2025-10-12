@@ -42,8 +42,6 @@ $ ./verify_LQR_data.py pendulum_LQR_data.json
 - natural frequency is 1 second, looks reasonable
 - creates an eigen value and tells you if it unstable
 
----
-
 ## Failure of the week:
 For a while I tried working on a Python + Trimesh + PyBullet workflow, [do not use](../DOCS/oct11_LQR_modeling.md)
 
