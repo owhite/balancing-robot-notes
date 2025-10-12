@@ -179,17 +179,6 @@ Then this thing makes input for the teensy, supposedly:
 $ ./design_pendulum_LQR.py pendulum_LQR_data.json
 ```
 
-# What is next
-
-- Tune and test
-- Adjust 𝑄 and 𝑅 in the Python script,
-- Regenerate K, add to embedded firmware
-  - If it’s too jittery: increase R.
-  - If it’s too sluggish: increase the top-left entry in Q.
-- *"No guesswork. No PID voodoo."* says ChatG. 
-
-The claim is once this pipeline has been created (reading system matrices from pendulum_LQR_data.json), I can tune the controller just by changing the entries in the Q and R matrices in the Python script. 
-
 ---
 ## DEETS
 - git hash ID: 402ffd1dfd508cb03787e4157f761a6df67d2a21
