@@ -41,8 +41,9 @@ $ ./design_pendulum_LQR.py pendulum_LQR_data.json
    ├── generates K matrix
    └── input for teensy (lqr_sim_output.json)
    ↓
-Here we are
-
+$ ./graph_LQR_data.py
+   ↓
+   show the results
 ```
 
 ## Using these tools we can check:
@@ -213,6 +214,9 @@ This final summary tells you, quantitatively and qualitatively, whether your inv
 
 ## :warning: Failure of the week :warning: 
 For a while I tried working on a Python + Trimesh + PyBullet workflow, [do not use](../DOCS/oct11_LQR_modeling.md)
+
+## :warning: Second failure of the week :warning: 
+Turns out it not possible for a 500hz controller can keep a really tall pendulum standing
 
 ## Notes for eventual tune and test
 

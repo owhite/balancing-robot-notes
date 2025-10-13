@@ -1,0 +1,40 @@
+(base) Owens-Mac-mini:modeling owhite$ ./verify_LQR_data.py pendulum_LQR_data.json 
+
+🔍 Verifying pendulum data from: pendulum_LQR_data.json
+
+📏 Dimensional sanity checks:
+  Mass (kg): 0.182692
+  Moment of inertia (kg·m²): 4.923894e-03
+  Lever arm (m): 0.093946
+  Gravity (m/s²): 9.81
+
+📊 Consistency checks:
+  mgr/I stored = 34.194794
+  mgr/I calc   = 34.194794
+  Δ mgr/I (%)  = +0.000%
+
+  ω_n stored   = 5.847631 rad/s
+  ω_n calc     = 5.847631 rad/s
+  Δ ω_n (%)    = +0.000%
+
+  T stored     = 1.074484 s
+  T calc       = 1.074484 s
+  Δ T (%)      = +0.000%
+
+🧮 Matrix verification:
+  ||ΔA||₂ = 1.831e+01
+  ||ΔB||₂ = 0.000e+00
+
+⚙️  Detected damping term in A[1,1]: -18.309 s⁻¹
+  → Implies effective b ≈ 0.09015 N·m·s/rad
+  Motor model b = 0.09015 → Δ = +0.00%
+  ✅ Damping term matches motor electrical model.
+
+⚙️  Control system analysis:
+  Eigenvalues of A: [+1.7083+0.0000j, -20.0174+0.0000j]
+  ⚠️  System is unstable (expected for inverted pendulum).
+  Controllability rank: 2/2
+  Observability rank:   2/2
+
+✅ Verification summary:
+  ✅ Model verified with damping included; all checks consistent.

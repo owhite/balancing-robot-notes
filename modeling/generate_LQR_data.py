@@ -104,10 +104,9 @@ def compute_lqr_parameters(inertia_results, base_path, motor_params, R_value):
 
     # Include damping term (from motor)
     b = motor_params["b_Nm_s_per_rad"]
-    b = 0
     A = np.array([[0, 1], [mgr_over_I, -b / I]])
     B = np.array([[0], [1 / I]])
-    B *= 1.5
+    # B *= 1.5
 
     print("\n--- Computed LQR parameters ---")
     print(f"mass m = {m:.6f} kg")
@@ -118,7 +117,7 @@ def compute_lqr_parameters(inertia_results, base_path, motor_params, R_value):
     print(f"b/I = {b / I:.6f}  (damping term in A[1,1])")
 
     # --- Compute LQR gain ---
-    Q = np.diag([10.0, 1.0])
+    Q = np.diag([150.0, 1.0])
     R = np.array([[R_value]])
     P = solve_continuous_are(A, B, Q, R)
     K = np.linalg.inv(R) @ (B.T @ P)
