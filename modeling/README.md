@@ -260,9 +260,9 @@ Penalizes state error and control effort; the weighting matrices( Q) and( R) exp
 ### ⚙️ General Practice
 
 1. **Start conservatively** —( Q =([10, 1])),( R = 1).
-2. **Decrease( R)** to allow stronger control if torque headroom exists.
-3. **Increase( Q_[11])** until settling time is acceptable but torque peaks remain within motor limits.
-4. **Adjust( Q_[22])** only if overshoot or oscillation appears.
+2. **Decrease R** to allow stronger control if torque headroom exists.
+3. **Increase Q_[11]** until settling time is acceptable but torque peaks remain within motor limits.
+4. **Adjust Q_[22]** only if overshoot or oscillation appears.
 5. **Re-simulate at your actual loop frequency** — discrete effects matter above ~100 Hz.
 
 ---
