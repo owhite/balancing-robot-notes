@@ -232,7 +232,7 @@ The claim is once this pipeline has been created (reading system matrices from p
 
 The **LQR cost function**
 
-penalizes state error \( x \) and control effort \( u \). The weighting matrices \( Q \) and \( R \) express how “expensive” each deviation or actuation is.
+Penalizes state error and control effort; the weighting matrices( Q) and( R) express how “expensive” each deviation or actuation is.
 
 ---
 
@@ -240,47 +240,47 @@ penalizes state error \( x \) and control effort \( u \). The weighting matrices
 
 | Symbol | Meaning | Effect when increased |
 |:--------|:---------|:----------------------|
-| \( Q_{11} \) | Weight on angle error (\(\theta\)) | Faster return to upright, higher torque demand |
-| \( Q_{22} \) | Weight on angular velocity (\(\dot{\theta}\)) | More damping, less overshoot |
-| \( R \) | Weight on control torque | Smoother actuation, slower response |
+|( Q_[11]) | Weight on angle error (\(\theta\)) | Faster return to upright, higher torque demand |
+|( Q_[22]) | Weight on angular velocity (\(\dot{\theta}\)) | More damping, less overshoot |
+|( R) | Weight on control torque | Smoother actuation, slower response |
 
 ---
 
 ### 📊 Common Ranges by System
 
-| System | States (x) | Typical \( Q \) | Typical \( R \) | Notes |
+| System | States (x) | Typical( Q) | Typical( R) | Notes |
 |:--------|:------------|:----------------|:----------------|:------|
-| **Rotary / simple pendulum** | [\(\theta\), \(\dot{\theta}\)] | diag([50–300, 1]) | 0.1–1.0 | Emphasize angle strongly; small weight on velocity |
-| **Cart–pole** | [x, \(\dot{x}\), \(\theta\), \(\dot{\theta}\)] | diag([10–100, 1, 100–300, 1]) | 0.1–1.0 | Balance tilt and position; \(\theta\) usually dominates |
-| **Two-wheel balancing robot** | [x, \(\dot{x}\), \(\theta\), \(\dot{\theta}\)] | diag([100–500, 1, 10–50, 1]) | 0.05–0.5 | Angle has highest weight; small R for agility |
-| **Large inertia (Segway-scale)** | [x, \(\dot{x}\), \(\theta\), \(\dot{\theta}\)] | diag([200–1000, 1, 10, 1]) | 0.1–0.5 | Prioritize angle; manage torque to avoid saturation |
+| **Rotary / simple pendulum** | [θ, θ̇] | diag([50–300, 1]) | 0.1–1.0 | Emphasize angle strongly; small weight on velocity |
+| **Cart–pole** | [x,(\dot{x}\), [θ, θ̇] | diag([10–100, 1, 100–300, 1]) | 0.1–1.0 | Balance tilt and position;(\theta\) usually dominates |
+| **Two-wheel balancing robot** | [x, ẋ, θ, θ̇] | diag([100–500, 1, 10–50, 1]) | 0.05–0.5 | Angle has highest weight; small R for agility |
+| **Large inertia (Segway-scale)** | [x, ẋ, θ, θ̇] | diag([200–1000, 1, 10, 1]) | 0.1–0.5 | Prioritize angle; manage torque to avoid saturation |
 
 ---
 
 ### ⚙️ General Practice
 
-1. **Start conservatively** — \( Q = \text{diag}([10, 1]) \), \( R = 1 \).
-2. **Decrease \( R \)** to allow stronger control if torque headroom exists.
-3. **Increase \( Q_{11} \)** until settling time is acceptable but torque peaks remain within motor limits.
-4. **Adjust \( Q_{22} \)** only if overshoot or oscillation appears.
+1. **Start conservatively** —( Q =text{diag}([10, 1])),( R = 1).
+2. **Decrease( R)** to allow stronger control if torque headroom exists.
+3. **Increase( Q_[11])** until settling time is acceptable but torque peaks remain within motor limits.
+4. **Adjust( Q_[22])** only if overshoot or oscillation appears.
 5. **Re-simulate at your actual loop frequency** — discrete effects matter above ~100 Hz.
 
 ---
 
 ### 🧠 Interpretation
 
-- \( Q_{11} \) governs **upright stiffness** — “how much you care about falling.”  
-- \( Q_{22} \) governs **damping smoothness.**  
-- \( R \) governs **motor effort.**  
+-(Q_[11]) governs **upright stiffness** — “how much you care about falling.”  
+-(Q_[22]) governs **damping smoothness.**  
+-(R) governs **motor effort.**  
 
 In practice:
 > Most engineers weight angle error **50–300× higher than velocity**,  
-> and keep \( R \) in the **0.1–1** range to match available torque bandwidth.
+> and keep( R) in the **0.1–1** range to match available torque bandwidth.
 
 ---
 
 ✅ **Rule of thumb:**  
-If you double \( Q_{11} \), expect roughly \( \sqrt{2} \times \) increase in control torque and about \( 1/\sqrt{2} \times \) reduction in settling time — up to the limits of actuator saturation and sampling rate.
+If you double (Q_[11]), expect roughly (sqrt(2) times) increase in control torque and about (1/sqrt(2) times) reduction in settling time — up to the limits of actuator saturation and sampling rate.
 
 ## Things
 
