@@ -51,12 +51,6 @@ $ ./verify_LQR_data.py pendulum_LQR_data.json
 - natural frequency is 1 second, looks reasonable
 - creates an eigen value and tells you if it unstable
 
-## ✅ Verification Checks for Pendulum LQR Model
-
-This section summarizes all the verification layers performed by the Python verifier for `pendulum_LQR_data.json`. Each layer tests a different aspect of the physics and control consistency of your inverted pendulum model.
-
----
-
 ## Tests
 Ensures that all quantities have consistent physical units and reasonable magnitudes.
 - Mass (`m`) in kilograms
