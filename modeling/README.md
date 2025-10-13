@@ -250,10 +250,10 @@ Penalizes state error and control effort; the weighting matrices( Q) and( R) exp
 
 | System | States (x) | Typical( Q) | Typical( R) | Notes |
 |:--------|:------------|:----------------|:----------------|:------|
-| **Rotary / simple pendulum** | [θ, θ̇] | diag([50–300, 1]) | 0.1–1.0 | Emphasize angle strongly; small weight on velocity |
-| **Cart–pole** | [x,(\dot{x}\), [θ, θ̇] | diag([10–100, 1, 100–300, 1]) | 0.1–1.0 | Balance tilt and position;(\theta\) usually dominates |
-| **Two-wheel balancing robot** | [x, ẋ, θ, θ̇] | diag([100–500, 1, 10–50, 1]) | 0.05–0.5 | Angle has highest weight; small R for agility |
-| **Large inertia (Segway-scale)** | [x, ẋ, θ, θ̇] | diag([200–1000, 1, 10, 1]) | 0.1–0.5 | Prioritize angle; manage torque to avoid saturation |
+| **Rotary / simple pendulum** | [θ, θ̇] | ([50–300, 1]) | 0.1–1.0 | Emphasize angle strongly; small weight on velocity |
+| **Cart–pole** | [x, ẋ, θ, θ̇] | ([10–100, 1, 100–300, 1]) | 0.1–1.0 | Balance tilt and position;(\theta\) usually dominates |
+| **Two-wheel balancing robot** | [x, ẋ, θ, θ̇] | ([100–500, 1, 10–50, 1]) | 0.05–0.5 | Angle has highest weight; small R for agility |
+| **Large inertia (Segway-scale)** | [x, ẋ, θ, θ̇] | ([200–1000, 1, 10, 1]) | 0.1–0.5 | Prioritize angle; manage torque to avoid saturation |
 
 ---
 
