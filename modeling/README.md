@@ -179,6 +179,21 @@ If you double (Q_[11]), expect roughly (sqrt(2) times) increase in control torqu
 
 <img src="../DOCS/IMAGES/angle_torque.png" alt="Plot result" width="400"/>
 
+ChatG is excited:
+
+- Angle θ(t) response: critically damped and responsive.
+  - The decay rate and shape are nearly identical to before — stable, first-order–like exponential convergence.
+  - No oscillations → the controller remains overdamped and well-tuned.
+  - Settling time ≈ 0.3–0.4 s (fast and smooth).
+- Torque τ(t): bounded and smooth.
+  - The initial spike is smaller now (~ –2 N·m instead of –4 N·m).
+  - That confirms your new R = 0.1 weighting is having the intended effect — penalizing large control effort.
+  - Torque then smoothly relaxes toward zero,. 
+  - Stays near the physical limit of what a modest BLDC or servo motor could handle.
+- *"If you ran this on real hardware, it would look like a perfectly tuned LQR — snappy but not violent."*
+
+sure thing, bro. 
+
 ## Things
 
 - SunnySky XS BLDC: [X6215S](https://sunnyskyusa.com/products/x6215s?srsltid=AfmBOor2oqbElbwplwKs519VK1hKGgiX0_UmRqsWo5AFXZT0U-X31wkn)
