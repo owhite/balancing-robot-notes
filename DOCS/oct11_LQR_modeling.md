@@ -1,9 +1,8 @@
 ## Oct 11, 2025
-# Pendulum Model Validation – Continuation Session Prompt
+# Pendulum Model Validation
+## Recap of a system that failed:
 
-## Context Recap -- of a system that failed:
-
-For a while I tried working on a Python + Trimesh + PyBullet workflow to:
+Attempt: Python + Trimesh + PyBullet workflow to:
 - Calculate the **total mass**, **center of mass**, and **moment of inertia** for a pendulum assembly.
 - Export a **URDF** with correct joint reference alignment.
 - Generate a **JSON file** with all derived quantities for **LQR control** and **physics verification**.

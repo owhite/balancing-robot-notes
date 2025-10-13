@@ -90,7 +90,7 @@ def compute_motor_damping(Kv_rpm_per_V, R_phase_ohm, connection="wye"):
     return {"Kv": Kv_rpm_per_V, "Ke": Ke, "Kt": Kt, "Rm": Rm, "b_Nm_s_per_rad": b}
 
 
-def compute_lqr_parameters(inertia_results, base_path, motor_params, R_value):
+def compute_lqr_parameters(inertia_results, base_path, motor_params, R_value, Q_term):
     """Compute physical parameters, matrices, and LQR gain."""
     m = inertia_results["total_mass"]
     I = inertia_results["moment_of_inertia_scalar_m2"]
@@ -117,7 +117,8 @@ def compute_lqr_parameters(inertia_results, base_path, motor_params, R_value):
     print(f"b/I = {b / I:.6f}  (damping term in A[1,1])")
 
     # --- Compute LQR gain ---
-    Q = np.diag([150.0, 1.0])
+    # Q = np.diag([150.0, 1.0])
+    Q = np.diag([Q_term, 1.0])
     R = np.array([[R_value]])
     P = solve_continuous_are(A, B, Q, R)
     K = np.linalg.inv(R) @ (B.T @ P)
@@ -157,6 +158,7 @@ if __name__ == "__main__":
     parser.add_argument("-k", "--kv", required=True, type=float, help="Motor Kv in rpm/V")
     parser.add_argument("-p", "--rphase", required=True, type=float, help="Motor phase-to-phase resistance in ohms")
     parser.add_argument("-r", "--rvalue", required=True, type=float, help="LQR R value (scalar)")
+    parser.add_argument("-q", "--Qterm", required=True, type=float, help="LQR Q term (scalar)")
     args = parser.parse_args()
 
     with open(args.input, "r") as f:
@@ -180,7 +182,7 @@ if __name__ == "__main__":
 
     motor_params = compute_motor_damping(args.kv, args.rphase, connection="wye")
 
-    data = compute_lqr_parameters(inertia_results, base_path, motor_params, args.rvalue)
+    data = compute_lqr_parameters(inertia_results, base_path, motor_params, args.rvalue, args.Qterm)
 
     out_path = os.path.join(base_path, "pendulum_LQR_data.json")
     with open(out_path, "w") as f:

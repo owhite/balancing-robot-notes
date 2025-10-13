@@ -16,7 +16,7 @@ dump_stls.py CAD Export JSON from Rhino
    ├── generates STLs
    └── pendulum_metadata.json (stl files, origin, axis of rotation)
    ↓
-$ ./generate_LQR_data.py -i pendulum_metadata.json -k 170 -p 0.07 -r 0.1
+$ ./generate_LQR_data.py -i pendulum_metadata.json -k 170 -p 0.07 -r 0.1 -q 150
    ↓
    ├── computes mass, CoM, inertia
    └── writes JSON pendulum_LQR_data.json
@@ -31,12 +31,14 @@ $ ./design_pendulum_LQR.py pendulum_LQR_data.json
    ├── generates K matrix
    └── input for teensy (lqr_sim_output.json)
    ↓
-$ ./graph_LQR_data.py
+View results: 
    ↓
-   show the results
+   ├── ./visual_lqr_perturb.py pendulum_LQR_data.json 
+   └── ./graph_LQR_data.py     pendulum_LQR_data.json 
+   └── ./graph_angle_torque.py pendulum_LQR_data.json 
 ```
 
-## Using these tools we can check:
+## What can we check with this tool:
 
 ```
 $ ./verify_LQR_data.py pendulum_LQR_data.json 
@@ -85,7 +87,7 @@ Catches unit conversion or scale errors (e.g., forgetting to convert mm → m) t
   Controllable: 2/2, Observable: 2/2
 ```
 
-## 🧠 Quick Reference Summary
+## Quick Reference Summary
 Things that are evaluated by: 
 ```$ ./verify_LQR_data.py pendulum_LQR_data.json```
 
@@ -121,6 +123,7 @@ Turns out it not possible for a 500hz controller can keep a really tall pendulum
 
 The claim is once this pipeline has been created (reading system matrices from pendulum_LQR_data.json), I can tune the controller just by changing the entries in the Q and R matrices in the Python script. *"No guesswork. No PID voodoo."* says ChatG. 
 
+<img src="../DOCS/IMAGES/angle_torque.png" alt="Plot result" width="400"/>
 
 ## ⚖️ LQR Weighting: Common Q and R Practices
 
@@ -181,3 +184,14 @@ If you double (Q_[11]), expect roughly (sqrt(2) times) increase in control torqu
 - SunnySky XS BLDC: [X6215S](https://sunnyskyusa.com/products/x6215s?srsltid=AfmBOor2oqbElbwplwKs519VK1hKGgiX0_UmRqsWo5AFXZT0U-X31wkn)
 - Motor Resistance: `70mΩ`
 - KV rating: `Kv170`
+
+##
+
+| Plot                                  | Description                      | Why it matters                                                                             |
+| ------------------------------------- | -------------------------------- | ------------------------------------------------------------------------------------------ |
+| **θ(t)** — angle vs. time             | The pendulum’s angular position  | Primary performance measure — shows stability, overshoot, and settling time.               |
+| **θ̇(t)** — angular velocity vs. time | Time derivative of angle         | Shows damping behavior, energy dissipation, and controller aggressiveness.                 |
+| **τ(t)** — control torque vs. time    | Commanded actuator torque        | Reveals how hard the motor must work — checks for saturation or instability.               |
+| **Phase portrait (θ̇ vs θ)**          | System trajectory in state space | Visualizes damping and convergence to equilibrium; closed spirals indicate stable control. |
+| **Energy vs. time**                   | Kinetic + potential energy       | Confirms if total system energy decreases monotonically under control.                     |
+| **Parameter sweeps (Q, R)**           | Response speed vs. gain ratio    | Lets you empirically tune control effort vs. smoothness.                                   |

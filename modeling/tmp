@@ -1,3 +1,8 @@
+Settling around 0.5 s: Matches your closed-loop dominant pole of roughly −12 s⁻¹ (≈ 1/0.08 s time constant).
+gain matrix is aggressive K=[27.5, 2.19] is pretty strong).
+
+
+
 (base) Owens-Mac-mini:modeling owhite$ ./verify_LQR_data.py pendulum_LQR_data.json 
 
 🔍 Verifying pendulum data from: pendulum_LQR_data.json
