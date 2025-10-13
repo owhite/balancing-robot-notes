@@ -123,8 +123,6 @@ Turns out it not possible for a 500hz controller can keep a really tall pendulum
 
 The claim is once this pipeline has been created (reading system matrices from pendulum_LQR_data.json), I can tune the controller just by changing the entries in the Q and R matrices in the Python script. *"No guesswork. No PID voodoo."* says ChatG. 
 
-<img src="../DOCS/IMAGES/angle_torque.png" alt="Plot result" width="400"/>
-
 ## ⚖️ LQR Weighting: Common Q and R Practices
 
 The **LQR cost function**
@@ -178,6 +176,8 @@ In practice:
 
 ✅ **Rule of thumb:**  
 If you double (Q_[11]), expect roughly (sqrt(2) times) increase in control torque and about (1/sqrt(2) times) reduction in settling time — up to the limits of actuator saturation and sampling rate.
+
+<img src="../DOCS/IMAGES/angle_torque.png" alt="Plot result" width="400"/>
 
 ## Things
 
