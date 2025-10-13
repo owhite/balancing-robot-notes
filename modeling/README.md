@@ -179,7 +179,7 @@ If you double (Q_[11]), expect roughly (sqrt(2) times) increase in control torqu
 
 <img src="../DOCS/IMAGES/angle_torque.png" alt="Plot result" width="400"/>
 
-ChatG is excited:
+**ChatG is excited:**
 
 - Angle θ(t) response: critically damped and responsive.
   - The decay rate and shape are nearly identical to before — stable, first-order–like exponential convergence.
