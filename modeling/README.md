@@ -57,16 +57,12 @@ This section summarizes all the verification layers performed by the Python veri
 
 ---
 
-## 🧩 1. Dimensional Sanity Checks
-
-**Tests:**
+## Tests
+Ensures that all quantities have consistent physical units and reasonable magnitudes.
 - Mass (`m`) in kilograms
 - Moment of inertia (`I`) in kg·m²
 - Lever arm (`r`) in meters
 - Gravity (`g`) in m/s²
-
-**Purpose:**
-Ensures that all quantities have consistent physical units and reasonable magnitudes.
 
 **Typical expected ranges:**
 - `0.01 < m < 10` kg
@@ -95,15 +91,10 @@ Catches unit conversion or scale errors (e.g., forgetting to convert mm → m) t
   Controllable: 2/2, Observable: 2/2
 ```
 
-**Why it matters:**
-This final summary tells you, quantitatively and qualitatively, whether your inverted pendulum model is:
-1. Physically sound,
-2. Mathematically consistent,
-3. Ready for control design (LQR or otherwise).
-
----
-
 ## 🧠 Quick Reference Summary
+Things that are evaluated by: 
+```$ ./verify_LQR_data.py pendulum_LQR_data.json```
+
 
 | Check Type | Purpose | Key Equation / Metric | Typical Outcome |
 |-------------|----------|-----------------------|-----------------|
