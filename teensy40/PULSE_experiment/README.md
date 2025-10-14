@@ -146,14 +146,10 @@ $ ./torque_raise.py  /dev/cu.usbmodem178888901
 
 The standard state-space model for a pendulum is 𝑥-dot =Ax+Bu, where B represents how strongly the applied control input u (torque) affects the pendulum’s angular acceleration. To model 𝐵 accurately, we need to determine how much actual physical torque the motor produces for a given commanded torque value from the controller. In other words, we must measure the motor’s torque-per-command ratio — the mapping between the controller’s normalized input and the true torque applied at the pendulum joint.
 
-```
-$ ./torque_raise.py /dev/cu.usbmodem178888901
-```
-
-- The program omputes acceleration: `np.gradient(vel, t)` numerically differentiates velocity.
+- Run: `$ ./torque_raise.py /dev/cu.usbmodem178888901`
+- The program computes acceleration: `np.gradient(vel, t)` numerically differentiates velocity.
 - Estimated `B_real` = 102.5 rad/s² per N·m
-
-The results are:
+- The results are:
 
 <img src="Figure_1.png" alt="Plot result" width="400"/>
 
