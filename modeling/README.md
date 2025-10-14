@@ -214,7 +214,7 @@ I have a [json file](pendulum_LQR_data.json) with all the relevant factors for t
 | `motor_params.Kv`         | Motor speed constant; inversely related to torque constant.                                                                 | rpm/V     | 170.0                            |
 | `motor_params.Ke`         | Back-EMF constant (electrical damping relationship).                                                                        | V·s/rad   | 0.05617                          |
 | `motor_params.Kt`         | Torque constant (mechanical torque per amp).                                                                                | N·m/A     | 0.05617                          |
-| `motor_params.Rm`         | Effective motor resistance per equivalent phase winding.                                                                    | Ω         | 0.035_                           |
+| `motor_params.Rm`         | Effective motor resistance per equivalent phase winding.                                                                    | Ω         | 0.035                            |
 
 - The dominant pole (−7.07 s⁻¹) → ~0.14 s time constant → defines visible response.
 - The fast pole (−948 s⁻¹) represents motor current dynamics and settles almost instantly.
