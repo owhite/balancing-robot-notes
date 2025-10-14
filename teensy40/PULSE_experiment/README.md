@@ -150,20 +150,10 @@ The standard state-space model for a pendulum is 𝑥-dot =Ax+Bu, where B repres
 $ ./torque_raise.py /dev/cu.usbmodem178888901
 ```
 
-- The program Computes acceleration: `np.gradient(vel, t)` numerically differentiates velocity.
+- The program omputes acceleration: `np.gradient(vel, t)` numerically differentiates velocity.
 - Estimated `B_real` = 102.5 rad/s² per N·m
 
 The results are:
 
 <img src="Figure_1.png" alt="Plot result" width="400"/>
 
-
-## Next Steps
-
-- Implement the Python ↔ Teensy serial protocol.  
-- Run a baseline 0.2 Nm, 85 ms pulse and verify response.  
-- Scale experiments:
-  - Vary pulse amplitudes (0.1 Nm, 0.3 Nm, …).  
-  - Vary durations (50 ms, 100 ms, …).  
-- Use PRBS excitation once pulse responses look consistent.  
-- Validate the fitted model with new inputs not used for training.  
