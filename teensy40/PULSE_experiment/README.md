@@ -141,10 +141,10 @@ $ ./torque_raise.py  /dev/cu.usbmodem178888901
 
 ---
 
-## Modeling the B term applying to the physical plant. 
+## Estimate the 𝐵 term of the physical plant from real data
 
 
-The standard state-space model for a pendulum is 𝑥-dot =Ax+Bu, where B represents how strongly the applied control input u (torque) affects the pendulum’s angular acceleration. To model 𝐵 accurately, we need to determine how much actual physical torque the motor produces for a given commanded torque value from the controller. In other words, we must measure the motor’s torque-per-command ratio — the mapping between the controller’s normalized input and the true torque applied at the pendulum joint.
+The standard state-space model for a pendulum is 𝑥-dot =Ax+Bu, where 𝐵 represents how strongly the applied control input u (torque) affects the pendulum’s angular acceleration. To model 𝐵 accurately, we need to determine how much actual physical torque the motor produces for a given commanded torque value from the controller. In other words, we must measure the motor’s torque-per-command ratio — the mapping between the controller’s normalized input and the true torque applied at the pendulum joint.
 
 - Run: `$ ./torque_raise.py /dev/cu.usbmodem178888901`
 - The program computes acceleration: `np.gradient(vel, t)` numerically differentiates velocity.
