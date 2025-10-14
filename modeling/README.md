@@ -114,7 +114,7 @@ For a while I tried working on a Python + Trimesh + PyBullet workflow, [do not u
 ## :warning: Second failure of the week :warning: 
 Turns out it not possible for a 500hz controller can keep a really tall pendulum standing
 
-## Notes for eventual tune and test
+## Variables to tune and test
 
 - Adjust 𝑄 and 𝑅 in the Python script
 - Regenerate K, add to embedded firmware
@@ -186,13 +186,48 @@ If you double (Q_[11]), expect roughly (sqrt(2) times) increase in control torqu
   - No oscillations → the controller remains overdamped and well-tuned.
   - Settling time ≈ 0.3–0.4 s (fast and smooth).
 - Torque τ(t): bounded and smooth.
-  - The initial spike is smaller now (~ –2 N·m instead of –4 N·m).
-  - That confirms your new R = 0.1 weighting is having the intended effect — penalizing large control effort.
+  - Small initial spike (~ –2 N·m) 
+  - The R = 0.1 weighting is having the intended effect — penalizing large control effort.
   - Torque then smoothly relaxes toward zero,. 
   - Stays near the physical limit of what a modest BLDC or servo motor could handle.
 - *"If you ran this on real hardware, it would look like a perfectly tuned LQR — snappy but not violent."*
 
 sure thing, bro. 
+
+## Parameters
+
+I have a [json file](pendulum_LQR_data.json) with all the relevant factors for the state-space model, which are also shown here:
+
+
+| **Field**                     | **Value**                                                        | **Units** | **Description / Purpose**                                                                                                                           |
+| ----------------------------- | ---------------------------------------------------------------- | --------- | --------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `mass_kg`                     | 0.1716535                                                        | kg        | Total mass of the pendulum assembly (used in gravitational torque term (mgr/I)).                                                                    |
+| `moment_of_inertia_kg_m2`     | 0.0033369                                                        | kg·m²     | Moment of inertia about the hinge axis; key parameter for dynamic response and torque-to-angular-acceleration relationship.                         |
+| `total_com_mm`                | [−0.0000125, −11.5649, 121.1311]                                 | mm        | Center of mass position in 3D, relative to model coordinates (from CAD). Used to compute lever arm (r).                                             |
+| `origin_of_rotation_mm`       | [0.0, 0.0, 45.138]                                               | mm        | Physical location of the hinge or pivot point, defining the rotation axis origin.                                                                   |
+| `r_m`                         | 0.0768681                                                        | m         | Distance from hinge to center of mass. Governs gravitational torque magnitude (τ_g = mgr\sinθ).                                                     |
+| `g_m_per_s2`                  | 9.81                                                             | m/s²      | Gravitational acceleration constant used in dynamic equations.                                                                                      |
+| `mgr_over_I`                  | 38.7908                                                          | 1/s²      | Ratio (mgr/I); defines open-loop angular acceleration for small angles (restoring torque term).                                                     |
+| `omega_n_rad_per_s`           | 6.2282                                                           | rad/s     | Natural (undamped) frequency of the linearized pendulum.                                                                                            |
+| `expected_period_s`           | 1.0088                                                           | s         | Expected oscillation period in the undamped open-loop case.                                                                                         |
+| `axis_unit_vector`            | [0.0, 1.0, 0.0]                                                  | –         | Direction of the pendulum’s hinge axis (rotation about the Y-axis).                                                                                 |
+| `motor_params.Kv`             | 170.0                                                            | rpm/V     | Motor speed constant; inversely related to torque constant.                                                                                         |
+| `motor_params.Ke`             | 0.05617                                                          | V·s/rad   | Back-EMF constant (electrical damping relationship).                                                                                                |
+| `motor_params.Kt`             | 0.05617                                                          | N·m/A     | Torque constant (mechanical torque per amp).                                                                                                        |
+| `motor_params.Rm`             | 0.035                                                            | Ω         | Effective motor resistance per equivalent phase winding.                                                                                            |
+| `motor_params.b_Nm_s_per_rad` | 0.09015                                                          | N·m·s/rad | Estimated viscous damping coefficient from motor electrical losses.                                                                                 |
+| `A_matrix`                    | [[0, 1], [38.79, −27.02]]                                        | –         | Linearized system dynamics matrix: (A = \begin{bmatrix}0 & 1 \ mgr/I & -b/I\end{bmatrix}). Encodes open-loop pendulum behavior (gravity + damping). |
+| `B_matrix`                    | [[0], [299.682]]                                                 | –         | Input matrix: (B = \begin{bmatrix}0 \ 1/I\end{bmatrix}). Maps motor torque to angular acceleration.                                                 |
+| `K_gain`                      | [[22.4905, 3.0970]]                                              | –         | LQR feedback gains ([k_θ, k_{\dot θ}]). Used in control law (u = -Kx).                                                                              |
+| `closed_loop_eigenvalues`     | [−7.0682, −948.0772]                                             | 1/s       | Closed-loop poles (dominant and fast). Define settling speed and overall system stability.                                                          |
+| `urdf_file`                   | `/Users/owhite/MESC_brain_board/modeling/pendulum_assembly.urdf` | –         | Path to CAD-derived URDF used for inertia and geometry extraction.                                                                                  |
+
+- The dominant pole (−7.07 s⁻¹) → ~0.14 s time constant → defines visible response.
+- The fast pole (−948 s⁻¹) represents motor current dynamics and settles almost instantly.
+- The K_gain was designed to balance control effort (torque) against angle correction.
+- State-space design is complete; the experimental verification phase begins.
+- The next milestone is hardware-in-the-loop validation of sampling, units, and torque authority.
+- When the measured response matches predicted ~0.15 s settling we can consider the system validated. 
 
 ## Things
 
@@ -200,13 +235,3 @@ sure thing, bro.
 - Motor Resistance: `70mΩ`
 - KV rating: `Kv170`
 
-##
-
-| Plot                                  | Description                      | Why it matters                                                                             |
-| ------------------------------------- | -------------------------------- | ------------------------------------------------------------------------------------------ |
-| **θ(t)** — angle vs. time             | The pendulum’s angular position  | Primary performance measure — shows stability, overshoot, and settling time.               |
-| **θ̇(t)** — angular velocity vs. time | Time derivative of angle         | Shows damping behavior, energy dissipation, and controller aggressiveness.                 |
-| **τ(t)** — control torque vs. time    | Commanded actuator torque        | Reveals how hard the motor must work — checks for saturation or instability.               |
-| **Phase portrait (θ̇ vs θ)**          | System trajectory in state space | Visualizes damping and convergence to equilibrium; closed spirals indicate stable control. |
-| **Energy vs. time**                   | Kinetic + potential energy       | Confirms if total system energy decreases monotonically under control.                     |
-| **Parameter sweeps (Q, R)**           | Response speed vs. gain ratio    | Lets you empirically tune control effort vs. smoothness.                                   |

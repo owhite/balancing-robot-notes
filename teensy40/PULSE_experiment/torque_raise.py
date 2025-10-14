@@ -3,6 +3,7 @@ import sys, json, serial, math
 import matplotlib.pyplot as plt
 import matplotlib.animation as animation
 from matplotlib.widgets import TextBox, Button
+import numpy as np
 
 # --- Motor Torque Command Calculation ---
 # 1. From motor specs we know Kv (RPM/V). The torque constant Kt is its reciprocal:
@@ -238,6 +239,33 @@ def update(frame):
         ymin, ymax = min(vel_vals), max(vel_vals)
         margin = 0.1 * (ymax - ymin) if ymax > ymin else 1.0
         ax_vel.set_ylim(ymin - margin, ymax + margin)
+
+        # --- Estimate B_real (angular acceleration per torque) ---
+        t = np.array(t_vals) * 1e-3  # convert ms → s
+        vel = np.array(vel_vals)
+        torque = np.array(torque_vals)
+
+        if len(t) > 5:
+            # Numerical derivative of velocity → angular acceleration
+            acc = np.gradient(vel, t)
+
+            # Consider only the active torque pulse region
+            active = np.abs(torque) > 0.05 * np.max(np.abs(torque))
+            if np.any(active):
+                # Fit least-squares line acc = B_real * torque
+                B_real, _ = np.polyfit(torque[active], acc[active], 1)
+                # Display on console and plot
+                print(f"Estimated B_real = {B_real:.2f} rad/s² per N·m")
+
+                # Optional: show on figure
+                ax_label.text(
+                    0.0, -0.3,
+                    f"B_real: {B_real:.1f} rad/s²/Nm",
+                    transform=ax_label.transAxes,
+                    fontsize=12,
+                    color="black"
+                )
+
 
         burst_data = None
 
