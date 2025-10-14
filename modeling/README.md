@@ -200,7 +200,7 @@ I have a [json file](pendulum_LQR_data.json) with all the relevant factors for t
 
 
 | **Field**                     | **Value**                                                        | **Units** | **Description / Purpose**                                                                                                                           |
-| ----------------------------- | ---------------------------------------------------------------- | --------- | --------------------------------------------------------------------------------------------------------------------------------------------------- |
+| ----------------------------- | -------------------------------- | --------- | ---------------------------------------------------------------------------------------------------------|
 | `mass_kg`                     | 0.1716535                                                        | kg        | Total mass of the pendulum assembly (used in gravitational torque term (mgr/I)).                                                                    |
 | `moment_of_inertia_kg_m2`     | 0.0033369                                                        | kg·m²     | Moment of inertia about the hinge axis; key parameter for dynamic response and torque-to-angular-acceleration relationship.                         |
 | `total_com_mm`                | [−0.0000125, −11.5649, 121.1311]                                 | mm        | Center of mass position in 3D, relative to model coordinates (from CAD). Used to compute lever arm (r).                                             |

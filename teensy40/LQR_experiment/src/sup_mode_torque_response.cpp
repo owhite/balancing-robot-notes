@@ -36,8 +36,8 @@ void run_mode_torque_response(Supervisor_typedef *sup,
     }
 
     // ---------------- Control parameters ----------------
-    const float Kp = 22.49f;
-    const float Kd = 3.10f;
+    const float Kp = 6.26f;          // updated from LQR for B_real = 102
+    const float Kd = 0.60f;
     const float SAFETY_SCALE = 0.2f;
     const float TORQUE_CLAMP = 0.5f;
     const float THETA_EQ = 4.368f;   // upright equilibrium position [rad]
