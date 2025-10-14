@@ -153,7 +153,8 @@ $ ./torque_raise.py /dev/cu.usbmodem178888901
 - The program Computes acceleration: `np.gradient(vel, t)` numerically differentiates velocity.
 - Estimated `B_real` = 102.5 rad/s² per N·m
 
-The results are
+The results are:
+
 <img src="Figure_1.png" alt="Plot result" width="400"/>
 
 
