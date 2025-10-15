@@ -49,9 +49,9 @@ def main():
     with open(json_path, "r") as f:
         data = json.load(f)
 
-    A = np.array(data["A_matrix"])
-    B = np.array(data["B_matrix"])
-    K = np.array(data["K_gain"])
+    A = np.array(data["A_matrix_continuous"])
+    B = np.array(data["B_matrix_continuous"])
+    K = np.array(data["K_gain_continuous"])
     m = data["mass_kg"]
     I = data["moment_of_inertia_kg_m2"]
     r = data["r_m"]

@@ -4,10 +4,10 @@ Compute the physical parameters, linearized state-space model,
 and LQR gain for an inverted pendulum from its CAD-derived JSON configuration.
 
 Usage:
-    ./generate_pendulum_LQR_data.py -i <assembly_config.json> -k <Kv> -p <R_phase> -r <R_value>
+    ./generate_pendulum_LQR_data.py -i <assembly_config.json> -k <Kv> -p <R_phase> -r <R_value> -q <Q_term>
 
 Example:
-    ./generate_pendulum_LQR_data.py -i config.json -k 170 -p 0.07 -r 0.1
+    ./generate_pendulum_LQR_data.py -i config.json -k 170 -p 0.07 -r 0.1 -q 150
 """
 
 import json
@@ -16,7 +16,7 @@ import os
 import sys
 import argparse
 import trimesh
-from scipy.linalg import solve_continuous_are
+from scipy.linalg import solve_continuous_are, solve_discrete_are, expm
 
 
 def calculate_total_moment_of_inertia(assembly_data: dict):
@@ -90,8 +90,10 @@ def compute_motor_damping(Kv_rpm_per_V, R_phase_ohm, connection="wye"):
     return {"Kv": Kv_rpm_per_V, "Ke": Ke, "Kt": Kt, "Rm": Rm, "b_Nm_s_per_rad": b}
 
 
-def compute_lqr_parameters(inertia_results, base_path, motor_params, R_value, Q_term):
-    """Compute physical parameters, matrices, and LQR gain."""
+def compute_lqr_parameters(inertia_results, base_path, motor_params, R_value, Q_term, B_term):
+    """Compute physical parameters, matrices, and LQR gains for both
+       continuous- and discrete-time (500 Hz) systems.
+    """
     m = inertia_results["total_mass"]
     I = inertia_results["moment_of_inertia_scalar_m2"]
     com = inertia_results["total_com"]
@@ -104,33 +106,46 @@ def compute_lqr_parameters(inertia_results, base_path, motor_params, R_value, Q_
 
     # Include damping term (from motor)
     b = motor_params["b_Nm_s_per_rad"]
-    A = np.array([[0, 1], [mgr_over_I, -b / I]])
-    B = np.array([[0], [1 / I]])
-    # B *= 1.5
+    A = np.array([[0, 1],
+                  [mgr_over_I, -b / I]])
+    B = np.array([[0],
+                  [1 / I]])
+    B = np.array([[0],
+              [B_term]])
 
-    print("\n--- Computed LQR parameters ---")
-    print(f"mass m = {m:.6f} kg")
-    print(f"I = {I:.6e} kg·m²")
-    print(f"r = {r:.6f} m")
-    print(f"mgr/I = {mgr_over_I:.6f}")
-    print(f"ω_n = {omega_n:.6f} rad/s,  T = {period_T:.6f} s")
-    print(f"b/I = {b / I:.6f}  (damping term in A[1,1])")
-
-    # --- Compute LQR gain ---
-    # Q = np.diag([150.0, 1.0])
+    # --- Continuous-time LQR (CARE) ---
     Q = np.diag([Q_term, 1.0])
     R = np.array([[R_value]])
-    P = solve_continuous_are(A, B, Q, R)
-    K = np.linalg.inv(R) @ (B.T @ P)
-    eigvals, _ = np.linalg.eig(A - B @ K)
-    print("\n--- LQR Design ---")
-    print(f"Q = {Q}")
-    print(f"R = {R}")
-    print(f"A = {A}")
-    print(f"B = {B}")
-    print(f"K = {K}")
-    print(f"b = {b}")
-    print(f"Closed-loop eigenvalues = {eigvals}")
+    P_cont = solve_continuous_are(A, B, Q, R)
+    K_cont = np.linalg.inv(R) @ (B.T @ P_cont)
+    eig_cont, _ = np.linalg.eig(A - B @ K_cont)
+
+    print("\n=== CONTINUOUS-TIME DYNAMICS ===")
+    print("A (continuous) =\n", A)
+    print("B (continuous) =\n", B)
+    print("Q =\n", Q)
+    print("R =\n", R)
+    print("K (continuous-time LQR gain) =", K_cont)
+    print("Closed-loop eigenvalues (continuous) =", eig_cont)
+
+    # --- Discrete-time LQR (DARE) ---
+    Ts = 0.002  # 500 Hz sample rate
+    M = np.block([[A, B],
+                  [np.zeros((1, 3))]])
+    Md = expm(M * Ts)
+    A_d = Md[:2, :2]
+    B_d = Md[:2, 2:3]
+
+    P_disc = solve_discrete_are(A_d, B_d, Q, R)
+    K_disc = np.linalg.inv(B_d.T @ P_disc @ B_d + R) @ (B_d.T @ P_disc @ A_d)
+    eig_disc = np.linalg.eigvals(A_d - B_d @ K_disc)
+
+    print("\n=== DISCRETE-TIME DYNAMICS (500 Hz) ===")
+    print(f"Sampling period Ts = {Ts:.6f} s (500 Hz)")
+    print("A_d (discrete) =\n", A_d)
+    print("B_d (discrete) =\n", B_d)
+    print("K_d (discrete-time LQR gain) =", K_disc)
+    print("Closed-loop eigenvalues (discrete) =", eig_disc)
 
     return {
         "mass_kg": m,
@@ -144,10 +159,14 @@ def compute_lqr_parameters(inertia_results, base_path, motor_params, R_value, Q_
         "expected_period_s": period_T,
         "axis_unit_vector": inertia_results["axis_unit_vector"].tolist(),
         "motor_params": motor_params,
-        "A_matrix": A.tolist(),
-        "B_matrix": B.tolist(),
-        "K_gain": K.tolist(),
-        "closed_loop_eigenvalues": [float(ev.real) for ev in eigvals],
+        "A_matrix_continuous": A.tolist(),
+        "B_matrix_continuous": B.tolist(),
+        "A_matrix_discrete": A_d.tolist(),
+        "B_matrix_discrete": B_d.tolist(),
+        "K_gain_continuous": K_cont.tolist(),
+        "K_gain_discrete": K_disc.tolist(),
+        "closed_loop_eigs_cont": [float(ev.real) for ev in eig_cont],
+        "closed_loop_eigs_disc": [float(ev.real) for ev in eig_disc],
         "urdf_file": os.path.join(base_path, "pendulum_assembly.urdf")
     }
 
@@ -159,6 +178,7 @@ if __name__ == "__main__":
     parser.add_argument("-p", "--rphase", required=True, type=float, help="Motor phase-to-phase resistance in ohms")
     parser.add_argument("-r", "--rvalue", required=True, type=float, help="LQR R value (scalar)")
     parser.add_argument("-q", "--Qterm", required=True, type=float, help="LQR Q term (scalar)")
+    parser.add_argument("-b", "--Bterm", required=True, type=float, help="LQR B term based on observed data")
     args = parser.parse_args()
 
     with open(args.input, "r") as f:
@@ -179,10 +199,8 @@ if __name__ == "__main__":
     }
 
     inertia_results = calculate_total_moment_of_inertia(assembly_data)
-
     motor_params = compute_motor_damping(args.kv, args.rphase, connection="wye")
-
-    data = compute_lqr_parameters(inertia_results, base_path, motor_params, args.rvalue, args.Qterm)
+    data = compute_lqr_parameters(inertia_results, base_path, motor_params, args.rvalue, args.Qterm, args.Bterm)
 
     out_path = os.path.join(base_path, "pendulum_LQR_data.json")
     with open(out_path, "w") as f:

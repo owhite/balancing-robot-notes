@@ -25,7 +25,7 @@ m = cfg["mass_kg"]
 I = cfg["moment_of_inertia_kg_m2"]
 r = cfg["r_m"]
 b = cfg["motor_params"]["b_Nm_s_per_rad"]
-K = np.array(cfg["K_gain"]).reshape(1, 2)
+K = np.array(cfg["K_gain_continuous"]).reshape(1, 2)
 g = cfg["g_m_per_s2"]
 
 # === Build MuJoCo XML dynamically ===
