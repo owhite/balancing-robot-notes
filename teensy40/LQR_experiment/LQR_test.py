@@ -1,109 +1,52 @@
 #!/usr/bin/env python3
 import sys, json, serial, math
+import argparse
 import matplotlib.pyplot as plt
 import matplotlib.animation as animation
 from matplotlib.widgets import TextBox, Button
+import numpy as np
+from scipy.linalg import solve_discrete_are
 
-# --- Motor Torque Command Calculation ---
-# 1. From motor specs we know Kv (RPM/V). The torque constant Kt is its reciprocal:
-#        Kt = 60 / (2π * Kv)   [Nm/A]
-#    For Kv = 170 RPM/V, Kt ≈ 0.056 Nm/A.
-#
-# 2. To request a desired torque T (in Nm), compute the required phase current:
-#        I = T / Kt
-#    Example: For T = 0.2 Nm, I ≈ 3.57 A.
-#
-# 3. The ESC command is normalized from -1.0 to +1.0, where ±1.0 corresponds
-#    to ±I_max (the max current limit set in the ESC configuration).
-#        command = I / I_max
-#    Example: With I_max = 30 A, command = 3.57 / 30 ≈ 0.12.
-#
-# => So sending a normalized torque command of ~0.12 will request ~0.2 Nm.
-
-# --- ESC Configuration ---
 I_MAX = 30.0  # Amps, max current limit configured in ESC
 
-if len(sys.argv) < 2:
-    print("Usage: python torque_response.py <serial_port>")
-    sys.exit(1)
 
-port = sys.argv[1]
-ser = serial.Serial(port, 115200, timeout=0.1)
+def angle_diff(a, b):
+    """Return minimal signed difference between two angles (wrap at 2π)."""
+    return (a - b + math.pi) % (2 * math.pi) - math.pi
 
-PARAM_FILE = "params.json"
 
-# --- Load parameters from file ---
-def load_params():
-    try:
-        with open(PARAM_FILE, "r") as f:
-            return json.load(f)
-    except:
-        return {"Kt": 0.056, "Nm": 0.2, "pulse_ms": 85000, "total_ms": 170000}
+def compute_discrete_lqr_gain(A_d, B_d, Q_term, R_term, B_term):
+    """Compute discrete-time LQR gain matrix K."""
+    Q = np.diag([Q_term, 1.0])
+    R = np.array([[R_term]])
+    P = solve_discrete_are(A_d, B_d, Q, R)
+    K = np.linalg.inv(B_d.T @ P @ B_d + R) @ (B_d.T @ P @ A_d)
 
-params = load_params()
+    print("\n=== DISCRETE-TIME LQR GAIN RECOMPUTATION ===")
+    print("A_d =\n", A_d)
+    print("B_d =\n", B_d)
+    print(f"Qterm = {Q_term},  Rterm = {R_term},  Bterm = {B_term}")
+    print("K_gain_discrete =", K)
+    return K
 
-# --- Burst data container ---
-burst_data = None
 
-# --- Setup figure with 3 subplots ---
-fig, (ax_torque, ax_pos, ax_vel) = plt.subplots(3, 1, figsize=(10, 10), sharex=True)
-plt.subplots_adjust(left=0.1, right=0.75, top=0.92, bottom=0.1)
+def save_and_run(event, params, textboxes, label, axes_state, args, ser):
+    """
+    Handles 'Run' button click:
+      - Reads updated parameters from UI textboxes
+      - Saves JSON file
+      - Sends command to serial port (currently commented)
+      - Resets UI markers
+    """
+    start_pos, pi2_time_ms, pi2_cross_pos, hline, vline = axes_state
 
-# Torque input
-line_torque, = ax_torque.plot([], [], color="tab:red", label="Torque Command")
-ax_torque.set_title("Torque Input vs Time")
-ax_torque.set_ylabel("Torque (Nm)")
-ax_torque.grid(True)
-ax_torque.legend()
-
-# Position
-line_pos, = ax_pos.plot([], [], color="tab:green", label="Position")
-ax_pos.set_title("Pendulum Position vs Time")
-ax_pos.set_ylabel("Position (rad)")
-ax_pos.grid(True)
-ax_pos.legend()
-
-# Velocity
-line_vel, = ax_vel.plot([], [], color="tab:blue", label="Velocity")
-ax_vel.set_title("Pendulum Velocity vs Time")
-ax_vel.set_xlabel("t (ms)")
-ax_vel.set_ylabel("Velocity (rad/s)")
-ax_vel.grid(True)
-ax_vel.legend()
-
-# --- UI Controls ---
-axbox_Kt      = plt.axes([0.8, 0.82, 0.15, 0.05])
-axbox_Nm      = plt.axes([0.8, 0.74, 0.15, 0.05])
-axbox_pulse   = plt.axes([0.8, 0.66, 0.15, 0.05])
-axbox_total   = plt.axes([0.8, 0.58, 0.15, 0.05])
-axbutton      = plt.axes([0.8, 0.46, 0.15, 0.07])
-
-# --- TextBoxes with labels above ---
-tb_Kt    = TextBox(axbox_Kt, "", initial=str(params["Kt"]))
-axbox_Kt.set_title("Kt", fontsize=10)
-
-tb_Nm    = TextBox(axbox_Nm, "", initial=str(params["Nm"]))
-axbox_Nm.set_title("Nm", fontsize=10)
-
-tb_pulse = TextBox(axbox_pulse, "", initial=str(params["pulse_ms"]))
-axbox_pulse.set_title("pulse_ms", fontsize=10)
-
-tb_total = TextBox(axbox_total, "", initial=str(params["total_ms"]))
-axbox_total.set_title("total_ms", fontsize=10)
-
-button   = Button(axbutton, "Run")
-
-def save_and_run(event):
-    global start_pos, pi2_time_ms, pi2_cross_pos, hline, vline
-
-    # --- Reset state so multiple runs work correctly ---
+    # Reset tracking
     start_pos = None
     pi2_time_ms = None
     pi2_cross_pos = None
     label.set_text("π/2 Time: --- ms")
 
-
-    # remove old crosshair lines
+    # Remove old crosshairs
     if hline is not None:
         hline.remove()
         hline = None
@@ -111,137 +54,173 @@ def save_and_run(event):
         vline.remove()
         vline = None
 
-    params["Kt"] = float(tb_Kt.text)
-    params["Nm"] = float(tb_Nm.text)
-    params["pulse_ms"] = int(tb_pulse.text)
+    # Unpack TextBoxes
+    tb_torque, tb_Rterm, tb_Qterm, tb_Bterm, tb_total = textboxes
+
+    # Update parameters from UI
+    params["torque"] = float(tb_torque.text)
+    params["Rterm"] = float(tb_Rterm.text)
+    params["Qterm"] = float(tb_Qterm.text)
+    params["Bterm"] = float(tb_Bterm.text)
     params["total_ms"] = int(tb_total.text)
-    with open(PARAM_FILE, "w") as f:
+
+    with open(args.json_params, "w") as f:
         json.dump(params, f, indent=2)
 
-    # User-specified torque request (Nm)
-    desired_torque_Nm = params["Nm"]
-
-    # Convert torque → current → normalized command
-    I = desired_torque_Nm / params["Kt"]
+    desired_torque_Nm = params["torque"]
+    I = desired_torque_Nm / params["Bterm"]
     cmd = (I / I_MAX)
 
+    LQR_data_path = params["LQR_data"]
+    Q_term = params["Qterm"]
+    R_term = params["Rterm"]
+    B_term = params["Bterm"]
+
+    # --- Load LQR data and compute K ---
+    with open(LQR_data_path, "r") as f:
+        data = json.load(f)
+
+    A_d = np.array(data["A_matrix_discrete"])
+    B_d = np.array(data["B_matrix_discrete"])
+    K_disc = compute_discrete_lqr_gain(A_d, B_d, Q_term, R_term, B_term)
+
+    # {'cmd': 'send', 'pulse_torque': 0.2, 'pulse_us': 250000, 'total_us': 3000000, 'user_Kp_term': 6.26, 'user_Kd_term': 0.6}
+
+    print ("PARAMS: ", params)
     msg = {
         "cmd": "send",
-        "pulse_torque": cmd,
-        "pulse_us": params["pulse_ms"] * 1000,
-        "total_us": params["total_ms"] * 1000
+        "pulse_torque": params["torque"],
+        "total_us": params["total_ms"] * 1000, 
+        "user_Kp_term": float(K_disc[0, 0]),
+        "user_Kd_term": float(K_disc[0, 1])
     }
-    print("TX: ", msg)
+
+    print("TX:", msg)
     ser.write((json.dumps(msg) + "\n").encode("utf-8"))
 
-button.on_clicked(save_and_run)
+    # Return updated axes state for reference
+    return start_pos, pi2_time_ms, pi2_cross_pos, hline, vline
 
-# --- PI/2 travel time tracking (accumulated distance) ---
-start_pos = None
-pi2_time_ms = None
-pi2_cross_pos = None
-ax_label = plt.axes([0.8, 0.36, 0.15, 0.05])  # area for text display
-label = ax_label.text(0.0, 0.5, "π/2 Time: --- ms", transform=ax_label.transAxes, fontsize=14)
-ax_label.axis("off")
 
-# Line handles
-hline = None
-vline = None
+def main():
+    parser = argparse.ArgumentParser(description="Pendulum live serial plotter and controller.")
+    parser.add_argument("-p", "--port", required=True, help="Input serial port")
+    parser.add_argument("-j", "--json_params", required=True, help="Input parameter data")
+    args = parser.parse_args()
 
-# --- Utility: unwrap angle difference safely ---
-def angle_diff(a, b):
-    """Return minimal signed difference between two angles (wrap at 2π)."""
-    return (a - b + math.pi) % (2*math.pi) - math.pi
+    ser = serial.Serial(args.port, 115200, timeout=0.1)
 
-# --- Update loop ---
-def update(frame):
-    global burst_data, start_pos, pi2_time_ms, pi2_cross_pos, hline, vline
+    with open(args.json_params, "r") as f:
+        params = json.load(f)
 
-    while ser.in_waiting:
-        line = ser.readline().decode("utf-8", errors="ignore").strip()
-        if not line:
-            continue
-        try:
-            data = json.loads(line)
-        except json.JSONDecodeError:
-            if line.startswith("{") and "samples" in line:
-                buf = line
-                while True:
-                    chunk = ser.readline().decode("utf-8", errors="ignore")
-                    if not chunk:
-                        break
-                    buf += chunk
-                    try:
-                        data = json.loads(buf)
-                        break
-                    except json.JSONDecodeError:
-                        continue
+    # --- Setup plots ---
+    fig, (ax_torque, ax_pos, ax_vel) = plt.subplots(3, 1, figsize=(10, 10), sharex=True)
+    plt.subplots_adjust(left=0.1, right=0.75, top=0.92, bottom=0.1)
+
+    line_torque, = ax_torque.plot([], [], color="tab:red", label="Torque Command")
+    ax_torque.set_title("Torque Input vs Time")
+    ax_torque.set_ylabel("Torque (Nm)")
+    ax_torque.grid(True)
+    ax_torque.legend()
+
+    line_pos, = ax_pos.plot([], [], color="tab:green", label="Position")
+    ax_pos.set_title("Pendulum Position vs Time")
+    ax_pos.set_ylabel("Position (rad)")
+    ax_pos.grid(True)
+    ax_pos.legend()
+
+    line_vel, = ax_vel.plot([], [], color="tab:blue", label="Velocity")
+    ax_vel.set_title("Pendulum Velocity vs Time")
+    ax_vel.set_xlabel("t (ms)")
+    ax_vel.set_ylabel("Velocity (rad/s)")
+    ax_vel.grid(True)
+    ax_vel.legend()
+
+    # --- UI controls ---
+    axbox_torque = plt.axes([0.8, 0.90, 0.15, 0.05])
+    axbox_Rterm  = plt.axes([0.8, 0.82, 0.15, 0.05])
+    axbox_Qterm  = plt.axes([0.8, 0.74, 0.15, 0.05])
+    axbox_Bterm  = plt.axes([0.8, 0.66, 0.15, 0.05])
+    axbox_total  = plt.axes([0.8, 0.58, 0.15, 0.05])
+    axbutton     = plt.axes([0.8, 0.46, 0.15, 0.07])
+
+    tb_torque = TextBox(axbox_torque, "torque", initial=str(params["torque"]))
+    tb_Rterm  = TextBox(axbox_Rterm, "R term", initial=str(params["Rterm"]))
+    tb_Qterm  = TextBox(axbox_Qterm, "Q term", initial=str(params["Qterm"]))
+    tb_Bterm  = TextBox(axbox_Bterm, "B term", initial=str(params["Bterm"]))
+    tb_total  = TextBox(axbox_total, "total ms", initial=str(params["total_ms"]))
+    button    = Button(axbutton, "Run")
+
+    # --- Label display ---
+    ax_label = plt.axes([0.8, 0.36, 0.15, 0.05])
+    label = ax_label.text(0.0, 0.5, "arrive Time: --- ms", transform=ax_label.transAxes, fontsize=14)
+    ax_label.axis("off")
+
+    # --- Initialize state ---
+    start_pos = None
+    pi2_time_ms = None
+    pi2_cross_pos = None
+    hline = None
+    vline = None
+    axes_state = [start_pos, pi2_time_ms, pi2_cross_pos, hline, vline]
+    textboxes = [tb_torque, tb_Rterm, tb_Qterm, tb_Bterm, tb_total]
+
+    # --- Hook up callback ---
+    button.on_clicked(lambda event: save_and_run(event, params, textboxes, label, axes_state, args, ser))
+
+    # --- Animation loop ---
+    burst_data = None
+
+    def update(frame):
+        nonlocal burst_data, start_pos, pi2_time_ms, pi2_cross_pos, hline, vline
+
+        buf = ""
+        while ser.in_waiting:
+            chunk = ser.read(ser.in_waiting).decode("utf-8", errors="ignore")
+            buf += chunk
+
+            if not buf.strip():
+                continue
+            try:
+                data = json.loads(buf)
                 if "samples" in data:
                     burst_data = data["samples"]
-            continue
-        if "cmd" in data and data["cmd"] == "PRINT":
-            if "note" in data :
-                print("RX:", data["note"], " :: ", data)
+                    print(f"✅ Received burst of {len(burst_data)} samples.")
+                    buf = ""  # reset after full parse
 
-    if burst_data:
-        t_vals = [s["t"] * 1e-3 for s in burst_data]  # convert µs → ms
-        torque_vals = [s["torque"] * params["Kt"] * I_MAX for s in burst_data]  # convert back to Nm
-        pos_vals = [s["pos"] for s in burst_data]
-        vel_vals = [s["vel"] for s in burst_data]
+            except json.JSONDecodeError:
+                # wait for more data next frame
+                continue
 
-        # --- Track accumulated travel distance ---
-        if start_pos is None:
-            start_pos = pos_vals[0]
+            # --- handle parsed data ---
+            if "cmd" in data and data["cmd"] == "PRINT" and "note" in data:
+                print("RX:", data["note"], "::", data)
 
-        if pi2_time_ms is None:
-            total_dist = 0.0
-            last_angle = start_pos
-            for i in range(1, len(pos_vals)):
-                diff = angle_diff(pos_vals[i], last_angle)
-                total_dist += abs(diff)
-                last_angle = pos_vals[i]
+        if burst_data:
+            t_vals = [s["t"] * 1e-3 for s in burst_data]  # µs → ms
+            torque_vals = [s["torque"] * I_MAX for s in burst_data]
+            pos_vals = [s["pos"] for s in burst_data]
+            vel_vals = [s["vel"] for s in burst_data]
 
-                if total_dist >= math.pi/2:
-                    pi2_time_ms = t_vals[i]
-                    pi2_cross_pos = pos_vals[i]
-                    break
+            line_torque.set_data(t_vals, torque_vals)
+            line_pos.set_data(t_vals, pos_vals)
+            line_vel.set_data(t_vals, vel_vals)
 
-        if pi2_time_ms is not None:
-            label.set_text(f"π/2 Time: {pi2_time_ms:.1f} ms")
-            # Draw crosshair lines once
-            if hline is None and pi2_cross_pos is not None:
-                hline = ax_pos.axhline(y=pi2_cross_pos, color="red", linestyle="--", label="π/2 crossing")
-            if vline is None:
-                vline = ax_pos.axvline(x=pi2_time_ms, color="red", linestyle=":", label="π/2 time")
-            ax_pos.legend()
+            # Rescale axes dynamically
+            for ax, vals in [(ax_torque, torque_vals), (ax_pos, pos_vals), (ax_vel, vel_vals)]:
+                ax.set_xlim(min(t_vals), max(t_vals))
+                ymin, ymax = min(vals), max(vals)
+                margin = 0.1 * (ymax - ymin) if ymax > ymin else 1.0
+                ax.set_ylim(ymin - margin, ymax + margin)
 
-        line_torque.set_data(t_vals, torque_vals)
-        line_pos.set_data(t_vals, pos_vals)
-        line_vel.set_data(t_vals, vel_vals)
+            burst_data = None
 
-        # --- Rescale axes based on min/max of data ---
-        ax_torque.set_xlim(min(t_vals), max(t_vals))
-        ax_pos.set_xlim(min(t_vals), max(t_vals))
-        ax_vel.set_xlim(min(t_vals), max(t_vals))
+        # (animation display code unchanged)
+        return (line_torque, line_pos, line_vel, label)
 
-        # Torque
-        ymin, ymax = min(torque_vals), max(torque_vals)
-        margin = 0.1 * (ymax - ymin) if ymax > ymin else 1.0
-        ax_torque.set_ylim(ymin - margin, ymax + margin)
+    ani = animation.FuncAnimation(fig, update, interval=100, blit=False, cache_frame_data=False)
+    plt.show()
 
-        # Position
-        ymin, ymax = min(pos_vals), max(pos_vals)
-        margin = 0.1 * (ymax - ymin) if ymax > ymin else 1.0
-        ax_pos.set_ylim(ymin - margin, ymax + margin)
 
-        # Velocity
-        ymin, ymax = min(vel_vals), max(vel_vals)
-        margin = 0.1 * (ymax - ymin) if ymax > ymin else 1.0
-        ax_vel.set_ylim(ymin - margin, ymax + margin)
-
-        burst_data = None
-
-    return (line_torque, line_pos, line_vel, label)
-
-ani = animation.FuncAnimation(fig, update, interval=100, blit=False, cache_frame_data=False)
-plt.show()
+if __name__ == "__main__":
+    main()

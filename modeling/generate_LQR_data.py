@@ -4,10 +4,10 @@ Compute the physical parameters, linearized state-space model,
 and LQR gain for an inverted pendulum from its CAD-derived JSON configuration.
 
 Usage:
-    ./generate_pendulum_LQR_data.py -i <assembly_config.json> -k <Kv> -p <R_phase> -r <R_value> -q <Q_term>
+    ./generate_pendulum_LQR_data.py -i <assembly_config.json> -k <Kv> -p <R_phase> -r <R_value> -q <Q_term> -b <B_term>
 
 Example:
-    ./generate_pendulum_LQR_data.py -i config.json -k 170 -p 0.07 -r 0.1 -q 150
+    ./generate_LQR_data.py -i pendulum_metadata.json -k 170 -p 0.07 -r 1.0 -q 50 -b 102
 """
 
 import json
@@ -200,6 +200,7 @@ if __name__ == "__main__":
 
     inertia_results = calculate_total_moment_of_inertia(assembly_data)
     motor_params = compute_motor_damping(args.kv, args.rphase, connection="wye")
+
     data = compute_lqr_parameters(inertia_results, base_path, motor_params, args.rvalue, args.Qterm, args.Bterm)
 
     out_path = os.path.join(base_path, "pendulum_LQR_data.json")

@@ -105,41 +105,27 @@ void loop() {
 	JsonDocument doc;
 	DeserializationError err = deserializeJson(doc, input);
 	if (!err) {
-	  supervisor.user_setpoint = -1.0f;
-	  supervisor.user_p_term   = -1.0f;
-	  supervisor.user_i_term   = -1.0f;
-	  supervisor.user_d_term   = -1.0f;
+	  supervisor.user_pulse_torque = DEFAULT_PULSE_TORQUE;
+	  supervisor.user_pulse_us     = DEFAULT_PULSE_US;
+	  supervisor.user_total_us     = DEFAULT_TOTAL_US;
+	  supervisor.user_Kd_term      = DEFAULT_KD_TERM;
+	  supervisor.user_Kp_term      = DEFAULT_KP_TERM;
 
-	  supervisor.user_pulse_torque = 0.0f;
-	  supervisor.user_pulse_us = 0;
-	  supervisor.user_total_us = 0;
+	  // {'cmd': 'send', 'pulse_torque': 0.2, 'pulse_us': 250000, 'total_us': 3000000, 'user_Kp_term': 6.26, 'user_Kd_term': 0.6}
 
 	  if (doc.containsKey("cmd") && doc["cmd"] == "send") {
-	    // PID Control experiments
-	    if (doc.containsKey("setpoint"))
-	      supervisor.user_setpoint = doc["setpoint"];   // update your variable
-	    if (doc.containsKey("p_term"))
-	      supervisor.user_p_term = doc["p_term"];
-	    if (doc.containsKey("i_term"))
-	      supervisor.user_i_term = doc["i_term"];
-	    if (doc.containsKey("d_term"))
-	      supervisor.user_d_term = doc["d_term"];
-
-	    // Torque response experiments
 	    if (doc.containsKey("pulse_torque"))
 	      supervisor.user_pulse_torque = doc["pulse_torque"];
 	    if (doc.containsKey("pulse_us"))
 	      supervisor.user_pulse_us = doc["pulse_us"];
 	    if (doc.containsKey("total_us"))
 	      supervisor.user_total_us = doc["total_us"];
+	    if (doc.containsKey("user_Kp_term"))
+	      supervisor.user_Kp_term = doc["user_Kp_term"];
+	    if (doc.containsKey("user_Kd_term"))
+	      supervisor.user_Kd_term = doc["user_Kd_term"];
 
 	    supervisor.mode = SUP_MODE_TORQUE_RESPONSE;
-
-	    Serial.printf("{\"cmd\":\"PRINT\",\"note\":\"%s\",\"pulse_torque\":%.3f,\"pulse_us\":%lu,\"total_us\":%lu}\n",
-			  "LQR test run started",
-			  supervisor.user_pulse_torque,
-			  supervisor.user_pulse_us,
-			  supervisor.user_total_us);
 
 	  }
 	}

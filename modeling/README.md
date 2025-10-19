@@ -16,7 +16,7 @@ dump_stls.py CAD Export JSON from Rhino
    ├── generates STLs
    └── pendulum_metadata.json (stl files, origin, axis of rotation)
    ↓
-$ ./generate_LQR_data.py -i pendulum_metadata.json -k 170 -p 0.07 -r 0.1 -q 150 -b 102
+$ ./generate_LQR_data.py -i pendulum_metadata.json -k 170 -p 0.07 -r 1.0 -q 50 -b 102
    ↓
    ├── computes mass, CoM, inertia
    └── writes JSON pendulum_LQR_data.json

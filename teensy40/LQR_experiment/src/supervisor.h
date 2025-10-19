@@ -19,6 +19,13 @@
 #define CONTROL_LOOP_PRIORITY 16
 #define CONTROL_PERIOD_US     1000   // 1 kHz
 
+// ---------------- Defaults ----------------
+const uint32_t DEFAULT_PULSE_US     = 0;
+const uint32_t DEFAULT_TOTAL_US     = 0;
+const float    DEFAULT_KD_TERM = 0.0f;
+const float    DEFAULT_KP_TERM = 0.0f;
+const float    DEFAULT_PULSE_TORQUE = 0.0f;
+
 // ---------------- Loop Timing Stats ----------------
 // Captures jitter and execution time statistics of the control loop.
 struct LoopTimingStats {
@@ -101,12 +108,11 @@ struct Supervisor_typedef {
   uint32_t       last_imu_update_us;                       // Timestamp of last IMU update
 
   float user_setpoint = M_PI;
-  float user_p_term = -1.0f;
-  float user_i_term = -1.0f; 
-  float user_d_term = -1.0f; 
+  float user_Kp_term = 0.0f;
+  float user_Kd_term = 0.0f; 
   float user_pulse_torque   = 0.2f;    // amplitude of torque pulse
-  uint32_t user_pulse_us    = 85000;   // duration of pulse (µs)
-  uint32_t user_total_us    = 170000;
+  uint32_t user_pulse_us    = 1000;   // duration of pulse (µs)
+  uint32_t user_total_us    = 1000;
 
   SerialStats serial1_stats;                               // Telemetry serial performance stats
 

@@ -16,11 +16,6 @@ struct LogEntry {
 static LogEntry logBuffer[LOGLEN];
 static int logIndex = 0;
 
-// ---------------- Defaults ----------------
-const float    DEFAULT_PULSE_TORQUE = 0.2f;
-const uint32_t DEFAULT_PULSE_US     = 85000;   // 85 ms
-const uint32_t DEFAULT_TOTAL_US     = 170000;  // 170 ms (85 on, 85 off)
-
 void run_mode_torque_response(Supervisor_typedef *sup,
                            FlexCAN_T4<CAN1, RX_SIZE_256, TX_SIZE_16> &can) {
     if (!sup->esc[0].state.alive) { return; }
@@ -28,21 +23,37 @@ void run_mode_torque_response(Supervisor_typedef *sup,
     static bool first_entry = true;
     static unsigned long start_time = 0;
 
+    // ---------------- Control parameters ----------------
+    const float TORQUE_CLAMP = 0.4f;
+    const float THETA_EQ = 4.368f;   // upright equilibrium position [rad]
+
+    uint32_t total_us  = (sup->user_total_us != 0)     ? sup->user_total_us     : DEFAULT_TOTAL_US;
+    uint32_t pulse_us  = (sup->user_pulse_us != 0)     ? sup->user_pulse_us     : DEFAULT_PULSE_US;
+    float SAFETY_SCALE = (sup->user_pulse_torque != 0) ? sup->user_pulse_torque : DEFAULT_PULSE_TORQUE;
+    float Kp           = (sup->user_Kp_term != 0)      ? sup->user_Kp_term      : DEFAULT_KP_TERM;
+    float Kd           = (sup->user_Kd_term != 0)      ? sup->user_Kd_term      : DEFAULT_KD_TERM;
+
+    // override stuff. 
+    // Kp = 6.26f;
+    // Kd = 0.60f;
+    // SAFETY_SCALE = 0.2f;
+
     // ---------------- Initialize on first entry ----------------
     if (first_entry) {
         logIndex = 0;
         first_entry = false;
         start_time = micros();
+
+	Serial.printf("{\"cmd\":\"PRINT\",\"note\":\"%s\", \"pulse_torque\":%.3f, \"pulse_us\":%lu, \"total_us\":%lu,  \"pulse_Kp_term\":%.3f, \"pulse_Kd_term\":%.3f}\n", 
+	      "LQR test run started",
+		      SAFETY_SCALE,
+		      pulse_us,
+		      total_us,
+		      Kp,
+		      Kd
+		      );
+
     }
-
-    // ---------------- Control parameters ----------------
-    const float Kp = 6.26f;          // updated from LQR for B_real = 102
-    const float Kd = 0.60f;
-    const float SAFETY_SCALE = 0.4f;
-    const float TORQUE_CLAMP = 0.5f;
-    const float THETA_EQ = 4.368f;   // upright equilibrium position [rad]
-
-    uint32_t total_us = (sup->user_total_us != 0) ? sup->user_total_us : DEFAULT_TOTAL_US;
 
     // ---------------- Timing ----------------
     unsigned long now_time = micros();
@@ -59,6 +70,9 @@ void run_mode_torque_response(Supervisor_typedef *sup,
     // ---------------- LQR control ----------------
     float torque_cmd = -(Kp * theta + Kd * theta_dot);
     torque_cmd *= SAFETY_SCALE;
+
+    // Serial.printf("in loop %.4f %.4f %.4f\n", Kp, Kd, torque_cmd);
+
 
     // clamp to safe limits
     if (torque_cmd > TORQUE_CLAMP)  torque_cmd = TORQUE_CLAMP;
