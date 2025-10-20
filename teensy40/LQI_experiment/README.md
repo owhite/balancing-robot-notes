@@ -57,7 +57,10 @@ This spins the **bare** motor (no pendululum and gives this result:
 
 <img src="Figure_1.png" alt="Plot result" width="300"/>
 
-Estimated decay constant `λ = 3.1526 s⁻¹` and `b=3.15e-04`
+Estimated decay constant 
+- `λ = 3.1526 s⁻¹` 
+- `b=3.15e-04`
+
 ---
 
 ## Modeling 
@@ -75,6 +78,8 @@ Parameters that need to be chosen
 | sampling period (T_s) | Discretization step (for Teensy loop) | 1–2 ms (≈ 500–1000 Hz outer loop)                                           |
 | actuator limits       | torque or current saturation          | ± Kₜ · Iₘₐₓ, e.g. ± 1.68 N·m for 30 A                                       |
 
+Once 𝑄, 𝑅 are computed, this enables you to move variables on to the teensy for:  
+**𝐾 = [𝐾𝜃, 𝐾𝜃˙,𝐾𝑖]**
 
 ## Next Steps
 
