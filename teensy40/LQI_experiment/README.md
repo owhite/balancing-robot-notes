@@ -57,11 +57,14 @@ This spins the **bare** motor (no pendululum and gives this result:
 
 <img src="Figure_1.png" alt="Plot result" width="300"/>
 
-Estimated decay constant `λ = 3.1526 s⁻¹`
-
+Estimated decay constant `λ = 3.1526 s⁻¹` and `b=3.15e-04`
 ---
 
-## Modeling & Validation
+## Modeling 
+
+We have a bunch of variables, let's go:
+
+<img src="Figure3.png" alt="Plot result" width="600"/>
 
 ## Next Steps
 
