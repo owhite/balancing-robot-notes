@@ -13,8 +13,18 @@ This document describes the workflow for running LQI
 
 ---
 
-## Motor Constants
+<img src="Figure_1.png" alt="Plot result" width="300"/>
 
+---
+
+## Motor Constants Ke, Kt, Kv
+
+<img src="Figure_1.png" alt="Plot result" width="300"/>
+
+
+## Motor Constants: motor decay
+
+---
 After applying a known torque pulse to the motor, the control program records the motor’s angular velocity as it freely spins down once the torque command is set to zero. During this free-decay phase, no active control or regenerative braking is applied—the motion is governed solely by passive damping effects such as bearing friction, air drag, and internal electrical losses.
 
 The motor’s deceleration follows the first-order dynamic model:
@@ -49,7 +59,11 @@ $ ./LQI_experiment.py  /dev/cu.usbmodem178888901
 json command passed to teensy:
 ``` {'cmd': 'send', 'pulse_torque': 0.4, 'total_us': 2000000, 'pulse_us': 500000}```
 
+This spins the **bare** motor (no pendululum and gives this result: 
+
 <img src="Figure_1.png" alt="Plot result" width="300"/>
+
+Estimated decay constant `λ = 3.1526 s⁻¹`
 
 ---
 
