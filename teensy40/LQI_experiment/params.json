@@ -1,0 +1,7 @@
+{
+  "kv": 170,
+  "torque": 1.0,
+  "pulse_ms": 500,
+  "total_ms": 2000,
+  "LQR_data": "/Users/owhite/MESC_brain_board/modeling/pendulum_LQR_data.json"
+}
