@@ -12,14 +12,12 @@ This document describes the workflow for running LQI
 
 ---
 
-<img src="Figure_1.png" alt="Plot result" width="300"/>
 
 ---
 
 ## Motor Constants Ke, Kt, Kv
 
 <img src="figure0.png" alt="Plot result" width="300"/>
-
 
 ## Motor Constants: motor decay
 
