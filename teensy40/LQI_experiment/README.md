@@ -66,6 +66,16 @@ We have a bunch of variables, let's go:
 
 <img src="Figure3.png" alt="Plot result" width="600"/>
 
+Parameters that need to be chosen
+
+| Parameter             | Description                           | Typical Starting Point                                                      |
+| --------------------- | ------------------------------------- | --------------------------------------------------------------------------- |
+| (Q)                   | State weighting matrix                | diag([q₁, q₂, qᵢ]) — emphasize position & integral more than velocity       |
+| (R)                   | Control effort weight                 | scalar; start around 0.1–10 depending on how aggressive you want torque use |
+| sampling period (T_s) | Discretization step (for Teensy loop) | 1–2 ms (≈ 500–1000 Hz outer loop)                                           |
+| actuator limits       | torque or current saturation          | ± Kₜ · Iₘₐₓ, e.g. ± 1.68 N·m for 30 A                                       |
+
+
 ## Next Steps
 
 - Implement the Python ↔ Teensy serial protocol.  
