@@ -38,51 +38,22 @@ The program automatically identifies the point where torque drops to zero and fi
 
 These values are displayed in the GUI label and provide a direct, repeatable way to quantify mechanical damping in the system. The estimated damping coefficient 𝑏 is used later in the control model to refine LQR/LQI design and improve accuracy in simulated or analytical predictions.
 
-## Logging
+## Python Interface
 
-Each sample records:
+Launch the graphing program
 
-- `t_us` (µs since start of experiment)  
-- `torque` (normalized ESC command)  
-- `pos` (measured rotor angle, rad)  
-- `vel` (measured rotor velocity, rad/s)  
+```
+$ ./LQI_experiment.py  /dev/cu.usbmodem178888901
+```
 
-These logs are consumed later in Python for least squares fitting.
+json command passed to teensy:
+``` {'cmd': 'send', 'pulse_torque': 0.4, 'total_us': 2000000, 'pulse_us': 500000}```
 
 <img src="Figure_1.png" alt="Plot result" width="300"/>
 
 ---
 
-## Python Interface
-
-We will use a Python + matplotlib GUI to:
-
-1. Accept user parameters:
-   - `Kt` (Nm/A)  
-   - `pulse_duration` (ms)  
-   - `torque_request` (Nm)  
-2. Compute:
-   - Phase current: \(I = T / K_t\)  
-   - Normalized command: \(I / I_\text{max}\)  
-3. Send configuration (`user_pulse_torque`, `user_pulse_us`, `user_total_us`) to the Teensy over serial.  
-4. Run the experiment.  
-5. Retrieve JSON logs and overlay experimental response with PyBullet predictions.  
-
-Launch the graphing program
-```
-$ ./torque_raise.py  /dev/cu.usbmodem178888901
-```
-
----
-
 ## Modeling & Validation
-
-- In PyBullet (or analytical model), simulate the pendulum response to the same pulse torque input.  
-- Compare **position** and **velocity** traces to experimental data.  
-- Apply **least squares fitting** to minimize error and update estimated parameters (inertia, damping, Kt).  
-- Iterate until model matches physical system.  
-
----
 
 ## Next Steps
 
