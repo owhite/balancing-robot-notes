@@ -9,7 +9,6 @@ This document describes the workflow for running LQI
 - Apply known torque inputs (pulses) to motor system.  
 - Measure **position** and **velocity** response over time.  
 - Estimating the Decay Constant (λ) and Damping Coefficient (b)
-- 
 
 ---
 
