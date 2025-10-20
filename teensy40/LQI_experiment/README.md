@@ -6,12 +6,10 @@ This document describes the workflow for running LQI
 
 ## Goals
 
-- Apply known torque inputs (pulses) to motor system.  
-- Measure **position** and **velocity** response over time.  
-- Estimating the Decay Constant (λ) and Damping Coefficient (b)
-
----
-
+- Gather up a bunch of values to model the motor
+- Thing1
+- Thing2
+- Thing3 
 
 ---
 
@@ -21,7 +19,6 @@ This document describes the workflow for running LQI
 
 ## Motor Constants: motor decay
 
----
 After applying a known torque pulse to the motor, the control program records the motor’s angular velocity as it freely spins down once the torque command is set to zero. During this free-decay phase, no active control or regenerative braking is applied—the motion is governed solely by passive damping effects such as bearing friction, air drag, and internal electrical losses.
 
 The motor’s deceleration follows the first-order dynamic model:
