@@ -81,9 +81,7 @@ Parameters that need to be chosen
 Once 𝑄, 𝑅 are computed, this enables you to move variables on to the teensy for:  
 **𝐾 = [𝐾𝜃, 𝐾𝜃˙,𝐾𝑖]**
 
-## Next Steps
-
-I am attaching a program that will send values to my teensy and perform graphing
+## Position control
 
 The inputs are passed as json on parameters, and will include:
 Kt = 0.005617 Nm, λ = 3.1526 s⁻¹ , b=3.15e-04 and Ts = 0.002
@@ -104,19 +102,19 @@ they will be passed in this way:
   "LQI_path": "/Users/owhite/MESC_brain_board/teensy40/LQI_experiment"
 }
 ```
-Pass in the data using the python program:
+These data are used by the python program:
 
 ```
 $ ./LQI_command.py -p /dev/cu.usbmodem178888901 -j params.json
 ```
 
+which outputs the data to the teensy through the serial
+
 ```
 {'cmd': 'position', 'torque': 1.0, 'total_us': 1100000, 'user_Kth_term': 0.0523, 'user_Kw_term': 0.0147, 'user_Ki_term': 0.0158, 'theta_ref': 3.0}
 ```
 
-So the user can change some variables, for example, qterm, rterm, torque, theta, total_ms
-
-create matrices for A_c, B_c and calculate the K gains using cont2discrete() 
+The teensy uses these K-gains in the following code:
 
 ```c
 void run_mode_set_position(Supervisor_typedef *sup,
