@@ -73,7 +73,7 @@ Parameters that need to be chosen
 
 | Parameter             | Description                           | Typical Starting Point                                                      |
 | --------------------- | ------------------------------------- | --------------------------------------------------------------------------- |
-| (Q)                   | State weighting matrix                | diag([𝑄𝜃, 𝑄𝜔, 𝑄𝑖]) — emphasize position & integral more than velocity       |
+| (Q)                   | State weighting matrix                | [𝑄𝜃, 𝑄𝜔, 𝑄𝑖] — emphasize position & integral more than velocity       |
 | (R)                   | Control effort weight                 | scalar; start around 0.1–10 depending on how aggressive you want torque use |
 | sampling period (T_s) | Discretization step (for Teensy loop) | 1–2 ms (≈ 500–1000 Hz outer loop)                                           |
 | actuator limits       | torque or current saturation          | ± Kₜ · Iₘₐₓ, e.g. ± 1.68 N·m for 30 A                                       |
@@ -233,8 +233,8 @@ void run_mode_set_position(Supervisor_typedef *sup,
 
 The UI for the python graphing progam enables user input for the Matrix Q, R term and other variables. Adjusting each term has these impacts
 
-| Parameter             | Symbol     | Effect on Behavior          | What You’ll See                                                              |
-| --------------------- | ---- | --------------------------- | ---------------------------------------------------------------------------- |
+| Parameter              | Symbol     | Effect on Behavior          | What You’ll See                                                              |
+| ---------------------- | ---- | --------------------------- | ---------------------------------------------------------------------------- |
 | **Position weight**   | 𝑄𝜃 | Penalizes position error    | Higher → faster response, more torque, can overshoot                         |
 | **Velocity weight**   | 𝑄𝜔 | Penalizes angular speed     | Higher → smoother motion, less oscillation, slower response                  |
 | **Integrator weight** | 𝑄𝑖  | Penalizes accumulated error | Higher → removes steady-state bias faster, but can cause bounce or overshoot |
