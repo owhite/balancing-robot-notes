@@ -90,31 +90,31 @@ Kt = 0.005617 Nm, λ = 3.1526 s⁻¹ , b=3.15e-04 and Ts = 0.002
 
 they will be passed in this way: 
 
+```
 {
-  "qterm": "[100.0, 1.0, 500.0]",
-  "rterm": 1.0,
+  "qterm": "[.1, 10.0, .05]",
+  "rterm": 200000.0,
   "Kt": 0.005617,
   "lambda": 3.1526,
   "Ts": 0.002,
   "b_decay": 0.000315,
-  "torque": 0.2,
-  "theta": 3.14,
-  "total_ms": 3000000,
-  "LQI_path": "/Users/owhite/MESC_brain_board/teensy40/LQI_experiment",
-  "Q": "[1.0, 1.0, 1.0]",
-  "R": 1.0
+  "torque": 1.0,
+  "theta": 3.0,
+  "total_ms": 1100,
+  "LQI_path": "/Users/owhite/MESC_brain_board/teensy40/LQI_experiment"
 }
+```
+Pass in the data using the python program:
 
-And end up in params, for example:
+```
+$ ./LQI_command.py -p /dev/cu.usbmodem178888901 -j params.json
+```
 
-params["Kt"] = 0.005617
-params["lambda"] = 3.1526
-params["Ts"] = 0.002
-params["b_decay"] = 0.000315
+```
+{'cmd': 'position', 'torque': 1.0, 'total_us': 1100000, 'user_Kth_term': 0.0523, 'user_Kw_term': 0.0147, 'user_Ki_term': 0.0158, 'theta_ref': 3.0}
+```
 
 So the user can change some variables, for example, qterm, rterm, torque, theta, total_ms
-
-Your job is this. At the code comment: # COMPUTE cont2discrete() HERE
 
 create matrices for A_c, B_c and calculate the K gains using cont2discrete() 
 
