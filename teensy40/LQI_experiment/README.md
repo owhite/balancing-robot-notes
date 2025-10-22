@@ -1,6 +1,6 @@
 # LQI ≡ Linear–Quadratic–Integral 
 
-## Workflow for running LQI
+## Workflow to set up LQI
 
 - Gather up motor constants Ke, Kt, Kv
 - Plot motor decay constant
@@ -57,7 +57,7 @@ Estimated decay constant
 
 ## Modeling 
 
-So now have a bunch of variables, to complete the LQI modeling. Let's go:
+So now have a bunch of variables to complete the LQI modeling. Let's go:
 
 <img src="Figure3.png" alt="Plot result" width="600"/>
 
@@ -222,7 +222,7 @@ void run_mode_set_position(Supervisor_typedef *sup,
 
 ## Tuning Parameter Summary
 
-The UI for the python graphing progam enables user input for the Matrix Q, R term and other variables. Adjusting each term has these impacts
+The UI for the python graphing progam enables user input for the Q matrix, the R term and other variables. Adjusting each term has these impacts:
 
 | Parameter              | Symbol     | Effect on Behavior          | What You’ll See                                                              |
 | ---------------------- | ---- | --------------------------- | ---------------------------------------------------------------------------- |
@@ -264,12 +264,14 @@ The UI for the python graphing progam enables user input for the Matrix Q, R ter
 
 <img src="Figure4.png" alt="Plot result" width="300"/>
 
+**Note** the relatively rapid settling time of 300ms. 
+
 ## Summary
 
-Linear–Quadratic control methods (LQR and LQI) begin with the physical laws that govern the plant — equations originally formulated by Isaac Newton, expressing how forces, torques, and accelerations relate to system motion. These continuous-time dynamics are then forumulated into a state-space model, where matrix algebra captures how all relevant states (such as position, velocity, and integral error) evolve under control inputs. From this model, an optimal feedback law is derived that minimizes a user-defined cost function, allowing the designer to tune intuitive weighting parameters (𝑄 and 𝑅) that balance performance against effort. The result is a compact set of gain values (𝐾𝜃, 𝐾𝜔, 𝐾𝑖) — simple numerical coefficients that are deployed directly on the microcontroller. Remarkably this control law distills down to a simple line of code:
+Linear–Quadratic control methods (LQR and LQI) begin with the physical laws that govern the plant — equations originally formulated by Isaac Newton, expressing how forces, torques, and accelerations relate to system motion. These continuous-time dynamics are then forumulated into a state-space model, where matrix algebra captures how all relevant states (such as position, velocity, and integral error) will evolve under control inputs. From this model, an optimal feedback law is derived that minimizes a user-defined cost function, allowing the designer to tune intuitive weighting parameters (𝑄 and 𝑅) that balance performance against effort. The result is a compact set of gain values (𝐾𝜃, 𝐾𝜔, 𝐾𝑖) that are used as simple numerical coefficients that are deployed directly on the microcontroller. Remarkably this control law distills down to a simple line of code on the microcontroller:
 
 ```c
     torque_cmd = Kth_term * error - Kw_term * omega + Ki_term * integ_error;
 ```
 
-that transforms a deep physical modeling into efficient, real-time control.
+that transforms a complex physical model into efficient, real-time control.
