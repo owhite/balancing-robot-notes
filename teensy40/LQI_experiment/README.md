@@ -1,4 +1,4 @@
-# LQI
+# LQI ≡ Linear–Quadratic–Integral 
 
 ## Goals
 
