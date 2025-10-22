@@ -111,7 +111,7 @@ void loop() {
 
 	  // {'cmd': 'send', 'pulse_torque': 0.2, 'pulse_us':  2000000, 'total_us': 3000000}
 
-	  if (doc.containsKey("cmd") && doc["cmd"] == "send") {
+	  if (doc.containsKey("cmd") && doc["cmd"] == "pulse") {
 	    if (doc.containsKey("pulse_torque"))
 	      supervisor.user_pulse_torque = doc["pulse_torque"];
 	    if (doc.containsKey("pulse_us"))
@@ -120,6 +120,31 @@ void loop() {
 	      supervisor.user_total_us = doc["total_us"];
 
 	    supervisor.mode = SUP_MODE_INERTIA_TEST;
+	  }
+
+	  if (doc.containsKey("cmd") && doc["cmd"] == "position") {
+	    supervisor.user_torque   = 0.0f;
+	    supervisor.user_Kth_term = 0.0f;
+	    supervisor.user_Kw_term  = 0.0f;
+	    supervisor.user_Ki_term  = 0.0f;
+	    supervisor.user_theta    = 0.0f;
+	    supervisor.user_total_us = 0;
+
+	    // {'cmd': 'position', 'torque': 0.2, 'total_us': 3000000000, 'user_Kth_term': 10.1479, 'user_Kw_term': 1.0603, 'user_Ki_term': 6.6391, 'theta_ref': 3.14}
+	    if (doc.containsKey("torque"))
+	      supervisor.user_torque = doc["torque"];
+	    if (doc.containsKey("user_Kth_term"))
+	      supervisor.user_Kth_term = doc["user_Kth_term"];
+	    if (doc.containsKey("user_Kw_term"))
+	      supervisor.user_Kw_term = doc["user_Kw_term"];
+	    if (doc.containsKey("user_Ki_term"))
+	      supervisor.user_Ki_term = doc["user_Ki_term"];
+	    if (doc.containsKey("theta_ref"))
+	      supervisor.user_theta = doc["theta_ref"];
+	    if (doc.containsKey("total_us"))
+	      supervisor.user_total_us = doc["total_us"];
+
+	    supervisor.mode = SUP_MODE_SET_POSITION;
 	  }
 	}
 	input = "";  // reset buffer

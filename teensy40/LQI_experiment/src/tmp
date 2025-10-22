@@ -1,0 +1,22 @@
+I am going to pass you code for a function run_mode_set_position() that will run on a teensy and handle sending commands to a motor controller using CAN. The important CAN command is:
+
+canPackFloat(torque_cmd, msg.buf);
+
+The control law variables that are passed into the function are these:
+
+sup->torque, sup->user_Kth_term, sup->user_Kw_term, sup->user_Ki_term, sup->theta, sup->total_us
+
+and example values that will be tied to the variables are the following:
+
+user_Kth_term = 10.1478, user_Kw_term = 1.0602, user_Ki_term = 6.63911, theta_ref = 3.14, total_ms = 3000000000
+
+Perform the calculation for torque based on the control law values near the comment:
+
+// ---------------- LQI control here ----------------
+
+Notice that the function has a section to initialize values for the first time it enters this loop ("Initialize"), it has a section for finding the motor position, and it has a section that dumps recorded data ("End condition")
+
+
+
+
+

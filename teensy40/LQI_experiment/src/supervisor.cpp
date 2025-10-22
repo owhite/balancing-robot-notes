@@ -5,6 +5,8 @@
 
 void run_mode_inertia_test(Supervisor_typedef *sup,
 			      FlexCAN_T4<CAN1, RX_SIZE_256, TX_SIZE_16> &can);
+void run_mode_set_position(Supervisor_typedef *sup,
+			      FlexCAN_T4<CAN1, RX_SIZE_256, TX_SIZE_16> &can);
 
 static int telem_counter = 0;
 
@@ -257,9 +259,18 @@ void controlLoop(MPU6050 &imu, Supervisor_typedef *sup,
 	// Serial.printf("{\"t\":%lu,\"pos\":%.6f}\n", t_us, pos);
 	// Serial.printf("{\"cmd\": \"PRINT\", \"note\": \"Torque response runnning\"}\n");
     }
-
     break;
- }
+  }
+  case SUP_MODE_SET_POSITION: {
+    run_mode_set_position(sup, can);
+    if (++telem_counter >= TELEMETRY_DECIMATE) {
+        telem_counter = 0;
+	// --- Print motor position as JSON ---
+	float pos = sup->esc[0].state.pos_rad;   // radians
+	unsigned long t_us = micros();           // timestamp
+    }
+    break;
+  }
   default: {
     break;
   }

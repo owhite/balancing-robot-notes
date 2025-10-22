@@ -47,7 +47,7 @@ These values are displayed in the GUI label and provide a direct, repeatable way
 Launch the graphing program
 
 ```
-$ ./LQI_experiment.py  /dev/cu.usbmodem178888901
+$ ./LQI_experiment.py -p /dev/cu.usbmodem178888901 -j pulse.json
 ```
 
 json command passed to teensy:
@@ -83,10 +83,40 @@ Once 𝑄, 𝑅 are computed, this enables you to move variables on to the teens
 
 ## Next Steps
 
-- Implement the Python ↔ Teensy serial protocol.  
-- Run a baseline 0.2 Nm, 85 ms pulse and verify response.  
-- Scale experiments:
-  - Vary pulse amplitudes (0.1 Nm, 0.3 Nm, …).  
-  - Vary durations (50 ms, 100 ms, …).  
-- Use PRBS excitation once pulse responses look consistent.  
-- Validate the fitted model with new inputs not used for training.  
+I am attaching a program that will send values to my teensy and perform graphing
+
+The inputs are passed as json on parameters, and will include:
+Kt = 0.005617 Nm, λ = 3.1526 s⁻¹ , b=3.15e-04 and Ts = 0.002
+
+they will be passed in this way: 
+
+{
+  "qterm": "[100.0, 1.0, 500.0]",
+  "rterm": 1.0,
+  "Kt": 0.005617,
+  "lambda": 3.1526,
+  "Ts": 0.002,
+  "b_decay": 0.000315,
+  "torque": 0.2,
+  "theta": 3.14,
+  "total_ms": 3000000,
+  "LQI_path": "/Users/owhite/MESC_brain_board/teensy40/LQI_experiment",
+  "Q": "[1.0, 1.0, 1.0]",
+  "R": 1.0
+}
+
+And end up in params, for example:
+
+params["Kt"] = 0.005617
+params["lambda"] = 3.1526
+params["Ts"] = 0.002
+params["b_decay"] = 0.000315
+
+So the user can change some variables, for example, qterm, rterm, torque, theta, total_ms
+
+Your job is this. At the code comment: # COMPUTE cont2discrete() HERE
+
+create matrices for A_c, B_c and calculate the K gains using cont2discrete() 
+
+<img src="Figure4.png" alt="Plot result" width="300"/>
+

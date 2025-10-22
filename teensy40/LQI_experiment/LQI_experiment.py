@@ -9,7 +9,6 @@ from scipy.linalg import solve_discrete_are
 
 I_MAX = 30.0  # Amps, max current limit configured in ESC
 
-
 def angle_diff(a, b):
     """Return minimal signed difference between two angles (wrap at 2π)."""
     return (a - b + math.pi) % (2 * math.pi) - math.pi
@@ -76,7 +75,7 @@ def save_and_run(event, params, textboxes, label, axes_state, args, ser):
     # {'cmd': 'send', 'pulse_torque': 0.2, 'pulse_us': 250000, 'total_us': 3000000, 'user_Kp_term': 6.26, 'user_Kd_term': 0.6}
 
     msg = {
-        "cmd": "send",
+        "cmd": "pulse",
         "pulse_torque": params["torque"],
         "total_us": params["total_ms"] * 1000,
         "pulse_us": params["pulse_ms"] * 1000
@@ -180,7 +179,8 @@ def main():
                     # --- Find when torque goes to zero (start of spin-down) ---
                     zero_idx = np.argmax(torque == 0)  # first index where torque == 0
                     if zero_idx <= 0 or zero_idx >= len(t) - 10:
-                        print("⚠️  Not enough spin-down data to estimate damping.")
+                        # print("⚠️  Not enough spin-down data to estimate damping.")
+                        pass
                     else:
                         # Take only the spin-down region (velocity > 0 and smooth decay)
                         t_decay = t[zero_idx:]
@@ -201,7 +201,7 @@ def main():
                             print(f"✅ Estimated decay constant λ = {lam:.4f} s⁻¹ (so b/J = λ).")
 
                             # Optional: if J is known, compute b
-                            J_est = 1.0e-4   # <-- replace with your actual inertia [kg·m²]
+                            J_est = 1.0e-4   # must be actual inertia [kg·m²]
                             b_est = lam * J_est
                             msg = f"λ={lam:.3f}s⁻¹\nb={b_est:.2e}\n(N·m·s/rad)"
                             print(f"✅ {msg}")

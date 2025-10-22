@@ -1,7 +1,12 @@
 {
-  "kv": 170,
+  "qterm": "[.1, 10.0, .05]",
+  "rterm": 200000.0,
+  "Kt": 0.005617,
+  "lambda": 3.1526,
+  "Ts": 0.002,
+  "b_decay": 0.000315,
   "torque": 1.0,
-  "pulse_ms": 500,
-  "total_ms": 2000,
-  "LQR_data": "/Users/owhite/MESC_brain_board/modeling/pendulum_LQR_data.json"
+  "theta": 3.0,
+  "total_ms": 1100,
+  "LQI_path": "/Users/owhite/MESC_brain_board/teensy40/LQI_experiment"
 }
