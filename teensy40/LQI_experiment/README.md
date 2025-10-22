@@ -229,5 +229,43 @@ void run_mode_set_position(Supervisor_typedef *sup,
 }
 ```
 
+## Tuning 
+
+The UI for the python graphing progam enables user input for the Matrix Q, R term and other variables. Adjusting each term has these impacts
+
+| Parameter             | Symbol     | Effect on Behavior          | What You’ll See                                                              |
+| --------------------- | ---------- | --------------------------- | ---------------------------------------------------------------------------- |
+| **Position weight**   | (Q_\theta) | Penalizes position error    | Higher → faster response, more torque, can overshoot                         |
+| **Velocity weight**   | (Q_\omega) | Penalizes angular speed     | Higher → smoother motion, less oscillation, slower response                  |
+| **Integrator weight** | (Q_i)      | Penalizes accumulated error | Higher → removes steady-state bias faster, but can cause bounce or overshoot |
+| **Torque weight**     | (R)        | Penalizes torque effort     | Higher → gentle, slower motion; Lower → aggressive, fast, more power draw    |
+
+🟢 Increase 𝑄𝜃
+- Controller fights harder to correct position.
+- Quicker movement toward target.
+- More torque, possibly overshoot or oscillation.
+- Good for: precision pointing or small loads.
+- Bad for: high inertia or torque saturation limits.
+🟣 Increase 𝑄𝜔
+- Penalizes velocity — adds damping.
+- Reduces overshoot and bounce.
+- Too high: motion becomes sluggish, stalls before setpoint.
+- Good for: stability and smoothness.
+🟠 Increase 𝑄𝑖
+- Stronger correction for small residual errors.
+- Improves accuracy; reduces steady-state offset.
+- Too high: integral windup → small oscillations or “creep.”
+- Good for: eliminating long-term bias in load torque.
+🔵 Increase 𝑅
+- Discourages large torque commands.
+- Makes controller conservative and smooth.
+- Too high: system becomes underpowered, never reaches setpoint.
+- Good for: when you want to test safely or avoid current spikes.
+🔴 Decrease 𝑅
+- Controller becomes aggressive.
+- Higher torque, faster rise time.
+- Too low: possible overshoot or torque saturation.
+- Good for: when you want more “authority” (stronger actuation).
+
 <img src="Figure4.png" alt="Plot result" width="300"/>
 
