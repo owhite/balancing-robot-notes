@@ -1,19 +1,17 @@
 # LQI ≡ Linear–Quadratic–Integral 
 
-## Goals
-
-This document describes the workflow for running LQI
+## Workflow for running LQI
 
 - Gather up motor constants Ke, Kt, Kv
 - Plot motor decay constant
 - Develop LQI model
-- Tune
+- Tune/plot motor behavior
 
-## Motor Constants Ke, Kt, Kv
+## Calculate Motor Constants Ke, Kt, Kv
 
 <img src="figure0.png" alt="Plot result" width="600"/>
 
-## Motor Constants: motor decay
+## Measure Motor Constant: decay
 
 After applying a known torque pulse to the motor, the control program records the motor’s angular velocity as it freely spins down once the torque command is set to zero. During this free-decay phase, no active control or regenerative braking is applied—the motion is governed solely by passive damping effects such as bearing friction, air drag, and internal electrical losses.
 
@@ -49,21 +47,21 @@ $ ./LQI_experiment.py -p /dev/cu.usbmodem178888901 -j pulse.json
 json command passed to teensy:
 ``` {'cmd': 'send', 'pulse_torque': 0.4, 'total_us': 2000000, 'pulse_us': 500000}```
 
-This spins the **bare** motor (no pendululum and gives this result: 
+This spins the **bare** motor (no pendululum) and gives this result: 
 
 <img src="Figure_1.png" alt="Plot result" width="300"/>
 
 Estimated decay constant 
 - `λ = 3.1526 s⁻¹` 
-- `b=3.15e-04`
+- `b = 3.15e-04`
 
 ## Modeling 
 
-We have a bunch of variables, let's go:
+So now have a bunch of variables, to complete the LQI modeling. Let's go:
 
 <img src="Figure3.png" alt="Plot result" width="600"/>
 
-Parameters that need to be chosen
+Parameters used for tuning:
 
 | Parameter             | Description                           | Typical Starting Point                                                      |
 | --------------------- | ------------------------------------- | --------------------------------------------------------------------------- |
@@ -75,9 +73,9 @@ Parameters that need to be chosen
 Once 𝑄, 𝑅 are computed, this enables you to move variables on to the teensy for:  
 **𝐾 = [𝐾𝜃, 𝐾𝜃˙,𝐾𝑖]**
 
-## Position control
+## Tuning for Position Control
 
-The inputs are passed as json on parameters, and will include:
+The inputs are passed as json on parameters, and will include:  
 Kt = 0.005617 Nm, λ = 3.1526 s⁻¹ , b=3.15e-04 and Ts = 0.002
 
 they will be passed in this way: 
@@ -102,13 +100,13 @@ These data are used by the python program:
 $ ./LQI_command.py -p /dev/cu.usbmodem178888901 -j params.json
 ```
 
-which outputs the data to the teensy through the serial
+which outputs the data from the desktop to the teensy through the serial using the json:
 
 ```
 {'cmd': 'position', 'torque': 1.0, 'total_us': 1100000, 'user_Kth_term': 0.0523, 'user_Kw_term': 0.0147, 'user_Ki_term': 0.0158, 'theta_ref': 3.0}
 ```
 
-The teensy uses these K-gains in the following code:
+The K-gains get read by the teensy in the following code:
 
 ```c
 void run_mode_set_position(Supervisor_typedef *sup,
@@ -184,8 +182,7 @@ void run_mode_set_position(Supervisor_typedef *sup,
 
     // Send torque over CAN
     CAN_message_t msg;
-    msg.id = canMakeExtId(CAN_ID_IQREQ, TEENSY_NODE_ID,
-                          sup->esc[0].config.node_id);
+    msg.id = canMakeExtId(CAN_ID_IQREQ, TEENSY_NODE_ID, sup->esc[0].config.node_id);
     msg.len = 8;
     msg.flags.extended = 1;
     canPackFloat(torque_cmd, msg.buf);
@@ -223,7 +220,7 @@ void run_mode_set_position(Supervisor_typedef *sup,
 }
 ```
 
-## Tuning 
+## Tuning Parameter Summary
 
 The UI for the python graphing progam enables user input for the Matrix Q, R term and other variables. Adjusting each term has these impacts
 
@@ -233,9 +230,6 @@ The UI for the python graphing progam enables user input for the Matrix Q, R ter
 | **Velocity weight**   | 𝑄𝜔 | Penalizes angular speed     | Higher → smoother motion, less oscillation, slower response                  |
 | **Integrator weight** | 𝑄𝑖  | Penalizes accumulated error | Higher → removes steady-state bias faster, but can cause bounce or overshoot |
 | **Torque weight**     | 𝑅  | Penalizes torque effort     | Higher → gentle, slower motion; Lower → aggressive, fast, more power draw    |
-
-
-
 
 🟢 Increase 𝑄𝜃
 - Controller fights harder to correct position.
@@ -270,3 +264,12 @@ The UI for the python graphing progam enables user input for the Matrix Q, R ter
 
 <img src="Figure4.png" alt="Plot result" width="300"/>
 
+## Summary
+
+Linear–Quadratic control methods (LQR and LQI) begin with the physical laws that govern the plant — equations originally formulated by Isaac Newton, expressing how forces, torques, and accelerations relate to system motion. These continuous-time dynamics are then forumulated into a state-space model, where matrix algebra captures how all relevant states (such as position, velocity, and integral error) evolve under control inputs. From this model, an optimal feedback law is derived that minimizes a user-defined cost function, allowing the designer to tune intuitive weighting parameters (𝑄 and 𝑅) that balance performance against effort. The result is a compact set of gain values (𝐾𝜃, 𝐾𝜔, 𝐾𝑖) — simple numerical coefficients that are deployed directly on the microcontroller. Remarkably this control law distills down to a simple line of code:
+
+```c
+    torque_cmd = Kth_term * error - Kw_term * omega + Ki_term * integ_error;
+```
+
+that transforms a deep physical modeling into efficient, real-time control.
