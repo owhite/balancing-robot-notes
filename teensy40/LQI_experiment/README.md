@@ -246,21 +246,25 @@ The UI for the python graphing progam enables user input for the Matrix Q, R ter
 - More torque, possibly overshoot or oscillation.
 - Good for: precision pointing or small loads.
 - Bad for: high inertia or torque saturation limits.
+
 🟣 Increase 𝑄𝜔
 - Penalizes velocity — adds damping.
 - Reduces overshoot and bounce.
 - Too high: motion becomes sluggish, stalls before setpoint.
 - Good for: stability and smoothness.
+
 🟠 Increase 𝑄𝑖
 - Stronger correction for small residual errors.
 - Improves accuracy; reduces steady-state offset.
 - Too high: integral windup → small oscillations or “creep.”
 - Good for: eliminating long-term bias in load torque.
+
 🔵 Increase 𝑅
 - Discourages large torque commands.
 - Makes controller conservative and smooth.
 - Too high: system becomes underpowered, never reaches setpoint.
 - Good for: when you want to test safely or avoid current spikes.
+
 🔴 Decrease 𝑅
 - Controller becomes aggressive.
 - Higher torque, faster rise time.
