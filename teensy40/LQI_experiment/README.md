@@ -1,17 +1,13 @@
 # LQI
 
-This document describes the workflow for running LQI
-
----
-
 ## Goals
 
-- Gather up a bunch of values to model the motor
-- Thing1
-- Thing2
-- Thing3 
+This document describes the workflow for running LQI
 
----
+- Gather up motor constants Ke, Kt, Kv
+- Plot motor decay constant
+- Develop LQI model
+- Tune
 
 ## Motor Constants Ke, Kt, Kv
 
@@ -60,8 +56,6 @@ This spins the **bare** motor (no pendululum and gives this result:
 Estimated decay constant 
 - `λ = 3.1526 s⁻¹` 
 - `b=3.15e-04`
-
----
 
 ## Modeling 
 
