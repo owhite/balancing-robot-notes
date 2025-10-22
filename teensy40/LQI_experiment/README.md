@@ -234,11 +234,11 @@ void run_mode_set_position(Supervisor_typedef *sup,
 The UI for the python graphing progam enables user input for the Matrix Q, R term and other variables. Adjusting each term has these impacts
 
 | Parameter             | Symbol     | Effect on Behavior          | What You’ll See                                                              |
-| --------------------- | ---------- | --------------------------- | ---------------------------------------------------------------------------- |
-| **Position weight**   | (Q_\theta) | Penalizes position error    | Higher → faster response, more torque, can overshoot                         |
-| **Velocity weight**   | (Q_\omega) | Penalizes angular speed     | Higher → smoother motion, less oscillation, slower response                  |
-| **Integrator weight** | (Q_i)      | Penalizes accumulated error | Higher → removes steady-state bias faster, but can cause bounce or overshoot |
-| **Torque weight**     | (R)        | Penalizes torque effort     | Higher → gentle, slower motion; Lower → aggressive, fast, more power draw    |
+| --------------------- | ---- | --------------------------- | ---------------------------------------------------------------------------- |
+| **Position weight**   | 𝑄𝜃 | Penalizes position error    | Higher → faster response, more torque, can overshoot                         |
+| **Velocity weight**   | 𝑄𝜔 | Penalizes angular speed     | Higher → smoother motion, less oscillation, slower response                  |
+| **Integrator weight** | 𝑄𝑖  | Penalizes accumulated error | Higher → removes steady-state bias faster, but can cause bounce or overshoot |
+| **Torque weight**     | 𝑅  | Penalizes torque effort     | Higher → gentle, slower motion; Lower → aggressive, fast, more power draw    |
 
 🟢 Increase 𝑄𝜃
 - Controller fights harder to correct position.
