@@ -278,8 +278,6 @@ The UI for the python graphing progam enables user input for the Q matrix, the R
 
 **Note** the relatively rapid settling time of 300ms. 
 
----
-
 ## Spinning the Motor Under LQI Control Law
 
 Preliminary results **sending position commands** using the brain board's onboard RC transmitter. 
