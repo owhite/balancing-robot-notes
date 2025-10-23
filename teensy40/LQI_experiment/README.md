@@ -1,5 +1,16 @@
 # LQI ≡ Linear–Quadratic–Integral 
 
+What I find interesting about Linear–Quadratic control methods (e.g., LQR and LQI) is they begin with the physical laws that govern the plant — equations originally formulated by Isaac Newton, expressing how forces, torques, and accelerations relate to system motion. These continuous-time dynamics are then forumulated into a state-space model, where matrix algebra captures how all relevant states (such as position, velocity, and integral error) will evolve under control inputs. From this model, an optimal feedback law is derived that minimizes a user-defined cost function, allowing the designer to tune intuitive weighting parameters (𝑄 and 𝑅) that balance performance against effort. 
+
+The result is a compact set of gain values (𝐾𝜃, 𝐾𝜔, 𝐾𝑖) that are used as simple numerical coefficients that are deployed directly on the microcontroller. Remarkably this control law distills down to a simple line of code on the microcontroller:
+
+```c
+    torque_cmd = Kth_term * error - Kw_term * omega + Ki_term * integ_error;
+```
+
+These gains transforms a complex physical model into efficient, real-time control.
+
+
 ## Workflow to set up LQI
 
 - Gather up motor constants Ke, Kt, Kv
@@ -266,12 +277,3 @@ The UI for the python graphing progam enables user input for the Q matrix, the R
 
 **Note** the relatively rapid settling time of 300ms. 
 
-## Summary
-
-Linear–Quadratic control methods (LQR and LQI) begin with the physical laws that govern the plant — equations originally formulated by Isaac Newton, expressing how forces, torques, and accelerations relate to system motion. These continuous-time dynamics are then forumulated into a state-space model, where matrix algebra captures how all relevant states (such as position, velocity, and integral error) will evolve under control inputs. From this model, an optimal feedback law is derived that minimizes a user-defined cost function, allowing the designer to tune intuitive weighting parameters (𝑄 and 𝑅) that balance performance against effort. The result is a compact set of gain values (𝐾𝜃, 𝐾𝜔, 𝐾𝑖) that are used as simple numerical coefficients that are deployed directly on the microcontroller. Remarkably this control law distills down to a simple line of code on the microcontroller:
-
-```c
-    torque_cmd = Kth_term * error - Kw_term * omega + Ki_term * integ_error;
-```
-
-that transforms a complex physical model into efficient, real-time control.

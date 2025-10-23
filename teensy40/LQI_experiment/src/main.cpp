@@ -153,6 +153,20 @@ void loop() {
       }
     }
 
+    // Read the RC input values
+    RCInputRaw &raw0 = supervisor.rc_raw[0];
+    RCInputRaw &raw1 = supervisor.rc_raw[1];
+    RCChannel  &ch  = supervisor.rc[0];
+
+    if (supervisor.mode != SUP_MODE_SET_POSITION) {
+      if (raw1.raw_us < 1000 && ch.valid) {
+	supervisor.mode = SUP_MODE_MOVE_TO_POSITION;
+      }
+      else {
+	supervisor.mode = SUP_MODE_IDLE;
+      }
+    }
+
     // LED CONTROL
     tone_update(&g_tone, now_us);
     led_update(&g_led_red, now_us);

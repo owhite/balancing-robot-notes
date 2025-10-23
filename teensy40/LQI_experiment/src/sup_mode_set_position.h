@@ -5,3 +5,6 @@
 void run_mode_position_set(Supervisor_typedef *sup,
 			      FlexCAN_T4<CAN1, RX_SIZE_256, TX_SIZE_16> &can);
 
+void run_mode_move_to_position(Supervisor_typedef *sup,
+			       FlexCAN_T4<CAN1, RX_SIZE_256, TX_SIZE_16> &can);
+

@@ -1,28 +1,10 @@
-We’re continuing work on implementing and tuning the Teensy LQR controller for the inverted pendulum.
+#pragma once
+#include "supervisor.h"
+#include <FlexCAN_T4.h>
 
-The project implements and validates a continuous-time LQR state-space controller on a Teensy 4.0 for an inverted pendulum actuated by a brushless motor via a MESC ESC. All model parameters were originally derived from a CAD-based inertia computation and confirmed in linear and MuJoCo simulations. Real-time control runs at 500 Hz, triggered by CAN feedback from the ESC.
+void run_mode_position_set(Supervisor_typedef *sup,
+			   FlexCAN_T4<CAN1, RX_SIZE_256, TX_SIZE_16> &can);
 
-Current Implementation of controller
-- On Teensy, run_mode_torque_response() receives sup->esc[0].state.pos_rad (0–2π) and sup->esc[0].state.vel_rad_s, computes normalized torque command and clamps to ±0.5 and transmits it over CAN to the ESC.
-- The desired upright equilibrium angle: 4.368 rad.
-- Logging collects time (µs), torque, position, and velocity and outputs JSON.
-
-Experimental Findings
-
-We know a standard state-space model for a pendulum is this: x˙=Ax+Bu,
-- In my model we modeled B=300.
-- B may have been wrong. 
-- B is how strongly the applied torque affects the angular acceleration
-- But we have a contrary physical torque test
-- In a physical torque pulse test (0.3 N·m for 250 ms) shows angular acceleration ≈ 25 rad/s² → inferred inertia ≈ 0.012 kg·m². Model inertia was 0.00334 kg·m² → actual actuation ≈ 0.28× as strong as expected. 
-- The real value for B (B-real) appears to 84 
-- So in our testing the LQR saturates early, producing oscillations and slower-than-predicted response.
-
-The standard state-space model for a pendulum is 𝑥-dot =Ax+Bu, where B represents how strongly the applied control input u (torque) affects the pendulum’s angular acceleration. To model 𝐵 accurately, we need to determine how much actual physical torque the motor produces for a given commanded torque value from the controller. In other words, we must measure the motor’s torque-per-command ratio — the mapping between the controller’s normalized input and the true torque applied at the pendulum joint.
-
-Next Steps
-- Recompute 𝐾 based on B-real
-- Or scale the existing 𝐾 by ≈ 0.28.
-- Verify new closed-loop dynamics and check torque-to-acceleration mapping.
-- Gradually increase torque clamp and test stability about 4.368 rad.
+void run_mode_move_to_position(Supervisor_typedef *sup,
+			       FlexCAN_T4<CAN1, RX_SIZE_256, TX_SIZE_16> &can);
 
