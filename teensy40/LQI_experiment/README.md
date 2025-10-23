@@ -11,7 +11,7 @@ The result is a compact set of gain values (𝐾𝜃, 𝐾𝜔, 𝐾𝑖) that a
 These gains transforms a complex physical model into efficient, real-time control.
 
 
-## Workflow to set up LQI
+## LQI Setup, Workflow
 
 - Gather up motor constants Ke, Kt, Kv
 - Plot motor decay constant
@@ -280,8 +280,8 @@ The UI for the python graphing progam enables user input for the Q matrix, the R
 
 ---
 
-## Spin the motot
+## Spinning the Motor Under LQI Control Law
 
-**Preliminary results sending position commands** 
+Preliminary results **sending position commands** using the brain board's onboard RC transmitter. 
 
 [![LQI Tuning Result](https://img.youtube.com/vi/9YN7K3y4Kbw/0.jpg)](https://www.youtube.com/watch?v=9YN7K3y4Kbw)
