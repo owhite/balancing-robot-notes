@@ -8,7 +8,7 @@ From this model, an optimal feedback law is derived that minimizes a user-define
     torque_cmd = Kth_term * error - Kw_term * omega + Ki_term * integ_error;
 ```
 
-These gains transforms a complex physical model into efficient, real-time control.
+These gains transform a complex physical model into efficient, real-time control.
 
 
 ## LQI Setup, Workflow
