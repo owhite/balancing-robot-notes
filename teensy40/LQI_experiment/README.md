@@ -15,8 +15,9 @@ These gains transforms a complex physical model into efficient, real-time contro
 
 - Gather up motor constants Ke, Kt, Kv
 - Plot motor decay constant
-- Develop LQI model
-- Tune/plot motor behavior
+- Use those constants to develop LQI model
+- Test LQI gains, plot motor behavior
+- Run final set of gains on controller
 
 ## Calculate Motor Constants Ke, Kt, Kv
 
@@ -117,7 +118,7 @@ which outputs the data from the desktop to the teensy through the serial using t
 {'cmd': 'position', 'torque': 1.0, 'total_us': 1100000, 'user_Kth_term': 0.0523, 'user_Kw_term': 0.0147, 'user_Ki_term': 0.0158, 'theta_ref': 3.0}
 ```
 
-The K-gains get read by the teensy in the following code:
+The teensy reads the K-gains and converts to torque commands here:
 
 ```c
 void run_mode_set_position(Supervisor_typedef *sup,
@@ -277,3 +278,6 @@ The UI for the python graphing progam enables user input for the Q matrix, the R
 
 **Note** the relatively rapid settling time of 300ms. 
 
+---
+
+[![LQI Tuning Result](https://img.youtube.com/vi/9YN7K3y4Kbw/0.jpg)](https://www.youtube.com/watch?v=9YN7K3y4Kbw)
