@@ -280,4 +280,8 @@ The UI for the python graphing progam enables user input for the Q matrix, the R
 
 ---
 
+## Spin the motot
+
+**Preliminary results sending position commands** 
+
 [![LQI Tuning Result](https://img.youtube.com/vi/9YN7K3y4Kbw/0.jpg)](https://www.youtube.com/watch?v=9YN7K3y4Kbw)
