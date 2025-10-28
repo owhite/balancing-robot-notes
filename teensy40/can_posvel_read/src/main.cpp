@@ -28,6 +28,8 @@ bool bufferPop(CAN_message_t &msg) {
 
 // --- POSVEL handler ---
 void handlePosVel(const CAN_message_t &msg) {
+  uint8_t  receiver = (msg.id)       & 0xFF;    // receiver ID
+
   if (msg.len == 8) {
     float pos, vel;
     uint32_t u0 = msg.buf[0] | (msg.buf[1] << 8) | (msg.buf[2] << 16) | (msg.buf[3] << 24);
@@ -35,8 +37,7 @@ void handlePosVel(const CAN_message_t &msg) {
     memcpy(&pos, &u0, sizeof(float));
     memcpy(&vel, &u1, sizeof(float));
 
-      Serial.printf("{\"t_us\":%lu,\"pos\":%.6f,\"vel\":%.6f}\r\n",
-		    micros(), pos, vel);
+    Serial.printf("{\"t_us\":%lu,\"sender\":%u,\"pos\":%.6f,\"vel\":%.6f}\r\n", micros(), receiver, pos, vel);
 
     // Print as JSON
     if (vel > -20.0f && vel < 20.0f && (vel > 0.1f || vel < -0.1f)) {
@@ -47,6 +48,7 @@ void handlePosVel(const CAN_message_t &msg) {
 // --- General CAN handler ---
 void canHandler(const CAN_message_t &msg) {
   uint16_t mid = (msg.id >> 16) & 0x1FFF;  // unpack MESC message ID
+
   if (mid == CAN_ID_POSVEL) {
     handlePosVel(msg);
   }

@@ -9,7 +9,8 @@ FlexCAN_T4<CAN1, RX_SIZE_256, TX_SIZE_16> Can1;
 
 // IDs
 #define TEENSY_NODE_ID  0x03   // sender (this Teensy)
-#define ESC_NODE_ID     0x0B   // receiver (your ESC node_id = 11)
+#define ESC_NODE_ID1     0x0B   // receiver (your ESC node_id = 11)
+#define ESC_NODE_ID2     0x0C   // receiver (your ESC node_id = 12)
 
 // Build full 29-bit CAN extended ID
 uint32_t make_ext_id(uint16_t msg_id, uint8_t sender, uint8_t receiver) {
@@ -46,7 +47,7 @@ void loop() {
     if (cmd < -1.0f) cmd = -1.0f;
 
     CAN_message_t msg;
-    msg.id = make_ext_id(CAN_ID_IQREQ, TEENSY_NODE_ID, ESC_NODE_ID);
+    msg.id = make_ext_id(CAN_ID_IQREQ, TEENSY_NODE_ID, ESC_NODE_ID2);
 
     msg.flags.extended = 1;
     msg.len = 8;
@@ -56,7 +57,6 @@ void loop() {
     pack_float(zero, msg.buf + 4);
 
     Can1.write(msg);
-    Serial.printf("Sent Iq_req=%.3f A to ESC node_id=%u (CAN ID=0x%08X)\r\n",
-                  cmd, ESC_NODE_ID, msg.id);
+    Serial.printf("Sent Iq_req=%.3f A to ESC node_id=%u (CAN ID=0x%08X)\r\n", cmd, ESC_NODE_ID2, msg.id);
   }
 }
