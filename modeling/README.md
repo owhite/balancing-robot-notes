@@ -340,7 +340,7 @@ Interpretation
 $ ./verify_TWR_data.py LQR_bot_LQR_data.json
 ```
 
-📏 Dimensional sanity checks:
+|📏 Dimensions           |              |
 | ---------------------- | ------------ |
 | Body mass (kg):        | 0.6000       |
 | Wheel mass (kg):       | 0.7600       |
