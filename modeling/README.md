@@ -284,57 +284,56 @@ These are useful prompts for ChatG:
 | Axial offset (X)   | ~0 mm    | symmetric about midplane             |
 | Derived mass       | 1.4 kg   | consistent with geometry and inertia |
 
-1. Continuous-time eigenvalues
+** 1. Continuous-time eigenvalues **
+```
 eig_cont = [
   -1.1401778985598954,
   -1.1401778985598954,
   -0.05262332464223693,
   -0.053248906264029436
 ]
+```
 
-✅ Interpretation
+Interpretation
 
-All eigenvalues are real and negative, meaning the closed-loop system is stable (no oscillation, no complex conjugate pairs).
+- All eigenvalues are real and negative, meaning the closed-loop system is stable (no oscillation, no complex conjugate pairs).
+- There are two fast modes near –1.14 s⁻¹ and two slow modes near –0.053 s⁻¹.
 
-There are two fast modes near –1.14 s⁻¹ and two slow modes near –0.053 s⁻¹.
-
-Mode	Eigenvalue	Time constant τ = –1/λ	Interpretation
-1–2	≈ –1.14	≈ 0.88 s	Fast stabilization modes (angle and angular rate regulation).
-3–4	≈ –0.053	≈ 19 s	Very slow modes (wheel position drift, integral-like effect).
+|Mode         | Eigenvalue Time constant τ = –1/λ  | Interpretation
+| ----------- | ---------------------------------- | ------------------------------------ |
+|1–2 ≈ –1.14  | ≈ 0.88 s                           |Fast stabilization modes (angle and angular rate regulation).
+|3–4 ≈ –0.053 | ≈  19 s	                           | Very slow modes (wheel position drift, integral-like effect).
 
 So, physically:
 
-The LQR is actively damping the body angle and angular velocity quickly (under 1 second response time).
+- The LQR is actively damping the body angle and angular velocity quickly (under 1 second response time).
+- The cart position / wheel drift is only weakly stabilized — it will slowly creep but remain bounded.
+- That’s exactly what you expect for a torque-controlled balancing robot with standard LQR weights: prioritize angle balance, tolerate slow translation.
 
-The cart position / wheel drift is only weakly stabilized — it will slowly creep but remain bounded.
-
-That’s exactly what you expect for a torque-controlled balancing robot with standard LQR weights: prioritize angle balance, tolerate slow translation.
-
-2. Discrete-time eigenvalues
+** 2. Discrete-time eigenvalues **
+```
 eig_disc = [
   0.9977201969697364,
   0.9977201969697364,
   0.9998947593913394,
   0.9998935079390716
 ]
+```
 
 Interpretation
-These correspond to a discrete-time system at 500 Hz (Ts = 0.002 s).
-All values are less than 1, so the system is discretely stable.
-You can convert them to approximate continuous decay rates and if you do that:
+- These correspond to a discrete-time system at 500 Hz (Ts = 0.002 s).
+- All values are less than 1, so the system is discretely stable.
+- You can convert them to approximate continuous decay rates and if you do that:
 
-eig_disc	λ_cont (approx)	τ = –1/λ
-0.99772	–1.14 s⁻¹	0.88 s
-0.99989	–0.053 s⁻¹	19 s
+|eig     | λ_cont (approx) | τ = –1/λ
+| ------ | --------------- | --------
+|0.99772 | –1.14 s⁻¹       | 0.88 s
+|0.99989 | –0.053 s⁻¹      | 19 s
 
-The LQR successfully stabilizes your system: all modes decay, none oscillate.
-
-Two modes decay relatively quickly → you’ll see the body angle settle in ~1 s.
-
-Two modes decay very slowly → you’ll notice the bot can still drift forward/backward slowly over tens of seconds if you don’t include position feedback or integral correction.
-
-If you increased the 
-Q weight on the position state, those slow eigenvalues would move further left (faster correction, less drift).
+- The LQR successfully stabilizes your system: all modes decay, none oscillate.
+- Two modes decay relatively quickly → you’ll see the body angle settle in ~1 s.
+- Two modes decay very slowly → you’ll notice the bot can still drift forward/backward slowly over tens of seconds if you don’t include position feedback or integral correction.
+- If you increased the Q weight on the position state, those slow eigenvalues would move further left (faster correction, less drift).
 
 
 ```
