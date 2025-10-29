@@ -253,15 +253,9 @@ $ ./verify_TWR_data.py LQR_bot_LQR_data.json
    ↓
    └── sanity checks lots of values
    ↓
-$ ./design_pendulum_LQR.py pendulum_LQR_data.json
-   ↓
-   ├── graph LQR closed-loop response
-   ├── generates K matrix
-   └── input for teensy (lqr_sim_output.json)
-   ↓
 View results: 
    ↓
-   ├── ./visual_lqr_perturb.py pendulum_LQR_data.json 
+   ├── ./plot_TWR_response.py LQR_bot_data.json 
    └── ./graph_LQR_data.py     pendulum_LQR_data.json 
    └── ./graph_angle_torque.py pendulum_LQR_data.json 
 ```
@@ -271,7 +265,7 @@ View results:
 These are useful prompts for ChatG:
 - What is your interpretation of these eigen values?
 - Tell me about how total damping was calculated
-- How did you arrive at the conclusion that "Model and LQR data consistent and stable." ?
+- How did you arrive at the conclusion that the model and LQR data consistent and stable?
 - Reality check this value: Moment inertia I_b = 1.1758e-02 kg·m²
 - Reality check my COM CoM (mm) = [-2.46032006e-02 -1.14117663e+01 1.30614191e+02]
 - How do all of my results compare to other 1.5kg sized balancing bots
@@ -284,7 +278,7 @@ These are useful prompts for ChatG:
 | Axial offset (X)   | ~0 mm    | symmetric about midplane             |
 | Derived mass       | 1.4 kg   | consistent with geometry and inertia |
 
-** 1. Continuous-time eigenvalues **
+**1. Continuous-time eigenvalues**
 ```
 eig_cont = [
   -1.1401778985598954,
@@ -294,7 +288,7 @@ eig_cont = [
 ]
 ```
 
-Interpretation
+**Interpretation**
 
 - All eigenvalues are real and negative, meaning the closed-loop system is stable (no oscillation, no complex conjugate pairs).
 - There are two fast modes near –1.14 s⁻¹ and two slow modes near –0.053 s⁻¹.
@@ -310,7 +304,7 @@ So, physically:
 - The cart position / wheel drift is only weakly stabilized — it will slowly creep but remain bounded.
 - That’s exactly what you expect for a torque-controlled balancing robot with standard LQR weights: prioritize angle balance, tolerate slow translation.
 
-** 2. Discrete-time eigenvalues **
+**2. Discrete-time eigenvalues**
 ```
 eig_disc = [
   0.9977201969697364,
@@ -320,7 +314,7 @@ eig_disc = [
 ]
 ```
 
-Interpretation
+**Interpretation**
 - These correspond to a discrete-time system at 500 Hz (Ts = 0.002 s).
 - All values are less than 1, so the system is discretely stable.
 - You can convert them to approximate continuous decay rates and if you do that:
@@ -335,8 +329,7 @@ Interpretation
 - Two modes decay very slowly → you’ll notice the bot can still drift forward/backward slowly over tens of seconds if you don’t include position feedback or integral correction.
 - If you increased the Q weight on the position state, those slow eigenvalues would move further left (faster correction, less drift).
 
-
-```
+``
 $ ./verify_TWR_data.py LQR_bot_LQR_data.json
 ```
 
@@ -362,11 +355,11 @@ $ ./verify_TWR_data.py LQR_bot_LQR_data.json
   → Closed-loop system is stable.
 
 ⚙️  **Discrete-time dynamics (Ts = 0.002000 s):**  
-  Open-loop eigenvalues: `[1.       0.999794 1.000088 0.999912]`  
+  Open-loop eigenvalues: `[1. 0.999794 1.000088 0.999912]`  
   Closed-loop eigenvalues: `[0.99772 +0.00202j 0.99772 -0.00202j 0.999895+0.j 0.999894+0.j]`  
   → Discrete-time closed-loop is stable.  
 
-⏱️  **Characteristic time constants (s)**: `[ 0.877  0.877 18.78  19.003]`  
+⏱️  **Characteristic time constants (s)**: `[0.877 0.877 18.78 19.003]`  
 Fast modes: ~0.88 s, Slow modes: ~18.9 s  
   → Lever arm l = 0.0906 m appears physically reasonable.  
 
@@ -376,3 +369,8 @@ Fast modes: ~0.88 s, Slow modes: ~18.9 s
 
 ----
 
+```
+$ ./plot_TWR_response.py LQR_bot_data.json 
+```
+
+<img src="Figure_1.png" alt="Plot result" width="600"/>
