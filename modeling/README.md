@@ -329,7 +329,7 @@ eig_disc = [
 - Two modes decay very slowly → you’ll notice the bot can still drift forward/backward slowly over tens of seconds if you don’t include position feedback or integral correction.
 - If you increased the Q weight on the position state, those slow eigenvalues would move further left (faster correction, less drift).
 
-``
+```
 $ ./verify_TWR_data.py LQR_bot_LQR_data.json
 ```
 
