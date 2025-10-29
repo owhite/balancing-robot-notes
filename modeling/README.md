@@ -373,4 +373,13 @@ Fast modes: ~0.88 s, Slow modes: ~18.9 s
 $ ./plot_TWR_response.py LQR_bot_data.json 
 ```
 
+Check system dynamics and actuator demand by giving it some negative torque at then plot a smooth exponential decay toward zero as the robot rebalances.
+
 <img src="Figure_1.png" alt="Plot result" width="600"/>
+
+This is validation that:
+
+- Units — mm → m, g → kg, and inertia scaling are probably correct.
+- If they were off the smooth decay either be a sluggish drift or a chaotic oscillation.
+- 𝑄 and  𝑅 weights are balanced to keep torque effort reasonable, and not over-penalize wheel displacement
+- Mechanical and electrical damping seem ok
