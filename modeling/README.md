@@ -377,7 +377,7 @@ Check system dynamics and actuator demand by giving it some negative torque at t
 
 <img src="Figure_1.png" alt="Plot result" width="600"/>
 
-This is validation that the gains _for the model of the robot_ are probably okay. 
+This is validation that the gains **_for the model of the robot_** are probably okay. 
 
 - Units (e.g., mm → m, g → kg) and inertia scaling are probably correct.
 - (If they were off the smooth decay either be a sluggish drift or a chaotic oscillation.)
