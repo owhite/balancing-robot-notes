@@ -360,18 +360,18 @@ $ ./verify_TWR_data.py LQR_bot_LQR_data.json
   Closed-loop eigenvalues: [-1.14018+1.01253j -1.14018-1.01253j -0.05262+0.j      -0.05325+0.j     ]
   ✅ Closed-loop system is stable.
 
-⚙️  Discrete-time dynamics (Ts = 0.002000 s):
-  Open-loop eigenvalues: [1.       0.999794 1.000088 0.999912]
-  Closed-loop eigenvalues: [0.99772 +0.00202j 0.99772 -0.00202j 0.999895+0.j      0.999894+0.j     ]
-  ✅ Discrete-time closed-loop is stable.
+⚙️  Discrete-time dynamics (Ts = 0.002000 s):  
+  Open-loop eigenvalues: [1.       0.999794 1.000088 0.999912]  
+  Closed-loop eigenvalues: [0.99772 +0.00202j 0.99772 -0.00202j 0.999895+0.j      0.999894+0.j     ]  
+  ✅ Discrete-time closed-loop is stable.  
 
-⏱️  Characteristic time constants (s): [ 0.877  0.877 18.78  19.003]
-  → Fast modes: ~0.88 s, Slow modes: ~18.9 s
+⏱️  Characteristic time constants (s): [ 0.877  0.877 18.78  19.003]  
+  → Fast modes: ~0.88 s, Slow modes: ~18.9 s  
 
-✅ Lever arm l = 0.0906 m appears physically reasonable.
+✅ Lever arm l = 0.0906 m appears physically reasonable.  
 
-✅ Verification summary:
-  ✅ Model and LQR data consistent and stable.
+✅ Verification summary:  
+  ✅ Model and LQR data consistent and stable.  
 
 
 ----
