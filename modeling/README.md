@@ -350,7 +350,7 @@ $ ./verify_TWR_data.py LQR_bot_LQR_data.json
 | Damping b (N·m·s/rad): | 0.1402       |
 |  Gravity (m/s²):       | 9.810        |
 
-🧮 Controllability rank: 4/4  
+🧮 **Controllability rank: 4/4**  
   → System is fully controllable.  
 
 ⚙  **Observability rank:   4/4**  
