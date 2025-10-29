@@ -341,18 +341,19 @@ $ ./verify_TWR_data.py LQR_bot_LQR_data.json
 ```
 
 📏 Dimensional sanity checks:
-  Body mass (kg):       0.6000
-  Wheel mass (kg):      0.7600
-  Inertia (kg·m²):      6.217621e+02
-  Lever arm l (m):      0.0906
-  Wheel radius r (m):   0.0400
-  Damping b (N·m·s/rad):0.1402
-  Gravity (m/s²):       9.810
+| ---------------------- | ------------ |
+| Body mass (kg):        | 0.6000       |
+| Wheel mass (kg):       | 0.7600       |
+| Inertia (kg·m²):       | 6.217621e+02 |
+| Lever arm l (m):       | 0.0906       |
+| Wheel radius r (m):    | 0.0400       |
+| Damping b (N·m·s/rad): | 0.1402       |
+|  Gravity (m/s²):       | 9.810        |
 
-🧮 Controllability rank: 4/4
-  ✅ System is fully controllable.
-  Observability rank:   4/4
-  ✅ System is fully observable (full-state feedback assumed).
+🧮 Controllability rank: 4/4  
+  ✅ System is fully controllable.  
+  Observability rank:   4/4  
+  ✅ System is fully observable (full-state feedback assumed).  
 
 ⚙️  Continuous-time dynamics:
   Open-loop eigenvalues: [ 0.      -0.10305  0.04398 -0.04421]
