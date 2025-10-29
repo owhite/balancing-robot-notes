@@ -357,7 +357,7 @@ $ ./verify_TWR_data.py LQR_bot_LQR_data.json
 
 ⚙️  Continuous-time dynamics:
   Open-loop eigenvalues: [ 0.      -0.10305  0.04398 -0.04421]
-  Closed-loop eigenvalues: [-1.14018+1.01253j -1.14018-1.01253j -0.05262+0.j      -0.05325+0.j     ]
+  Closed-loop eigenvalues: [-1.14018+1.01253j -1.14018-1.01253j -0.05262+0.j      -0.05325+0.j     ]  
   ✅ Closed-loop system is stable.
 
 ⚙️  Discrete-time dynamics (Ts = 0.002000 s):  
