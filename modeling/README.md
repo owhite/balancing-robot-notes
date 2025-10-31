@@ -383,3 +383,5 @@ This is validation that the gains **_for the model of the robot_** are probably 
 - (If they were off the smooth decay either be a sluggish drift or a chaotic oscillation.)
 - 𝑄 and  𝑅 weights are balanced to keep torque effort reasonable, and not over-penalize wheel displacement.
 - Mechanical and electrical damping seems ok
+
+This does **NOT** mean the gains when applied physical robot is going to behave as well. 
