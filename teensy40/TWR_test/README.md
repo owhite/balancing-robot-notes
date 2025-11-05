@@ -24,7 +24,7 @@ The immediate objective is to characterize and mitigate the vibration coupling b
 
 **Phase 1: Tilt table approach** 
 
-- Sweep angles slowly by hand (±10°) with motors off, then on but wheels off floor.
+- Sweep angles slowly by hand (±10°) with motors **off**, then run with motors **on** but wheels off floor.
 - Verify roll tracks angle and rate stays quiet with motors energized.
 - Try different isolation pads (Sorbothane/silicone) and choose the one that drops high-freq noise most.
 
