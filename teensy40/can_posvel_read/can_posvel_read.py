@@ -16,10 +16,11 @@ PORT = sys.argv[1]
 BAUD = int(sys.argv[2]) if len(sys.argv) > 2 else 115200
 WINDOW = 1000  # rolling window length
 
-# === Buffers (shared between threads) ===
-time_buf = deque(maxlen=WINDOW)
-pos_buf  = deque(maxlen=WINDOW)
-vel_buf  = deque(maxlen=WINDOW)
+# === Buffers for each sender ===
+data = {
+    11: {"time": deque(maxlen=WINDOW), "pos": deque(maxlen=WINDOW), "vel": deque(maxlen=WINDOW)},
+    12: {"time": deque(maxlen=WINDOW), "pos": deque(maxlen=WINDOW), "vel": deque(maxlen=WINDOW)}
+}
 
 sample_idx = 0
 lock = threading.Lock()
@@ -35,14 +36,17 @@ def serial_reader():
         if not line:
             continue
         try:
-            data = json.loads(line)
-            pos = data.get("pos", None)  # radians (0–2π)
-            vel = data.get("vel", None)  # rad/s
+            data_in = json.loads(line)
+            sid = data_in.get("sender", None)
+            pos = data_in.get("pos", None)
+            vel = data_in.get("vel", None)
+            if sid not in data:
+                continue  # ignore unknown sender IDs
 
             with lock:
-                time_buf.append(sample_idx)
-                pos_buf.append(pos)
-                vel_buf.append(vel)
+                data[sid]["time"].append(sample_idx)
+                data[sid]["pos"].append(pos)
+                data[sid]["vel"].append(vel)
                 sample_idx += 1
         except json.JSONDecodeError:
             continue
@@ -59,47 +63,57 @@ fig = plt.figure(figsize=(10, 8))
 ax1 = fig.add_subplot(2, 1, 1, polar=True)
 ax1.set_title("Position (circular)", va="bottom")
 
-# Needle line (from center outwards)
-pos_line, = ax1.plot([0, 0], [0, 1], lw=2)
+# Two sender lines
+pos_line_11, = ax1.plot([0, 0], [0, 1], lw=2, color="blue", label="Sender 11")
+pos_line_12, = ax1.plot([0, 0], [0, 1], lw=2, color="orange", label="Sender 12")
+
+ax1.legend(loc="upper right")
 
 # Configure angular ticks (radians)
 ax1.set_xticks([0, np.pi/2, np.pi, 3*np.pi/2])
 ax1.set_xticklabels(["0", "π/2", "π", "3π/2"])
-
-# Hide radial (concentric) labels and grid
 ax1.set_yticklabels([])
 ax1.yaxis.grid(False)
 
 # --- Scrolling position plot (time series) ---
 ax2 = fig.add_subplot(2, 1, 2)
-ln2, = ax2.plot([], [], lw=1, color="blue", label="Position (rad)")
+ln11, = ax2.plot([], [], lw=1.5, color="blue", label="Sender 11")
+ln12, = ax2.plot([], [], lw=1.5, color="orange", label="Sender 12")
 ax2.set_title("Position (scrolling)")
 ax2.set_xlabel("Sample")
 ax2.set_ylabel("rad")
-ax2.set_ylim(0, 2 * np.pi)  # fixed range 0–2π
+ax2.set_ylim(0, 2 * np.pi)
 ax2.legend(loc="upper right")
 
-# --- Shared labels (top-right of entire figure) ---
-pos_text = fig.text(0.75, 0.95, "", ha="left", va="top",
-                    fontsize=16, weight="bold")
-vel_text = fig.text(0.75, 0.90, "", ha="left", va="top",
-                    fontsize=16, weight="bold")
+# --- Shared labels (top-right of figure) ---
+pos_text = fig.text(0.75, 0.95, "", ha="left", va="top", fontsize=14, weight="bold")
+vel_text = fig.text(0.75, 0.90, "", ha="left", va="top", fontsize=14, weight="bold")
 
 # === Plot update loop ===
 while True:
     with lock:
-        if time_buf:
-            # --- Position update (circular plot) ---
-            pos = pos_buf[-1] if pos_buf else 0.0
-            pos_line.set_data([0, pos], [0, 1])  # angle=pos, radius=1
-            pos_text.set_text(f"Position: {pos:.2f} rad")
+        # --- Circular plot updates ---
+        pos11 = data[11]["pos"][-1] if data[11]["pos"] else 0.0
+        pos12 = data[12]["pos"][-1] if data[12]["pos"] else 0.0
 
-            # --- Position update (scrolling plot) ---
-            ln2.set_data(time_buf, pos_buf)
-            ax2.set_xlim(max(0, time_buf[-1] - WINDOW), time_buf[-1])
+        pos_line_11.set_data([0, pos11], [0, 1])
+        pos_line_12.set_data([0, pos12], [0, 1])
 
-            # --- Velocity label ---
-            vel = vel_buf[-1] if vel_buf else 0.0
-            vel_text.set_text(f"Velocity: {vel:.1f} rad/s")
+        pos_text.set_text(f"11: {pos11:.2f} rad | 12: {pos12:.2f} rad")
+
+        # --- Scrolling position updates ---
+        if data[11]["time"]:
+            ln11.set_data(data[11]["time"], data[11]["pos"])
+        if data[12]["time"]:
+            ln12.set_data(data[12]["time"], data[12]["pos"])
+
+        if data[11]["time"] or data[12]["time"]:
+            xmax = sample_idx
+            ax2.set_xlim(max(0, xmax - WINDOW), xmax)
+
+        # --- Velocity label ---
+        vel11 = data[11]["vel"][-1] if data[11]["vel"] else 0.0
+        vel12 = data[12]["vel"][-1] if data[12]["vel"] else 0.0
+        vel_text.set_text(f"11: {vel11:.2f} | 12: {vel12:.2f} rad/s")
 
     plt.pause(0.05)
