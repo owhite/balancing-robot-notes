@@ -14,6 +14,8 @@ and this is with:
 
 <img src="Figure_2.png" alt="Plot result" width="600"/>
 
+## Test rigs
+
 This test configuration is not fully representative of real operation—the PCB, IMU, and motors are rigidly mounted to a flat board rather than the full TWR body. Because the robot cannot balance yet, it is difficult to collect realistic motion data while the system is in its operational configuration.
 
 The immediate objective is to characterize and mitigate the vibration coupling before full balancing tests. Planned steps include:
@@ -33,12 +35,9 @@ The immediate objective is to characterize and mitigate the vibration coupling b
 Goal: let the controller run upright while preventing catastrophic falls.
 
 Build options (pick one):
-
-Overhead strap: Hang a light strap from above to a point near the TWR’s CG; length so it catches at ~±8°.
-
-Side rails: Two vertical 2×4s with furniture sliders; a loose loop of webbing around the body between rails so it can sway but not dump.
-
-Boom + bearing: Clamp a bicycle wheel (or lazy Susan) horizontally on a stand; bolt a short arm to the hub; tie the TWR top to the arm with a short strap. It can pitch freely but won’t fall far.
+- Overhead strap: Hang a light strap from above to a point near the TWR’s CG; length so it catches at ~±8°.
+- Side rails: Two vertical 2×4s with furniture sliders; a loose loop of webbing around the body between rails so it can sway but not dump.
+- Boom + bearing: Clamp a bicycle wheel (or lazy Susan) horizontally on a stand; bolt a short arm to the hub; tie the TWR top to the arm with a short strap. It can pitch freely but won’t fall far.
 
 Run:
 - Start with SAFETY_SCALE = 0.01 and θ̇ gain (K[1]) reduced 20–30%.
