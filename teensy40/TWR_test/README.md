@@ -4,6 +4,10 @@ During bench testing of the Two-Wheeled Robot (TWR) control stack, the MPU6050 I
 
 When the motors are off, both signals are stable and near-DC, confirming correct sensor setup and minimal electrical noise. However, when the motors spin (with the robot frame fixed to a test board), the roll-rate signal shows ±1 deg/s jitter and small bias drift, indicating mechanical coupling of motor and chassis vibrations into the IMU.
 
+```
+$ ./IMU_test.py -p /dev/cu.usbmodem178888901
+```
+
 <img src="Figure_1.png" alt="Plot result" width="600"/>
 
 and this is with:
