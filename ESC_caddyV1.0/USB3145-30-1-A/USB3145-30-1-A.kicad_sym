@@ -1,0 +1,189 @@
+
+(kicad_symbol_lib (version 20211014) (generator kicad_symbol_editor)
+  (symbol "USB3145-30-1-A" (pin_names (offset 1.016)) (in_bom yes) (on_board yes)
+    (property "Reference" "J" (id 0) (at 0.0 11.43 0)
+      (effects (font (size 1.27 1.27)) (justify bottom left))
+    )
+    (property "Value" "USB3145-30-1-A" (id 1) (at 0.0 -13.97 0)
+      (effects (font (size 1.27 1.27)) (justify bottom left))
+    )
+    (property "Footprint" "USB3145-30-1-A:USB3145-30-1-A" (id 2) (at 0 0 0)
+      (effects (font (size 1.27 1.27)) (justify bottom) hide)
+    )
+    (property "MF" "Global Connector Technology" (id 4) (at 0 0 0)
+      (effects (font (size 1.27 1.27)) (justify bottom) hide)
+    )
+    (property "Description" "\n                        \n                            USB - micro B USB 2.0 Receptacle Connector 5 Position Through Hole\n                        \n" (id 5) (at 0 0 0)
+      (effects (font (size 1.27 1.27)) (justify bottom) hide)
+    )
+    (property "Package" "None" (id 6) (at 0 0 0)
+      (effects (font (size 1.27 1.27)) (justify bottom) hide)
+    )
+    (property "Price" "None" (id 7) (at 0 0 0)
+      (effects (font (size 1.27 1.27)) (justify bottom) hide)
+    )
+    (property "Availability" "In Stock" (id 8) (at 0 0 0)
+      (effects (font (size 1.27 1.27)) (justify bottom) hide)
+    )
+    (property "POLE" "5" (id 9) (at 0 0 0)
+      (effects (font (size 1.27 1.27)) (justify bottom) hide)
+    )
+    (property "SnapEDA_Link" "https://www.snapeda.com/parts/USB3145-30-1-A/Global+Connector+Technology/view-part/?ref=snap" (id 10) (at 0 0 0)
+      (effects (font (size 1.27 1.27)) (justify bottom) hide)
+    )
+    (property "MP" "USB3145-30-1-A" (id 11) (at 0 0 0)
+      (effects (font (size 1.27 1.27)) (justify bottom) hide)
+    )
+    (property "FARNELL" "2311903" (id 12) (at 0 0 0)
+      (effects (font (size 1.27 1.27)) (justify bottom) hide)
+    )
+    (property "TYP" "USB3145-30-1-A" (id 13) (at 0 0 0)
+      (effects (font (size 1.27 1.27)) (justify bottom) hide)
+    )
+    (property "USB_TYPE" "B" (id 14) (at 0 0 0)
+      (effects (font (size 1.27 1.27)) (justify bottom) hide)
+    )
+    (property "Check_prices" "https://www.snapeda.com/parts/USB3145-30-1-A/Global+Connector+Technology/view-part/?ref=eda" (id 15) (at 0 0 0)
+      (effects (font (size 1.27 1.27)) (justify bottom) hide)
+    )
+    (symbol "USB3145-30-1-A_0_0"
+      (polyline
+        (pts (xy 0.0 8.89) (xy 0.0 -6.35)) (stroke (width 0.254))
+      )
+      (polyline
+        (pts (xy 0.0 -6.35) (xy 5.08 -6.35)) (stroke (width 0.254))
+      )
+      (polyline
+        (pts (xy 0.0 8.89) (xy 5.08 8.89)) (stroke (width 0.254))
+      )
+      (polyline
+        (pts (xy 2.54 -11.43) (xy 2.54 -10.668)) (stroke (width 0.1524))
+      )
+      (polyline
+        (pts (xy 2.54 -10.16) (xy 2.54 -9.398)) (stroke (width 0.1524))
+      )
+      (polyline
+        (pts (xy 6.35 -5.334) (xy 6.35 -4.572)) (stroke (width 0.1524))
+      )
+      (polyline
+        (pts (xy 6.35 -4.064) (xy 6.35 -3.302)) (stroke (width 0.1524))
+      )
+      (polyline
+        (pts (xy 6.35 -2.794) (xy 6.35 -2.032)) (stroke (width 0.1524))
+      )
+      (polyline
+        (pts (xy 6.35 -1.524) (xy 6.35 -0.762)) (stroke (width 0.1524))
+      )
+      (polyline
+        (pts (xy 6.35 -0.254) (xy 6.35 0.508)) (stroke (width 0.1524))
+      )
+      (polyline
+        (pts (xy 6.35 1.016) (xy 6.35 1.778)) (stroke (width 0.1524))
+      )
+      (polyline
+        (pts (xy 6.35 2.286) (xy 6.35 3.048)) (stroke (width 0.1524))
+      )
+      (polyline
+        (pts (xy 6.35 3.556) (xy 6.35 4.318)) (stroke (width 0.1524))
+      )
+      (polyline
+        (pts (xy 6.35 4.826) (xy 6.35 5.588)) (stroke (width 0.1524))
+      )
+      (polyline
+        (pts (xy 6.35 6.096) (xy 6.35 6.858)) (stroke (width 0.1524))
+      )
+      (polyline
+        (pts (xy 6.35 7.366) (xy 6.35 8.128)) (stroke (width 0.1524))
+      )
+      (polyline
+        (pts (xy 6.35 9.652) (xy 5.588 9.652)) (stroke (width 0.1524))
+      )
+      (polyline
+        (pts (xy 5.08 9.652) (xy 4.318 9.652)) (stroke (width 0.1524))
+      )
+      (polyline
+        (pts (xy 3.81 9.652) (xy 3.048 9.652)) (stroke (width 0.1524))
+      )
+      (polyline
+        (pts (xy 2.54 9.652) (xy 1.778 9.652)) (stroke (width 0.1524))
+      )
+      (polyline
+        (pts (xy 2.54 -8.382) (xy 2.54 -7.62)) (stroke (width 0.1524))
+      )
+      (polyline
+        (pts (xy 3.556 -7.112) (xy 2.794 -7.112)) (stroke (width 0.1524))
+      )
+      (polyline
+        (pts (xy 4.826 -7.112) (xy 4.064 -7.112)) (stroke (width 0.1524))
+      )
+      (polyline
+        (pts (xy 6.096 -7.112) (xy 5.334 -7.112)) (stroke (width 0.1524))
+      )
+      (text "u-USB-B" (at 5.08 -5.08 900)
+        (effects (font (size 2.4 2.4)) (justify bottom left))
+      )
+      (polyline
+        (pts (xy 6.35 -6.604) (xy 6.35 -5.842)) (stroke (width 0.1524))
+      )
+      (polyline
+        (pts (xy 6.35 8.636) (xy 6.35 9.398)) (stroke (width 0.1524))
+      )
+      (pin passive line (at -2.54 6.35 0) (length 2.54)
+        (name "~"
+          (effects (font (size 1.016 1.016)))
+        )
+        (number "1"
+          (effects (font (size 1.016 1.016)))
+        )
+      )
+      (pin passive line (at -2.54 3.81 0) (length 2.54)
+        (name "~"
+          (effects (font (size 1.016 1.016)))
+        )
+        (number "2"
+          (effects (font (size 1.016 1.016)))
+        )
+      )
+      (pin passive line (at -2.54 1.27 0) (length 2.54)
+        (name "~"
+          (effects (font (size 1.016 1.016)))
+        )
+        (number "3"
+          (effects (font (size 1.016 1.016)))
+        )
+      )
+      (pin passive line (at -2.54 -1.27 0) (length 2.54)
+        (name "~"
+          (effects (font (size 1.016 1.016)))
+        )
+        (number "4"
+          (effects (font (size 1.016 1.016)))
+        )
+      )
+      (pin passive line (at 0.0 -8.89 0) (length 2.54)
+        (name "~"
+          (effects (font (size 1.016 1.016)))
+        )
+        (number "S1"
+          (effects (font (size 1.016 1.016)))
+        )
+      )
+      (pin passive line (at 0.0 -11.43 0) (length 2.54)
+        (name "~"
+          (effects (font (size 1.016 1.016)))
+        )
+        (number "S2"
+          (effects (font (size 1.016 1.016)))
+        )
+      )
+      (pin passive line (at -2.54 -3.81 0) (length 2.54)
+        (name "~"
+          (effects (font (size 1.016 1.016)))
+        )
+        (number "5"
+          (effects (font (size 1.016 1.016)))
+        )
+      )
+    )
+  )
+)

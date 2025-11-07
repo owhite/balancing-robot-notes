@@ -1,3 +1,5 @@
+Illuminating Neurodevelopment through Integrated Analysis and Vizualization of Multi-Omic Data (R24MH114815)
+
 ## MPU Testing
 
 During bench testing of the Two-Wheeled Robot (TWR) control stack, the MPU6050 IMU exhibited significant vibration-induced noise when the motors were energized. The Teensy is executing the run_mode_balance_TWR() loop at 500 Hz, using IMU-derived roll and roll-rate feedback for the LQR controller.
