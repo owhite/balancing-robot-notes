@@ -16,6 +16,39 @@ and this is with:
 
 <img src="Figure_2.png" alt="Plot result" width="600"/>
 
+## Roll-rate root mean square:
+
+**RMS (Root Mean Square)** is a statistical measure of signal energy. For IMU roll-rate data, RMS quantifies the **average noise level** of the gyro signal over a short window of time (e.g., 200 samples ≈ 0.4 s at 500 Hz). It compresses a noisy signal into a single scalar that reflects how “quiet” or “vibratory” the measurement is.
+
+Because self-balancing robots rely heavily on roll-rate (θ̇) feedback, excessive noise directly affects controller stability, causes jitter in torque output, and can lead to oscillations or instability. RMS is therefore a useful indicator of **sensor quality, mechanical isolation effectiveness, and motor-induced vibration.**
+
+Ideal operation would be:
+- Motors off (idle):
+- 0.05–0.20 deg/s RMS
+- means a clean gyro data and low mechanical noise.
+- Motors on, wheels off ground:
+   - 0.20–0.50 deg/s RMS
+   - Typical for a well-isolated IMU.
+
+Acceptable but monitor:
+- 0.50–1.00 deg/s RMS
+- Some vibration coupling.
+- Controller may still behave, but there could be torque “buzzing.”
+
+Let's look at some data. One hard desk bang causes this:
+
+<img src="Figure_2.png" alt="Plot result" width="600"/>
+
+**This is good news** 
+
+If the robot receives a mechanical impact, the IMU reports a temporary rise in roll-rate RMS, up to ~2–3 deg/s. This is expected and represents real physical disturbance, not measurement noise. The RMS rapidly returns to baseline (≈0.1–0.3 deg/s), indicating low steady-state noise, adequate mechanical damping, and no problematic chassis resonance.
+
+- RMS ~0.1–0.3 deg/s at steady state → Very clean IMU data.
+- A fast rise in RMS up to ~2.5 deg/s
+- A clean decay back to baseline over ~200–400 ms
+- No lingering resonance
+- No secondary ringing
+
 ## Test rigs
 
 This test configuration is not fully representative of real operation—the PCB, IMU, and motors are rigidly mounted to a flat board rather than the full TWR body. Because the robot cannot balance yet, it is difficult to collect realistic motion data while the system is in its operational configuration.
