@@ -47,6 +47,38 @@ Let's look at some data. Turn off the motors, and one hard desk bang causes this
 - No lingering resonance.
 - No secondary ringing.
 
+Let's try it with the motors running: 
+
+<img src="Figure_3.png" alt="Plot result" width="600"/>
+
+**This is also good news.**
+
+- This is typical for a wheel-in-the-air test.
+- Roll angle has small DC drift of a few degrees (normal due to chassis flex + IMU bias).
+- No jitter or high-frequency artifacts.
+- IMU orientation estimate is stable.
+- Roll rate (raw-ish gyro rate), noise amplitude is roughly ±2–4 deg/s
+- Centered around 0
+- Broad vibration band → this is expected motor vibration, not sensor instability
+- No strong narrow-band resonance → great sign
+- No drift → bias stable
+- Peak RMS ~3.3 deg/s at motor spin-up
+- Settles to ~1.2–1.5 deg/s steady state
+- Clean exponential decay after spin-up
+- This RMS level is acceptable for control.
+
+**General rules of thumb:**
+
+| Condition                  | RMS (deg/s)    | Interpretation                    |
+| -------------------------- | -------------- | --------------------------------- |
+| **Excellent / motors off** | 0.1–0.3        | Ideal                             |
+| **Good / motors on**       | 0.3–0.7        | Normal                            |
+| **Acceptable**             | 0.7–1.5        | Usable                            |
+| **Concerning**             | 1.5–2.0        | Needs checking                    |
+| **Problematic**            | >2.0 sustained | Likely resonance or poor mounting |
+
+
+
 ## Test rigs
 
 This test configuration is not fully representative of real operation—the PCB, IMU, and motors are rigidly mounted to a flat board rather than the full TWR body. Because the robot cannot balance yet, it is difficult to collect realistic motion data while the system is in its operational configuration.
