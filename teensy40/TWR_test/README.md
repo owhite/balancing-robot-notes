@@ -49,7 +49,7 @@ Let's look at some data. Turn off the motors, and one hard desk bang causes this
 
 Let's try it with the motors running: 
 
-<img src="Figure_3.png" alt="Plot result" width="600"/>
+<img src="Figure_4.png" alt="Plot result" width="600"/>
 
 **This is also good news.**
 
