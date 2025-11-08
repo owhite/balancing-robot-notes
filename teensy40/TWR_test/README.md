@@ -35,19 +35,17 @@ Acceptable but monitor:
 - Some vibration coupling.
 - Controller may still behave, but there could be torque “buzzing.”
 
-Let's look at some data. One hard desk bang causes this:
+Let's look at some data. Turn off the motors, and one hard desk bang causes this:
 
-<img src="Figure_2.png" alt="Plot result" width="600"/>
+<img src="Figure_3.png" alt="Plot result" width="600"/>
 
-**This is good news** 
-
-If the robot receives a mechanical impact, the IMU reports a temporary rise in roll-rate RMS, up to ~2–3 deg/s. This is expected and represents real physical disturbance, not measurement noise. The RMS rapidly returns to baseline (≈0.1–0.3 deg/s), indicating low steady-state noise, adequate mechanical damping, and no problematic chassis resonance.
+**This is good news.** If the robot receives a mechanical impact, the IMU reports a temporary rise in roll-rate RMS, up to ~2–3 deg/s. This is expected and represents real physical disturbance, not measurement noise. The RMS rapidly returns to baseline (≈0.1–0.3 deg/s), indicating low steady-state noise, adequate mechanical damping, and no problematic chassis resonance.
 
 - RMS ~0.1–0.3 deg/s at steady state → Very clean IMU data.
-- A fast rise in RMS up to ~2.5 deg/s
-- A clean decay back to baseline over ~200–400 ms
-- No lingering resonance
-- No secondary ringing
+- A fast rise in RMS up to ~2.5 deg/s.
+- A clean decay back to baseline over ~200–400 ms.
+- No lingering resonance.
+- No secondary ringing.
 
 ## Test rigs
 
