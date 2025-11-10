@@ -1,163 +1,160 @@
 #include "MPU6050.h"
+#include <Wire.h>
 
-// Register defs
+// MPU6050 register definitions
 #define MPU_ADDR        0x68
-#define REG_SMPLRT_DIV  0x19
+#define REG_PWR_MGMT_1  0x6B
 #define REG_CONFIG      0x1A
 #define REG_GYRO_CFG    0x1B
 #define REG_ACCEL_CFG   0x1C
-#define REG_FIFO_EN     0x23
-#define REG_INT_PIN_CFG 0x37
-#define REG_INT_ENABLE  0x38
-#define REG_FIFO_COUNT  0x72
-#define REG_FIFO_RW     0x74
-#define REG_USER_CTRL   0x6A
-#define REG_PWR_MGMT_1  0x6B
 
-#define DLPF_CFG          5
-#define ACCEL_FS          0x08    // ±4 g
-#define GYRO_FS           0x10    // ±1000 dps
-#define ACC_LSB_PER_G     8192.0f
-#define GYRO_LSB_PER_DPS  32.8f
-#define FIFO_FRAME_BYTES  12
+// Standard sequential data block begins here
+#define REG_ACCEL_XOUT  0x3B
 
-// ----------------- Public API -----------------
+#define ACC_LSB_PER_G        8192.0f     // ±4g
+#define GYRO_LSB_PER_DPS     32.8f       // ±1000 dps
+#define DEG2RAD              (PI/180.0f)
+
 bool MPU6050::begin() {
-    i2cWrite(REG_PWR_MGMT_1, 0x80); delay(100); // reset
-    i2cWrite(REG_PWR_MGMT_1, 0x01); delay(10);  // clock=PLL
-    i2cWrite(REG_CONFIG, DLPF_CFG);
-    i2cWrite(REG_GYRO_CFG,  GYRO_FS);
-    i2cWrite(REG_ACCEL_CFG, ACCEL_FS);
-    i2cWrite(REG_SMPLRT_DIV, 0x00);
 
-    i2cWrite(REG_USER_CTRL, 0x04); delay(10);   // FIFO reset
-    i2cWrite(REG_USER_CTRL, 0x40);              // FIFO enable
-    i2cWrite(REG_FIFO_EN, 0x78);                // accel+gyro
+  // Reset
+  i2cWrite(REG_PWR_MGMT_1, 0x80);
+  delay(100);
 
-    i2cWrite(REG_INT_PIN_CFG, 0x10);
-    i2cWrite(REG_INT_ENABLE,  0x01);
+  // Wake up (use PLL with X gyro)
+  i2cWrite(REG_PWR_MGMT_1, 0x01);
+  delay(10);
 
-    // Initialize Mahony gains tune how fast and how stably the robot estimates its tilt angle.
-    // twoKp = proportional correction gain (gyro alignment to accel)
-    // twoKi = integral term for gyro bias drift correction
+  // --- DLPF bandwidth ---
+  // 5 → ~10 Hz accel/gyro BW  (default)
+  // 6 → ~5 Hz  accel/gyro BW  (quieter, more damping)
+  i2cWrite(REG_CONFIG, 5);   // change to 6 if needed
 
-    twoKp = 2.0f;
-    twoKi = 0.05f;
-    ix = iy = iz = 0.0f;
+  // Gyro = ±1000 deg/s
+  i2cWrite(REG_GYRO_CFG, 0x10);
 
-    last_us = micros();
-    return true;
+  // Accel = ±4g
+  i2cWrite(REG_ACCEL_CFG, 0x08);
+
+  // ---------------------------------------------------------------------------
+  // Gyro + accel bias calibration (robot must be still)
+  // ---------------------------------------------------------------------------
+  const uint16_t N = 1000;
+  long ax_sum=0, ay_sum=0, az_sum=0, 
+       gx_sum=0, gy_sum=0, gz_sum=0;
+
+  uint8_t buf[14];
+
+  for (uint16_t i = 0; i < N; ++i) {
+    i2cBurstRead(REG_ACCEL_XOUT, buf, 14);
+
+    int16_t ax_i = (buf[0] << 8) | buf[1];
+    int16_t ay_i = (buf[2] << 8) | buf[3];
+    int16_t az_i = (buf[4] << 8) | buf[5];
+
+    int16_t gx_i = (buf[8]  << 8) | buf[9];
+    int16_t gy_i = (buf[10] << 8) | buf[11];
+    int16_t gz_i = (buf[12] << 8) | buf[13];
+
+    ax_sum += ax_i;
+    ay_sum += ay_i;
+    az_sum += az_i;
+
+    gx_sum += gx_i;
+    gy_sum += gy_i;
+    gz_sum += gz_i;
+
+    delay(1);
+  }
+
+  // Averages
+  float ax_avg = ax_sum / (float)N;
+  float ay_avg = ay_sum / (float)N;
+  float az_avg = az_sum / (float)N;
+
+  float gx_avg = gx_sum / (float)N;
+  float gy_avg = gy_sum / (float)N;
+  float gz_avg = gz_sum / (float)N;
+
+  // Convert to physical units
+  accel_bias_x = ax_avg / ACC_LSB_PER_G;
+  accel_bias_y = ay_avg / ACC_LSB_PER_G;
+  accel_bias_z = az_avg / ACC_LSB_PER_G - 1.0f;   // remove gravity from Z-axis
+
+  gyro_bias_x = (gx_avg / GYRO_LSB_PER_DPS) * DEG2RAD;
+  gyro_bias_y = (gy_avg / GYRO_LSB_PER_DPS) * DEG2RAD;
+  gyro_bias_z = (gz_avg / GYRO_LSB_PER_DPS) * DEG2RAD;
+
+  // Initialize LPF states (filtered accel)
+  ay_f = 0.0f;
+  az_f = 1.0f;
+
+  last_us = micros();
+  return true;
 }
 
-// ----------------- Update loop -----------------
+
+// -----------------------------------------------------------------------------
+// Direct register reading (NO FIFO, NO MAHONY, NO QUATERNION STATE).
+// This is the correct approach for a balancing robot.
+// -----------------------------------------------------------------------------
 void MPU6050::update() {
-    uint8_t cntBuf[2] = {0, 0};
-    i2cBurstRead(REG_FIFO_COUNT, cntBuf, 2);
-    uint16_t fifo_count = (cntBuf[0] << 8) | cntBuf[1];
 
-    // --- (1) FIFO Overflow Recovery ---
-    if (fifo_count > 1024) {
-        i2cWrite(REG_USER_CTRL, 0x04); delayMicroseconds(50); // reset FIFO
-        i2cWrite(REG_USER_CTRL, 0x40);
-        i2cWrite(REG_FIFO_EN, 0x78);  // re-enable accel+gyro
-        return;
-    }
+  uint8_t buf[14];
+  i2cBurstRead(REG_ACCEL_XOUT, buf, 14);
 
-    if (fifo_count < FIFO_FRAME_BYTES) return; // not enough data yet
+  int16_t ax_i = (buf[0]<<8)|buf[1];
+  int16_t ay_i = (buf[2]<<8)|buf[3];
+  int16_t az_i = (buf[4]<<8)|buf[5];
+  int16_t gx_i = (buf[8]<<8)|buf[9];
+  int16_t gy_i = (buf[10]<<8)|buf[11];
+  int16_t gz_i = (buf[12]<<8)|buf[13];
 
-    uint8_t raw[12];
-    i2cBurstRead(REG_FIFO_RW, raw, sizeof(raw));
+  float ax = ax_i / ACC_LSB_PER_G - accel_bias_x;
+  float ay = ay_i / ACC_LSB_PER_G - accel_bias_y;
+  float az = az_i / ACC_LSB_PER_G - accel_bias_z;
 
-    int16_t ax_i = (int16_t)readU16BE(raw[0], raw[1]);
-    int16_t ay_i = (int16_t)readU16BE(raw[2], raw[3]);
-    int16_t az_i = (int16_t)readU16BE(raw[4], raw[5]);
-    int16_t gx_i = (int16_t)readU16BE(raw[6], raw[7]);
-    int16_t gy_i = (int16_t)readU16BE(raw[8], raw[9]);
-    int16_t gz_i = (int16_t)readU16BE(raw[10], raw[11]);
+  float gx = (gx_i / GYRO_LSB_PER_DPS) * DEG2RAD - gyro_bias_x;
+  float gy = (gy_i / GYRO_LSB_PER_DPS) * DEG2RAD - gyro_bias_y;
+  float gz = (gz_i / GYRO_LSB_PER_DPS) * DEG2RAD - gyro_bias_z;
 
-    float ax = ax_i / ACC_LSB_PER_G;
-    float ay = ay_i / ACC_LSB_PER_G;
-    float az = az_i / ACC_LSB_PER_G;
-    float gx_dps = gx_i / GYRO_LSB_PER_DPS;
-    float gy_dps = gy_i / GYRO_LSB_PER_DPS;
-    float gz_dps = gz_i / GYRO_LSB_PER_DPS;
+  gyro_x_rad_s = gx; gyro_y_rad_s = gy; gyro_z_rad_s = gz;
+  roll_rate = gx;
 
-    // --- (2) Fixed timing (synchronized to 1kHz control loop) ---
-    constexpr float dt = 0.001f;  // 1 ms loop period (1000 Hz)
+  // dt for LPF (not critical; ~1kHz)
+  uint32_t now = micros();
+  float dt = (now - last_us) * 1e-6f;
+  last_us = now;
+  if (dt <= 0 || dt > 0.01f) dt = 0.001f;
 
-    const float DEG2RAD = PI / 180.0f;
-    mahonyUpdate(gx_dps * DEG2RAD,
-                 gy_dps * DEG2RAD,
-                 gz_dps * DEG2RAD,
-                 ax, ay, az, dt);
+  // 1st-order LPF on accel axes (fc ≈ 4 Hz)
+  const float fc = 4.0f;
+  const float alpha = expf(-2.0f * PI * fc * dt);   // keep 0<alpha<1
+  ay_f = alpha * ay_f + (1.0f - alpha) * ay;
+  az_f = alpha * az_f + (1.0f - alpha) * az;
+
+  roll_rad  = atan2f(ay_f, az_f);
+  pitch_rad = atan2f(-ax, sqrtf(ay_f*ay_f + az_f*az_f));
+  yaw_rad   = 0.0f;
 }
 
-// ----------------- Mahony Filter -----------------
-void MPU6050::mahonyUpdate(float gx, float gy, float gz,
-                           float ax, float ay, float az, float dt) {
-
-    // --- (3) Accelerometer saturation / validity check ---
-    float acc_mag = sqrtf(ax*ax + ay*ay + az*az);
-    if (acc_mag < 0.8f || acc_mag > 1.2f) return;  // skip outliers
-    float inv_norm = 1.0f / acc_mag;
-    ax *= inv_norm; ay *= inv_norm; az *= inv_norm;
-
-    float vx = 2.0f*(q1*q3 - q0*q2);
-    float vy = 2.0f*(q0*q1 + q2*q3);
-    float vz = q0*q0 - q1*q1 - q2*q2 + q3*q3;
-
-    float ex = (ay*vz - az*vy);
-    float ey = (az*vx - ax*vz);
-    float ez = (ax*vy - ay*vx);
-
-    if (twoKi > 0.0f) {
-        ix += twoKi * ex * dt;
-        iy += twoKi * ey * dt;
-        iz += twoKi * ez * dt;
-    } else {
-        ix = iy = iz = 0.0f;
-    }
-
-    gx += twoKp * ex + ix;
-    gy += twoKp * ey + iy;
-    gz += twoKp * ez + iz;
-
-    gx *= 0.5f * dt;
-    gy *= 0.5f * dt;
-    gz *= 0.5f * dt;
-    float qa = q0, qb = q1, qc = q2;
-    q0 += (-qb*gx - qc*gy - q3*gz);
-    q1 += (qa*gx + qc*gz - q3*gy);
-    q2 += (qa*gy - qb*gz + q3*gx);
-    q3 += (qa*gz + qb*gy - qc*gx);
-
-    float qnorm = 1.0f / sqrtf(q0*q0 + q1*q1 + q2*q2 + q3*q3);
-    q0 *= qnorm; q1 *= qnorm; q2 *= qnorm; q3 *= qnorm;
-
-    // Euler angles
-    float roll_r  = atan2f(2*(q0*q1 + q2*q3), 1 - 2*(q1*q1 + q2*q2));
-    float pitch_r = asinf(2*(q0*q2 - q3*q1));
-    roll  = roll_r  * 180.0f / PI;
-    pitch = pitch_r * 180.0f / PI;
-}
-
-// ----------------- I2C helpers -----------------
+// -----------------------------------------------------------------------------
+// I2C helpers
+// -----------------------------------------------------------------------------
 void MPU6050::i2cWrite(uint8_t reg, uint8_t val) {
-    Wire.beginTransmission(MPU_ADDR);
-    Wire.write(reg);
-    Wire.write(val);
-    Wire.endTransmission();
+  Wire.beginTransmission(MPU_ADDR);
+  Wire.write(reg);
+  Wire.write(val);
+  Wire.endTransmission();
 }
 
 void MPU6050::i2cBurstRead(uint8_t reg, uint8_t* buf, uint16_t len) {
-    Wire.beginTransmission(MPU_ADDR);
-    Wire.write(reg);
-    Wire.endTransmission(false);
-    Wire.requestFrom((int)MPU_ADDR, (int)len);
-    for (uint16_t i = 0; i < len && Wire.available(); ++i)
-        buf[i] = Wire.read();
-}
+  Wire.beginTransmission(MPU_ADDR);
+  Wire.write(reg);
+  Wire.endTransmission(false);
+  Wire.requestFrom((uint8_t)MPU_ADDR, len);
 
-uint16_t MPU6050::readU16BE(uint8_t high, uint8_t low) {
-    return (uint16_t)high << 8 | low;
+  for (uint16_t i = 0; i < len && Wire.available(); i++) {
+    buf[i] = Wire.read();
+  }
 }

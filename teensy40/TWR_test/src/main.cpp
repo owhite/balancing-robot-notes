@@ -93,6 +93,7 @@ void loop() {
   // -------- LOW PRIORITY --------
   // These functions are intentionally throttled using a x10 time divider
   // ---
+
   static uint32_t last_lowprio_us = 0;
   uint32_t now_us = micros();
 

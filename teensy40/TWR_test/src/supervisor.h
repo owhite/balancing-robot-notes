@@ -68,10 +68,16 @@ struct RCChannel {
 // ---------------- IMU ----------------
 // Orientation data from IMU.
 struct IMU_typedef {
-  bool valid;              // True if IMU data is fresh
-  float roll, pitch, yaw;  // Orientation angles [radians]
-  float roll_rate;        // Derived angular velocity [rad/s]
-  uint32_t last_update_us; // Timestamp of last IMU update
+  bool valid;
+
+  float roll_rad;
+  float pitch_rad;
+  float yaw_rad;
+
+  float roll_rate;        // rad/s
+  float roll_prev_rad;    // for finite diff
+
+  uint32_t last_update_us;
 };
 
 // ---------------- Supervisor Modes ----------------

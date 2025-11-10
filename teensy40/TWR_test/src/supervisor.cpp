@@ -1,9 +1,8 @@
 #include "supervisor.h"
 #include <string.h>
 #include "main.h"
-#pragma once
 
-void run_mode_balance_TWR(Supervisor_typedef *sup,
+void balance_TWR_mode(Supervisor_typedef *sup,
 			      FlexCAN_T4<CAN1, RX_SIZE_256, TX_SIZE_16> &can);
 
 // ---------------- Global Flags ----------------
@@ -85,7 +84,7 @@ void init_supervisor(Supervisor_typedef *sup,
 
   // IMU initial state
   sup->imu.valid = false;
-  sup->imu.roll = sup->imu.pitch = sup->imu.yaw = 0.0f;
+  sup->imu.roll_rad = sup->imu.pitch_rad = sup->imu.yaw_rad = 0.0f;
   sup->imu.last_update_us = now;
 
   // Supervisor state machine initial mode
@@ -182,6 +181,7 @@ void resetTelemetryStats(Supervisor_typedef *sup) {
 //
 
 static int telem_counter = 0;
+static int print_counter = 0;
 
 void controlLoop(MPU6050 &imu, Supervisor_typedef *sup,
                  FlexCAN_T4<CAN1, RX_SIZE_256, TX_SIZE_16> &can) {
@@ -212,24 +212,47 @@ void controlLoop(MPU6050 &imu, Supervisor_typedef *sup,
   }
 
   // ---- IMU: poll I²C, drain FIFO, update state ----
-  imu.update();
+  imu.update();   
 
-  float new_roll = imu.roll;
+  /*
+  if (++print_counter >= 50) {   // print at 20 Hz, not 1000 Hz
+    print_counter = 0;
+
+    Serial.printf("gx=%.3f gy=%.3f gz=%.3f\r\n",
+              imu.gyro_x_rad_s,
+              imu.gyro_y_rad_s,
+              imu.gyro_z_rad_s);
+
+    float roll_deg = imu.roll_rad * 180.0f / PI;
+    float roll_rate_deg = imu.roll_rate * 180.0f / PI;
+
+    // Serial.printf("roll=%.2f roll_rate=%.2f\r\n", roll_deg, roll_rate_deg);
+
+  }
+  */
+  
   uint32_t now_us = micros();
 
-  // Derive roll rate [rad/s] using finite difference
+  // Copy radian outputs directly from the MPU object
+  // MPU6050 now produces roll_rad, pitch_rad, yaw_rad
+  sup->imu.roll_rad  = imu.roll_rad;
+  sup->imu.pitch_rad = imu.pitch_rad;
+  sup->imu.yaw_rad   = imu.yaw_rad;
+
+  // roll_rate: use finite difference on roll_rad
   if (sup->imu.valid) {
     float dt = (now_us - sup->imu.last_update_us) * 1e-6f;
-    if (dt > 0.0005f && dt < 0.01f) {  // between 100 Hz and 2 kHz
-      float raw_rate = (new_roll - sup->imu.roll) / dt;
-      // Simple 1st-order low-pass filter to reduce noise
+    if (dt > 0.0005f && dt < 0.01f) { // between 100 Hz and 2 kHz
+      float raw_rate = (sup->imu.roll_rad - sup->imu.roll_prev_rad) / dt;
+
+      // optional smoothing (keep your prior LPF behavior)
       sup->imu.roll_rate = 0.9f * sup->imu.roll_rate + 0.1f * raw_rate;
     }
   }
 
-  sup->imu.roll  = new_roll;
-  sup->imu.pitch = imu.pitch;
-  sup->imu.yaw   = imu.yaw;
+  // Remember previous roll for next derivative
+  sup->imu.roll_prev_rad = sup->imu.roll_rad;
+
   sup->imu.valid = true;
   sup->imu.last_update_us = now_us;
 
@@ -266,7 +289,7 @@ void controlLoop(MPU6050 &imu, Supervisor_typedef *sup,
   }
  
   case SUP_MODE_BALANCE_TWR: {
-    run_mode_balance_TWR(sup, can);
+    balance_TWR_mode(sup, can);
     break;
   }
 
