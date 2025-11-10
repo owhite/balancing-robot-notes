@@ -1,9 +1,7 @@
 # MESC Brain Board Documentation
 
 ### Overview
-The MESC Brain Board is a Teensy 4.0-based microcontroller platform responsible for high-level control of a balancing robot using BLDC motors. It interfaces with motor controllers over CAN, receives motion data from an MPU6050 IMU, accepts user commands from an RC transceiver via PWM, and communicates with an ESP32 over UART. The brain board includes status indicators such as LEDs and a speaker. 
-
-This document just helping to think through firmware overview, and create really useful prompts for chatGPT.
+Most of this is nonesense. This document helped with thinking through firmware overview, and create really useful prompts for chatGPT.
 
 #
 ### Hardware Interfaces / Peripherals

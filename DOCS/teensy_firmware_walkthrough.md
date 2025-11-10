@@ -1,52 +1,3 @@
-# MESC BRAIN BOARD PROMPT
-
-This is a PCB and software development project for a balancing robot. 
-
-The goal is to use a hobby Electronic Speed Controller (one open source [example](https://github.com/owhite/MP2-DFN), and this circuit for a [brain board](https://github.com/owhite/MESC_brain_board/blob/main/brainboardV1.0/MESC_brain_board.pdf), a teensy 4.0, and an ESP-32, in combination with [MESC firmware](https://github.com/davidmolony/MESC_Firmware).
-
-## GENERAL APPROACH
-
-A separation of concerns is divided across these architectures:
-
-* **Teensy:** Runs the high-level brain → gait generator, balance estimator, RC inputs
-* **MESC:** The firmware on the ESC for control → torque or velocity loops per joint
-* **ESP32:** Easy to log and analyze later → pumps UDP to the computer
-* **Desktop computer** → perfectly adequate way of viewing high speed data with UDP
-
-## TEENSY 4.0
-* 600+ MHz ARM Cortex-M7 — plenty of headroom for filtering, control loops, gait logic, telemetry
-* Tons of I/O for IMU, encoders, RC input, WiFi (via ESP add-on), etc.
-* Precise timing with elapsedMicros or interrupts for deterministic control
-* Great for real-time control, sensor fusion, and behavior modeling
-
-## MESC MOTOR CONTROLLER
-* Executes low-level Field-Oriented Control (FOC) motor control 
-* DIY and commercially available boards
-* Built-in support for encoders, FOC, and torque estimation
-* Accurate low-level motor control using current sensing
-* Reads angular position from the MT6701 encoder via SPI or PWM
-* UART/CAN interface (RX + TX)	Real-time communication with the Teensy
-* PWM / FOC commutation w/ efficient, smooth motor operation
-
-## OTHER BRAIN BOARD FEATURES
-* RC receiver connector (for PWM/PPM/SBUS input)
-* ESP32 UART serial programmer
-* Power input connector
-* Voltage divider (to monitor battery voltage)
-* Push-button E-stop connector
-* IMU connector (e.g., MPU-6050)
-* Buzzer (for system alerts or E-stop signal)
-* CAN connector (for MESC motor control)
-* The ESC connects to a MT6701 encoder
-
-## CAN BUS
-* Full-duplex communication between Teensy and motor controllers
-* Carries:
-  * Commands: set_torque, set_velocity, enable_motor, zero_encoder, etc.
-  * Telemetry: encoder position, estimated torque, velocity, fault codes
-* Real-time performance with minimal latency
-* Can support multiple motor controllers on the same bus
-
 ## Teensy Firmware
 - main() 
    - supervisor is initialized which handles much of the control loop activities
@@ -295,3 +246,4 @@ void controlLoop(MPU6050 &imu,
     sup->timing.exec_time_us = micros() - start_us;
 }
 ```
+

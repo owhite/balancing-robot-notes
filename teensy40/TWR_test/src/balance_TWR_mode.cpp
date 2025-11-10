@@ -149,8 +149,8 @@ void balance_TWR_mode(Supervisor_typedef *sup,
       canPackFloat(0.0f, msgL.buf + 4);
       canPackFloat(0.0f, msgR.buf + 4);
 
-      // can.write(msgL);
-      // can.write(msgR);
+      can.write(msgL);
+      can.write(msgR);
     }
 
     // ---------------- Logging ----------------

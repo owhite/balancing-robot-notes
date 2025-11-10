@@ -1,23 +1,17 @@
-# MESC BRAIN BOARD
+# MESC BRAIN BOARD PROMPT
 
-A PCB and software development repo for a balancing robot. 
+This is a PCB and software development project for a balancing robot. 
 
-The goal is to use open source motor controller, the [MP2-DFN](https://github.com/owhite/MP2-DFN), and this circuit for a [brain board](https://github.com/owhite/MESC_brain_board/blob/main/brainboardV1.0/MESC_brain_board.pdf), a teensy 4.0, and an ESP-32, in combination with [MESC firmware](https://github.com/davidmolony/MESC_Firmware).
+The goal is to use a hobby Electronic Speed Controller (one open source [example](https://github.com/owhite/MP2-DFN), and this circuit for a [brain board](https://github.com/owhite/MESC_brain_board/blob/main/brainboardV1.0/MESC_brain_board.pdf), a teensy 4.0, and an ESP-32, in combination with [MESC firmware](https://github.com/davidmolony/MESC_Firmware).
 
 ## GENERAL APPROACH
 
 A separation of concerns is divided across these architectures:
 
 * **Teensy:** Runs the high-level brain → gait generator, balance estimator, RC inputs
-* **MESC:** Handles the low-level muscle control → torque or velocity loops per joint
+* **MESC:** The firmware on the ESC for control → torque or velocity loops per joint
 * **ESP32:** Easy to log and analyze later → pumps UDP to the computer
 * **Desktop computer** → perfectly adequate way of viewing high speed data with UDP
-
-## MANY THANKS
-This project would never happen without:
-* [MESC firmware](https://github.com/davidmolony/MESC_Firmware). 
-* [Netzpfuscher's](https://github.com/Netzpfuscher/TTerm) incredible TTerm and CAN work.
-* [MP2](https://github.com/badgineer/MP2-ESC) an open source motor controller from badgineer. 
 
 ## TEENSY 4.0
 * 600+ MHz ARM Cortex-M7 — plenty of headroom for filtering, control loops, gait logic, telemetry
@@ -26,8 +20,8 @@ This project would never happen without:
 * Great for real-time control, sensor fusion, and behavior modeling
 
 ## MESC MOTOR CONTROLLER
+* Deploys on simple DIY or commercially available ESC boards
 * Executes low-level Field-Oriented Control (FOC) motor control 
-* DIY and commercially available boards
 * Built-in support for encoders, FOC, and torque estimation
 * Accurate low-level motor control using current sensing
 * Reads angular position from the MT6701 encoder via SPI or PWM
@@ -47,15 +41,6 @@ This project would never happen without:
 * Reserved 2 GPIO pins on Teensy for emergency shutoff to MESC
 * CAN connector (for MESC motor control)
 
-## SPECS AND TESTING
-* Using the MT6701 [[LINK](DOCS/MT6701.md)]
-* Implementing CAN [[LINK](DOCS/CAN.md)]
-* Measuring jitter on the MESC [[LINK](DOCS/jitter_testing.md)]
-* Determinism discussion [[LINK](DOCS/determinism_design.md)]
-* **PRELIMINARY:** Control loop [[LINK](DOCS/control_loop.md)]
-* **PRELIMINARY:** Brain board firmware [[LINK](DOCS/software_specs.md)]
-* Balancing checklist [[LINK](DOCS/balancing_checklist.md)]
-
 ## CAN BUS
 * Full-duplex communication between Teensy and motor controllers
 * Carries:
@@ -64,18 +49,46 @@ This project would never happen without:
 * Real-time performance with minimal latency
 * Can support multiple motor controllers on the same bus
 
-## MT6701 ENCODER
-* High-resolution magnetic rotary encoder (up to 14-bit)
-* Measures rotor position for the BLDC
-* Output via SPI, PWM, or ABI 
-* Provides absolute angle, ideal for FOC and position tracking
+## SPECS AND TESTING
+* Using the MT6701 [[LINK](DOCS/MT6701.md)] → works great but required some minor modifications to MESC position and [velocity measurement](DOCS/pos_vel_CAN.md)
+* Measuring jitter on the MESC [[LINK](DOCS/jitter_testing.md)] → none found at current operating speeds
+* Determinism discussion [[LINK](DOCS/determinism_design.md)]
+* Implementing CAN [[LINK](DOCS/CAN.md)]
+* Preliminary balancing checklist [[LINK](DOCS/balancing_checklist.md)]
+* Balance failure modes [[LINK](DOCS/balancing_failures.md)]
+* Notes about MESC [[LINK](DOCS/MESC_control_variables.md)]
+* Discovering the inadequacies of [PID](DOCS/PID_position.md). 
+* Notes about learning [LQR](DOCS/learn_LQR.md). 
+* How the brain board firmware works [LQR](DOCS/teensy_firmware_walkthrough.md). 
+* **BLATHER AND NOISE:** Brain board firmware [[LINK](DOCS/software_specs.md)]
 
-## NOT IMPLEMENTED
-* Optional I²C header (for sensors like INA219 or IMU)
-* Encoder inputs (if reading position directly)
-* SWD debug access for Teensy
-* Big red e-stop button
-* Voltage divider (to monitor battery voltage)
+## Laboratory notes, 2025
+
+* [Position hold](DOCS/sept12_position_hold.md)
+* [Controller issues](DOCS/sept18_controller_issues.md)
+* [Torque nonlinearity](DOCS/sept19_torque_nonlinearity.md)
+* [PID notes](DOCS/sept23_PID_notes.md)
+* [Least squares](DOCS/sept30_least_squares.md)
+* [Torque response](DOCS/oct03_torque_response.md)
+* [LQR modeling](DOCS/oct11_LQR_modeling.md)
+* [LQR height](DOCS/oct12_LQR_height.md)
+
+## MANY THANKS
+This project would never happen without:
+* [MESC firmware](https://github.com/davidmolony/MESC_Firmware). 
+* [Netzpfuscher's](https://github.com/Netzpfuscher/TTerm) incredible TTerm and CAN work.
+* [MP2](https://github.com/badgineer/MP2-ESC) an open source motor controller from badgineer. 
+
+
+## NOTES
+Ever wanted to change all the names of kicad files at once?
+
+use this:
+```
+python3 replace_kicad_names.py VESC_brain_board MESC_brain_board
+```
+
+[[LINK](replace_kicad_names.py)]
 
 ## STILL NEEDS WORK
 * Not great design w/ DC-DC conversion from high voltage VBat
@@ -87,12 +100,3 @@ This project would never happen without:
 * See github tag [pcb-v1](https://github.com/owhite/MESC_brain_board/releases/tag/pcb-v1) for V1.0
 * Retreive with this command: "git checkout pcb-v1"
 
-## NOTES
-Ever wanted to change all the names of kicad files at once?
-
-use this:
-```
-python3 replace_kicad_names.py VESC_brain_board MESC_brain_board
-```
-
-[[LINK](replace_kicad_names.py)]

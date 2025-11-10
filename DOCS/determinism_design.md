@@ -121,14 +121,3 @@ By structuring the firmware around these principles preserves a highly determini
 
 ---
 
-### TEXT TO ADD
-- The Supervisor is the central state container, but there’s no doc explaining its layout.
-- Once complete add a “Supervisor variable map” document would improve readability and debugging (we just built a draft).
-- At some point summarize the low level tasks. Could be summarized once (e.g., “UI tasks are updated at 50–100 Hz via a divider, not tied to the control loop”).
-- This doc touches on telemetry, but we also have instrumentation (timing stats, Serial1 blocking stats).
-- Add a short section could explain:
-  - Telemetry is lossy by design.
-  - Stats are reset after each packet.
-  - Blocking measurements are collected for diagnostics, not core logic.
-- The README points to jitter testing and control loop, but determinism_design.md doesn’t reference those.
-- Adding links back to jitter test results strengthens the chain of evidence.

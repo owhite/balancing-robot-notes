@@ -191,3 +191,18 @@ Control setup:
 - I-term only after P–D balance is stable, to cancel offsets (friction, misalignment).
 - If this works, great, then move on to LQR
 
+## Bottom line
+
+- It took a while but even with pendulum testing I discovered **PID is a fun-house mirror of meaningless gains**
+- A balancing robot is a double-integrator–plus–gravity system. 
+   - The wheel torques accelerate the body
+   - The body angle integrates the rate
+   - Disturbances enter everywhere
+   - The dynamics are state-based, not error-based
+- **PID has no clue about any of this.**
+- It looks like you’re controlling the robot, but you’re actually tuning a distorted reflection of the system.
+
+I later learned that LQR at least gives you a fighting chance of understanding the system. Because instead of tuning gains blindfolded, 1) you model the system (linearized Euler-Lagrange or state-space); 2) Derive optimal state feedback gains using Riccati equations; and 3) Know why each gain has the value it does. Here's an introduction to [LQR](DOCS/learn_LQR.md). 
+
+### DEETS
+**Teensy code:** [here](https://github.com/owhite/MESC_brain_board/tree/main/teensy40/PID_position)
