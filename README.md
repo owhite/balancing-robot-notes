@@ -1,6 +1,6 @@
-# MESC BRAIN BOARD PROMPT
+# MESC BRAIN BOARD 
 
-This is a PCB and software development project for a balancing robot. 
+A PCB and software development project for a balancing robot. 
 
 The goal is to use a hobby Electronic Speed Controller (one open source [example](https://github.com/owhite/MP2-DFN), and this circuit for a [brain board](https://github.com/owhite/MESC_brain_board/blob/main/brainboardV1.0/MESC_brain_board.pdf), a teensy 4.0, and an ESP-32, in combination with [MESC firmware](https://github.com/davidmolony/MESC_Firmware).
 
