@@ -4611,16 +4611,6 @@
 	)
 	(wire
 		(pts
-			(xy 149.86 100.965) (xy 134.62 100.965)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "f063116b-19c4-4d78-a833-5665d40a55ad")
-	)
-	(wire
-		(pts
 			(xy 43.18 92.71) (xy 43.18 97.79)
 		)
 		(stroke
@@ -4706,6 +4696,7 @@
 	)
 	(label "LED2"
 		(at 147.32 97.79 180)
+		(fields_autoplaced yes)
 		(effects
 			(font
 				(size 1.27 1.27)
@@ -4716,6 +4707,7 @@
 	)
 	(label "ESP_RX"
 		(at 154.94 21.59 0)
+		(fields_autoplaced yes)
 		(effects
 			(font
 				(size 1.27 1.27)
@@ -4726,6 +4718,7 @@
 	)
 	(label "CAN_RX"
 		(at 238.76 85.09 180)
+		(fields_autoplaced yes)
 		(effects
 			(font
 				(size 1.27 1.27)
@@ -4736,6 +4729,7 @@
 	)
 	(label "GND"
 		(at 238.76 80.01 180)
+		(fields_autoplaced yes)
 		(effects
 			(font
 				(size 1.27 1.27)
@@ -4746,6 +4740,7 @@
 	)
 	(label "SPEAKER"
 		(at 154.94 69.85 0)
+		(fields_autoplaced yes)
 		(effects
 			(font
 				(size 1.27 1.27)
@@ -4756,6 +4751,7 @@
 	)
 	(label "ESP_RX"
 		(at 147.32 83.82 180)
+		(fields_autoplaced yes)
 		(effects
 			(font
 				(size 1.27 1.27)
@@ -4766,6 +4762,7 @@
 	)
 	(label "GPIO2"
 		(at 154.94 77.47 0)
+		(fields_autoplaced yes)
 		(effects
 			(font
 				(size 1.27 1.27)
@@ -4776,6 +4773,7 @@
 	)
 	(label "MISO"
 		(at 154.94 52.07 0)
+		(fields_autoplaced yes)
 		(effects
 			(font
 				(size 1.27 1.27)
@@ -4786,6 +4784,7 @@
 	)
 	(label "CAN_TX"
 		(at 238.76 87.63 180)
+		(fields_autoplaced yes)
 		(effects
 			(font
 				(size 1.27 1.27)
@@ -4796,6 +4795,7 @@
 	)
 	(label "GPIO1"
 		(at 154.94 80.01 0)
+		(fields_autoplaced yes)
 		(effects
 			(font
 				(size 1.27 1.27)
@@ -4806,6 +4806,7 @@
 	)
 	(label "GND"
 		(at 154.94 19.05 0)
+		(fields_autoplaced yes)
 		(effects
 			(font
 				(size 1.27 1.27)
@@ -4816,6 +4817,7 @@
 	)
 	(label "CS"
 		(at 154.94 46.99 0)
+		(fields_autoplaced yes)
 		(effects
 			(font
 				(size 1.27 1.27)
@@ -4826,6 +4828,7 @@
 	)
 	(label "RC_Steering"
 		(at 154.94 44.45 0)
+		(fields_autoplaced yes)
 		(effects
 			(font
 				(size 1.27 1.27)
@@ -4836,6 +4839,7 @@
 	)
 	(label "GND"
 		(at 154.94 59.69 0)
+		(fields_autoplaced yes)
 		(effects
 			(font
 				(size 1.27 1.27)
@@ -4846,6 +4850,7 @@
 	)
 	(label "ESP_TX"
 		(at 154.94 24.13 0)
+		(fields_autoplaced yes)
 		(effects
 			(font
 				(size 1.27 1.27)
@@ -4856,6 +4861,7 @@
 	)
 	(label "INT1"
 		(at 154.94 85.09 0)
+		(fields_autoplaced yes)
 		(effects
 			(font
 				(size 1.27 1.27)
@@ -4866,6 +4872,7 @@
 	)
 	(label "CAN_RX"
 		(at 26.67 63.5 0)
+		(fields_autoplaced yes)
 		(effects
 			(font
 				(size 1.27 1.27)
@@ -4876,6 +4883,7 @@
 	)
 	(label "GPIO4"
 		(at 154.94 72.39 0)
+		(fields_autoplaced yes)
 		(effects
 			(font
 				(size 1.27 1.27)
@@ -4886,6 +4894,7 @@
 	)
 	(label "LED2"
 		(at 154.94 29.21 0)
+		(fields_autoplaced yes)
 		(effects
 			(font
 				(size 1.27 1.27)
@@ -4894,18 +4903,9 @@
 		)
 		(uuid "82e6fd43-b71f-4737-b155-dd744df59b84")
 	)
-	(label "VSENSE"
-		(at 149.86 100.965 180)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify right bottom)
-		)
-		(uuid "874e9af8-1dec-4a02-8123-bd1cb6355fd4")
-	)
 	(label "+5V"
 		(at 238.76 77.47 180)
+		(fields_autoplaced yes)
 		(effects
 			(font
 				(size 1.27 1.27)
@@ -4916,6 +4916,7 @@
 	)
 	(label "RC_Mode"
 		(at 154.94 39.37 0)
+		(fields_autoplaced yes)
 		(effects
 			(font
 				(size 1.27 1.27)
@@ -4926,6 +4927,7 @@
 	)
 	(label "BUTTON"
 		(at 154.94 82.55 0)
+		(fields_autoplaced yes)
 		(effects
 			(font
 				(size 1.27 1.27)
@@ -4936,6 +4938,7 @@
 	)
 	(label "RC_Throttle"
 		(at 154.94 41.91 0)
+		(fields_autoplaced yes)
 		(effects
 			(font
 				(size 1.27 1.27)
@@ -4946,6 +4949,7 @@
 	)
 	(label "MOSI"
 		(at 154.94 49.53 0)
+		(fields_autoplaced yes)
 		(effects
 			(font
 				(size 1.27 1.27)
@@ -4956,6 +4960,7 @@
 	)
 	(label "LED1"
 		(at 147.32 95.25 180)
+		(fields_autoplaced yes)
 		(effects
 			(font
 				(size 1.27 1.27)
@@ -4966,6 +4971,7 @@
 	)
 	(label "SCLK"
 		(at 154.94 67.31 0)
+		(fields_autoplaced yes)
 		(effects
 			(font
 				(size 1.27 1.27)
@@ -4976,6 +4982,7 @@
 	)
 	(label "CAN_TX"
 		(at 26.67 60.96 0)
+		(fields_autoplaced yes)
 		(effects
 			(font
 				(size 1.27 1.27)
@@ -4986,6 +4993,7 @@
 	)
 	(label "LED1"
 		(at 154.94 26.67 0)
+		(fields_autoplaced yes)
 		(effects
 			(font
 				(size 1.27 1.27)
@@ -4996,6 +5004,7 @@
 	)
 	(label "GPIO3"
 		(at 154.94 74.93 0)
+		(fields_autoplaced yes)
 		(effects
 			(font
 				(size 1.27 1.27)
@@ -5006,6 +5015,7 @@
 	)
 	(label "ESP_TX"
 		(at 147.32 86.36 180)
+		(fields_autoplaced yes)
 		(effects
 			(font
 				(size 1.27 1.27)
@@ -5940,28 +5950,6 @@
 					(size 1.27 1.27)
 				)
 				(justify left)
-				(hide yes)
-			)
-		)
-	)
-	(global_label "VSENSE"
-		(shape input)
-		(at 134.62 100.965 180)
-		(fields_autoplaced yes)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify right)
-		)
-		(uuid "df379f84-e721-4a5d-863c-30f0b938224c")
-		(property "Intersheetrefs" "${INTERSHEET_REFS}"
-			(at 124.4987 100.965 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify right)
 				(hide yes)
 			)
 		)

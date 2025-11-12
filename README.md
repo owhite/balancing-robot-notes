@@ -59,7 +59,7 @@ A separation of concerns is divided across these architectures:
 * Notes about MESC [[LINK](DOCS/MESC_control_variables.md)]
 * Discovering the inadequacies of [PID](DOCS/PID_position.md). 
 * Notes about learning [LQR](DOCS/learn_LQR.md). 
-* How the brain board firmware works [LQR](DOCS/teensy_firmware_walkthrough.md). 
+* How the brain board firmware works: [teensy code](DOCS/teensy_firmware_walkthrough.md). 
 * **BLATHER AND NOISE:** Brain board firmware [[LINK](DOCS/software_specs.md)]
 
 ## Laboratory notes, 2025
