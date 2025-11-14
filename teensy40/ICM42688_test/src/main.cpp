@@ -6,57 +6,61 @@ static const uint8_t INT_PIN = 19;
 ICM42688 imu(SPI, CS_PIN);
 volatile bool dataReady = false;
 
-void setImuFlag() { dataReady = true; }
+// count interrupts per second
+volatile uint32_t isrCount = 0;
+
+void setImuFlag() {
+  dataReady = true;
+  isrCount++;
+}
 
 void setup() {
-  // serial to display data
-  Serial.begin(115'200);
+  Serial.begin(115200);
   while (!Serial) {}
 
-  // start communication with IMU
   int status = imu.begin();
   if (status < 0) {
-    Serial.println("IMU initialization unsuccessful");
-    Serial.println("Check IMU wiring or try cycling power");
-    Serial.print("Status: ");
+    Serial.println("IMU init failed");
     Serial.println(status);
     while (1) {}
   }
 
-  // attaching the interrupt to micro controller pin INT_PIN
   pinMode(INT_PIN, INPUT);
   attachInterrupt(INT_PIN, setImuFlag, RISING);
 
-  // set output data rate to 12.5 Hz
   imu.setAccelODR(ICM42688::odr12_5);
   imu.setGyroODR(ICM42688::odr12_5);
-
-  // enabling the data ready interrupt
   imu.enableDataReadyInterrupt();
 
-  Serial.println("ax,ay,az,gx,gy,gz,temp_C");
+  Serial.println("ax ay az gx gy gz temp | ISR Hz");
 }
 
-void loop() {
-  if (!dataReady) { return; }
+uint32_t lastPrint = 0;
 
+void loop() {
+  // print ISR frequency once per second
+  if (millis() - lastPrint >= 1000) {
+    lastPrint = millis();
+    uint32_t count = isrCount;
+    isrCount = 0;
+
+    Serial.print("ISR Frequency: ");
+    Serial.print(count);
+    Serial.println(" Hz");
+  }
+
+  // process IMU read when ready
+  if (!dataReady) return;
   dataReady = false;
 
-  // read the sensor
   imu.getAGT();
 
-  // display the data
-  Serial.print(imu.accX(), 6);
-  Serial.print("\t");
-  Serial.print(imu.accY(), 6);
-  Serial.print("\t");
-  Serial.print(imu.accZ(), 6);
-  Serial.print("\t");
-  Serial.print(imu.gyrX(), 6);
-  Serial.print("\t");
-  Serial.print(imu.gyrY(), 6);
-  Serial.print("\t");
-  Serial.print(imu.gyrZ(), 6);
-  Serial.print("\t");
-  Serial.println(imu.temp(), 6);
+  Serial.print(imu.accX(), 6); Serial.print('\t');
+  Serial.print(imu.accY(), 6); Serial.print('\t');
+  Serial.print(imu.accZ(), 6); Serial.print('\t');
+  Serial.print(imu.gyrX(), 6); Serial.print('\t');
+  Serial.print(imu.gyrY(), 6); Serial.print('\t');
+  Serial.print(imu.gyrZ(), 6); Serial.print('\t');
+  Serial.print(imu.temp(), 6); Serial.println('\r');
+  // ISR frequency printed separately
 }

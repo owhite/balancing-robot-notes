@@ -64,8 +64,8 @@ void balance_TWR_mode(Supervisor_typedef *sup,
     float theta = 0.0f;
     float theta_dot = 0.0f;
 
-    // float theta = (sup->imu.roll * DEG_TO_RAD) - THETA_EQ;   // body angle [rad]
-    // float theta_dot = sup->imu.roll_rate * DEG_TO_RAD;       // angular velocity [rad/s]
+    theta     = sup->imu.pitch_rad - THETA_EQ;   // [rad]
+    theta_dot = sup->imu.pitch_rate; 
 
     // Wheel position and velocity (average of two wheels)
     float pos_L = sup->esc[0].state.pos_rad;

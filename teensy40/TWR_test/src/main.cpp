@@ -4,14 +4,13 @@
 #include "main.h"
 #include "pushbutton.h"
 #include "tone_player.h"
-#include "MPU6050.h"
+#include "ICM42688.h"
 #include "ESC.h"
 #include "CAN_helper.h"
 #include "supervisor.h"
 
 // ---------------------- Setup / Loop -----------------------
 IntervalTimer g_ctrlTimer;
-MPU6050 imu;
 Supervisor_typedef supervisor;
 
 const char* esc_names[]   = {"left", "right"};
@@ -30,6 +29,8 @@ PushButton g_button(PUSHBUTTON_PIN, true, 50000u);
 static LEDCtrl g_led_red;
 LEDCtrl g_led_green;
 
+ICM42688 imu(SPI, CS_PIN);
+
 void setup() {
 #if SERIAL_WRITE
   Serial.begin(921600);
@@ -39,17 +40,6 @@ void setup() {
 #if TELEMETRY_WRITE
   Serial1.begin(115200);
 #endif
-
-  Wire.begin();
-  Wire.setClock(400000);
-  imu.begin();
-
-  init_supervisor(&supervisor,
-                  2,           // esc_count -- FIX: dont hard code this number
-                  esc_names,   // ESC names
-                  esc_ids,     // ESC node IDs
-                  rc_pins,     // RC pins
-                  4);          // RC count -- FIX: dont hard code this number
 
   // LEDs / Pushbutton / Tone
   led_init(&g_led_red,   LED1_PIN, LED_BLINK_SLOW);
@@ -64,6 +54,16 @@ void setup() {
   Can1.begin();
   Can1.setBaudRate(500000);
   Can1.enableFIFO();
+
+  init_supervisor(&supervisor,
+		  imu,
+                  2,           // esc_count -- FIX: dont hard code this number
+                  esc_names,   // ESC names
+                  esc_ids,     // ESC node IDs
+                  rc_pins,     // RC pins
+                  4);          // RC count -- FIX: dont hard code this number
+
+
 }
 
 void loop() {

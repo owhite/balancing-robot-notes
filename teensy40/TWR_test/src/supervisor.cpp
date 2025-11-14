@@ -45,16 +45,20 @@ float angle_diff(float target, float actual) {
   return diff - M_PI;
 }
 
+volatile bool dataReady = false;
+void setImuFlag() { dataReady = true; }
 
 // ---------------- Supervisor Initialization ----------------
 // Sets up ESCs, IMU, RC inputs, and resets timing/telemetry stats.
 // Called once at startup from main().
 void init_supervisor(Supervisor_typedef *sup,
+		     ICM42688 &imu,
                      uint16_t esc_count,
                      const char *esc_names[],
                      const uint16_t node_ids[],
                      const uint8_t rc_pins[],
                      uint16_t rc_count) {
+
   if (!sup) return;
   g_sup = sup;
 
@@ -82,7 +86,8 @@ void init_supervisor(Supervisor_typedef *sup,
     }
   }
 
-  // IMU initial state
+  // set supervisor's IMU initial state
+  //   does not touch the chip at this point
   sup->imu.valid = false;
   sup->imu.roll_rad = sup->imu.pitch_rad = sup->imu.yaw_rad = 0.0f;
   sup->imu.last_update_us = now;
@@ -91,6 +96,21 @@ void init_supervisor(Supervisor_typedef *sup,
   sup->mode = SUP_MODE_IDLE;
   sup->gait_mode = GAIT_IDLE;
   sup->last_imu_update_us = now;
+
+  // ---- IMU Setup ----
+  int status = imu.begin();
+  if (status < 0) {
+    Serial.println("IMU initialization unsuccessful");
+    Serial.println(status);
+    while (1) {}
+  }
+
+  // attaching the interrupt to micro controller pin INT_PIN
+  pinMode(INT_PIN, INPUT);
+  attachInterrupt(INT_PIN, setImuFlag, RISING);
+  imu.setAccelODR(ICM42688::odr2k);
+  imu.setGyroODR(ICM42688::odr2k);
+  imu.enableDataReadyInterrupt();
 
   // Timing stats initialization
   sup->timing.last_tick_us = now;
@@ -181,9 +201,12 @@ void resetTelemetryStats(Supervisor_typedef *sup) {
 //
 
 static int telem_counter = 0;
-static int print_counter = 0;
 
-void controlLoop(MPU6050 &imu, Supervisor_typedef *sup,
+static float ax_min = 999.0f, ax_max = -999.0f;
+static float gx_min = 999.0f, gx_max = -999.0f;
+static uint32_t dbg_timer = 0;
+
+void controlLoop(ICM42688 &imu, Supervisor_typedef *sup,
                  FlexCAN_T4<CAN1, RX_SIZE_256, TX_SIZE_16> &can) {
 
   // ----- Update timing stats -----
@@ -211,50 +234,56 @@ void controlLoop(MPU6050 &imu, Supervisor_typedef *sup,
     sup->timing.overruns++;
   }
 
-  // ---- IMU: poll I²C, drain FIFO, update state ----
-  imu.update();   
+  // ---- IMU: read & update pitch_rad / pitch_rate ----
+  if (dataReady) {
+    dataReady = false;
+    imu.getAGT();
 
-  /*
-  if (++print_counter >= 50) {   // print at 20 Hz, not 1000 Hz
-    print_counter = 0;
+    uint32_t now_imu_us = micros();
 
-    Serial.printf("gx=%.3f gy=%.3f gz=%.3f\r\n",
-              imu.gyro_x_rad_s,
-              imu.gyro_y_rad_s,
-              imu.gyro_z_rad_s);
+    // --- Raw sensor readings ---
+    float ax = imu.accX();
+    float ay = imu.accY();
+    float az = imu.accZ();
 
-    float roll_deg = imu.roll_rad * 180.0f / PI;
-    float roll_rate_deg = imu.roll_rate * 180.0f / PI;
+    float gx_dps = imu.gyrX(); 
+    float gyro_rate = gx_dps * DEG_TO_RAD;   // rad/s
 
-    // Serial.printf("roll=%.2f roll_rate=%.2f\r\n", roll_deg, roll_rate_deg);
+    // Accelerometer-based pitch
+    float pitch_acc = atan2f(-ax, az);
 
-  }
-  */
-  
-  uint32_t now_us = micros();
-
-  // Copy radian outputs directly from the MPU object
-  // MPU6050 now produces roll_rad, pitch_rad, yaw_rad
-  sup->imu.roll_rad  = imu.roll_rad;
-  sup->imu.pitch_rad = imu.pitch_rad;
-  sup->imu.yaw_rad   = imu.yaw_rad;
-
-  // roll_rate: use finite difference on roll_rad
-  if (sup->imu.valid) {
-    float dt = (now_us - sup->imu.last_update_us) * 1e-6f;
-    if (dt > 0.0005f && dt < 0.01f) { // between 100 Hz and 2 kHz
-      float raw_rate = (sup->imu.roll_rad - sup->imu.roll_prev_rad) / dt;
-
-      // optional smoothing (keep your prior LPF behavior)
-      sup->imu.roll_rate = 0.9f * sup->imu.roll_rate + 0.1f * raw_rate;
+    // --- First-time initialization ---
+    if (!sup->imu.valid) {
+      sup->imu.pitch_rad  = pitch_acc;
+      sup->imu.pitch_rate = 0.0f;
+      sup->imu.valid = true;
+      sup->imu.last_update_us = now_imu_us;
+      return;   // exit early; no filtering yet
     }
+
+    // --- Compute dt from last IMU update ---
+    float dt = (now_imu_us - sup->imu.last_update_us) * 1e-6f;
+    if (dt < 0.0005f || dt > 0.005f) {
+      dt = CONTROL_PERIOD_US * 1e-6f;  // fallback ~1 ms
+    }
+
+    // --- Complementary filter ---
+    const float tau = 0.10f;
+    float alpha = tau / (tau + dt);
+
+    // Predict angle
+    float pitch_pred = sup->imu.pitch_rad + gyro_rate * dt;
+
+    // Fuse
+    sup->imu.pitch_rad = alpha * pitch_pred + (1.0f - alpha) * pitch_acc;
+
+    // Filter pitch rate (optional)
+    const float rate_alpha = 0.2f;
+    sup->imu.pitch_rate =
+      rate_alpha * gyro_rate + (1.0f - rate_alpha) * sup->imu.pitch_rate;
+
+    sup->imu.last_update_us = now_imu_us;
   }
-
-  // Remember previous roll for next derivative
-  sup->imu.roll_prev_rad = sup->imu.roll_rad;
-
-  sup->imu.valid = true;
-  sup->imu.last_update_us = now_us;
 
    // ---- Update RC PWM input ----
   updateRC(sup);

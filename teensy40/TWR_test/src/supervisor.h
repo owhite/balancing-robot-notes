@@ -4,7 +4,7 @@
 #include <Arduino.h>
 #include "ESC.h"
 #include <FlexCAN_T4.h>
-#include "MPU6050.h"
+#include "ICM42688.h"
 #include "CAN_helper.h"
 #include "main.h"
 
@@ -75,7 +75,7 @@ struct IMU_typedef {
   float yaw_rad;
 
   float roll_rate;        // rad/s
-  float roll_prev_rad;    // for finite diff
+  float pitch_rate;        // rad/s
 
   uint32_t last_update_us;
 };
@@ -136,18 +136,22 @@ extern volatile uint32_t g_control_now_us;// Timestamp of control loop trigger (
 
 void controlLoop_isr(void); // ISR triggered at CONTROL_PERIOD_US
 
-void controlLoop(MPU6050 &imu, Supervisor_typedef *sup, // Core control loop logic
+void controlLoop(ICM42688 &imu, Supervisor_typedef *sup, // Core control loop logic
                  FlexCAN_T4<CAN1, RX_SIZE_256, TX_SIZE_16> &can);
 
 void init_supervisor(Supervisor_typedef *sup,
+		     ICM42688 &imu,
                      uint16_t esc_count,
                      const char *esc_names[],
                      const uint16_t node_ids[],
                      const uint8_t rc_pins[],
                      uint16_t rc_count);
+
 void updateSupervisorRC(Supervisor_typedef *sup);   // Update RC input channels
 void resetLoopTimingStats(Supervisor_typedef *sup); // Reset loop timing stats
 void resetTelemetryStats(Supervisor_typedef *sup);  // Reset telemetry stats
 float angle_diff(float target, float actual);
+void setImuFlag();
+
 
 #endif

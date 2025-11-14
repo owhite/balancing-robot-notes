@@ -21,6 +21,8 @@
 #define LED2_PIN        3
 #define PUSHBUTTON_PIN  17
 #define SPEAKER_PIN     13
+#define CS_PIN          18
+#define INT_PIN         19
 
 // ================= RC PWM (4 channels) =================
 #define RC_INPUT1       9
