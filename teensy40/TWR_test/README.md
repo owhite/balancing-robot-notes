@@ -89,7 +89,7 @@ A Mahony filter is a lightweight, quaternion-based sensor fusion algorithm used 
 
 the filter compares the gravity vector predicted by the current quaternion to the gravity vector measured by the accelerometer. The difference becomes an error signal, which is fed back into the gyroscope via proportional (Kp) and integral (Ki) terms. The corrected gyro is then integrated into the quaternion.
 
-Here is an example of running the bot with the wheels off the ground, but still chattering away. 
+Here is an example of running the bot with the wheels off the ground, but still chattering away. The full 3-axis Mahony filter produced a clean, stable pitch estimate that no longer drifts when the motors run. The filter automatically rejects vibration-induced accelerometer noise and uses gyro bias correction to keep the angle accurate over time. As a result, the robot’s tilt measurement is now smooth, responsive, and reliable enough for precise balance control.
 
 <img src="Figure_6.png" alt="Plot result" width="600"/>
 
