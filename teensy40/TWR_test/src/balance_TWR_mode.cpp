@@ -102,7 +102,6 @@ void balance_TWR_mode(Supervisor_typedef *sup,
     float x_wheel = 0.5f * (pos_L + pos_R);
     */ 
 
-
     float x_wheel = 0.5f * (pos_L + pos_R);
     float x_dot   = 0.5f * (vel_L + vel_R);
 

@@ -1,3 +1,8 @@
+../../DOCS/nov16_IMU.md
+
+See [this entry](../../DOCS/nov16_IMU.md) on using a Mahony filter to improve readings from the ICM42688. The filter automatically rejects vibration-induced accelerometer noise and uses gyro bias correction to keep the angle accurate over time. The code used for SPI on the ICM42688 was slightly modified from [here](https://github.com/finani/ICM42688.git) and the Mahony filter in [supervisor.cpp](src/supervisor.cpp) in `mahonyUpdateIMU()`. Also have a loop at `controlLoop()` in [balance_TWR_mode.cpp](src/balance_TWR_mode.cpp). 
+
+
 ## Test rigs
 
 This test configuration is not fully representative of real operation—the PCB, IMU, and motors are rigidly mounted to a flat board rather than the full TWR body. Because the robot cannot balance yet, it is difficult to collect realistic motion data while the system is in its operational configuration.

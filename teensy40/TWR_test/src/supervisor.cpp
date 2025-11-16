@@ -188,8 +188,7 @@ static const float twoKi = 2.0f * 0.1f;  // Ki = 0.1
 
 static void mahonyUpdateIMU(float gx, float gy, float gz,
                             float ax, float ay, float az,
-                            float dt)
-{
+                            float dt) {
   // -----------------------------------------------------------
   // Normalize accelerometer
   // -----------------------------------------------------------
