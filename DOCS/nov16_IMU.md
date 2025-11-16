@@ -78,7 +78,9 @@ Let's try it with the motors running:
 | **Problematic**            | >2.0 sustained | Likely resonance or poor mounting |
 
 
-A chunk of time has gone by and the MPU6050 is behaving really poorly when the bot is trying to balance. When the controller is on there is no way to get RMS down to a reasonable level, and almost as worse **readings for the tilt position of the robot were terrible**. This led to me switching to using an ICM-42688, and applying Mahony filtering. 
+## Additional filtering
+
+A chunk of time has gone by and the **MPU6050 is behaving really poorly when the bot is trying to balance**. When the controller is on there is no way to get RMS down to a reasonable level, and almost as worse **readings for the tilt position of the robot were terrible**. This led to me switching to using an ICM-42688, and applying Mahony filtering. 
 
 A Mahony filter is a lightweight, quaternion-based sensor fusion algorithm used to estimate 3-D orientation from an IMU. It combines gyroscope and accelerometer measurements in a way that:
 
