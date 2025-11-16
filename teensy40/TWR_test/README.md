@@ -78,9 +78,18 @@ Let's try it with the motors running:
 | **Problematic**            | >2.0 sustained | Likely resonance or poor mounting |
 
 
-A chunk of time has gone by and the MPU6050 is behaving really poorly when the bot is trying to balance. When the controller is on there is no way to get RMS down to a reasonable level, and almost as worse **readings for the tilt position of the robot were terrible**. This led to me switching to using an ICM-42688. Let's have a look at the results. This is when the motors are not running:
+A chunk of time has gone by and the MPU6050 is behaving really poorly when the bot is trying to balance. When the controller is on there is no way to get RMS down to a reasonable level, and almost as worse **readings for the tilt position of the robot were terrible**. This led to me switching to using an ICM-42688, and applying Mahony filtering. 
 
-<img src="Figure_5.png" alt="Plot result" width="600"/>
+A Mahony filter is a lightweight, quaternion-based sensor fusion algorithm used to estimate 3-D orientation from an IMU. It combines gyroscope and accelerometer measurements in a way that:
+
+- uses the gyroscope for smooth, low-noise short-term rotation tracking
+- uses the accelerometer as a long-term reference for the gravity direction
+- automatically rejects accelerometer readings that don’t match gravity (e.g., vibration, linear acceleration)
+- continuously estimates and removes gyro bias so the angle does not drift over time
+
+the filter compares the gravity vector predicted by the current quaternion to the gravity vector measured by the accelerometer. The difference becomes an error signal, which is fed back into the gyroscope via proportional (Kp) and integral (Ki) terms. The corrected gyro is then integrated into the quaternion.
+
+Here is an example of running the bot with the wheels off the ground, but still chattering away. 
 
 <img src="Figure_6.png" alt="Plot result" width="600"/>
 
