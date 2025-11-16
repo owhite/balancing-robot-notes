@@ -72,6 +72,7 @@ A separation of concerns is divided across these architectures:
 * [Torque response](DOCS/oct03_torque_response.md)
 * [LQR modeling](DOCS/oct11_LQR_modeling.md)
 * [LQR height](DOCS/oct12_LQR_height.md)
+* [IMU testing](DOCS/nov16_IMU.md)
 
 ## MANY THANKS
 This project would never happen without:
