@@ -8,7 +8,7 @@
 #include "CAN_helper.h"
 #include "main.h"
 
-#define TELEMETRY_DECIMATE 5
+#define TELEMETRY_DECIMATE 20
 #define SERIAL_DECIMATE    100
 
 #define SUPERVISOR_MAX_ESCS   4
@@ -75,7 +75,8 @@ struct IMU_typedef {
   float yaw_rad;
 
   float roll_rate;        // rad/s
-  float pitch_rate;        // rad/s
+  float pitch_rate;
+  float pitch_bias;
 
   uint32_t last_update_us;
 };
@@ -113,6 +114,7 @@ struct Supervisor_typedef {
   GaitMode       gait_mode;                                // Current gait mode
   uint32_t       last_imu_update_us;                       // Timestamp of last IMU update
 
+  float last_u;
   float user_setpoint = M_PI;
   float user_Kp_term = 0.0f;
   float user_Kd_term = 0.0f; 

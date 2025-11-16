@@ -3,7 +3,7 @@
 #include "main.h"
 
 void balance_TWR_mode(Supervisor_typedef *sup,
-			      FlexCAN_T4<CAN1, RX_SIZE_256, TX_SIZE_16> &can);
+		      FlexCAN_T4<CAN1, RX_SIZE_256, TX_SIZE_16> &can);
 
 // ---------------- Global Flags ----------------
 // These are set by the control ISR to signal the main loop.
@@ -178,6 +178,103 @@ void resetLoopTimingStats(Supervisor_typedef *sup) {
   sup->timing.overruns = 0;
 }
 
+// ---- Mahony 6DOF state ----
+static float q0 = 1.0f, q1 = 0.0f, q2 = 0.0f, q3 = 0.0f;
+static float integralFBx = 0.0f, integralFBy = 0.0f, integralFBz = 0.0f;
+
+// Gains: tune these later if needed.
+static const float twoKp = 2.0f * 0.5f;  // Kp = 0.5
+static const float twoKi = 2.0f * 0.1f;  // Ki = 0.1
+
+static void mahonyUpdateIMU(float gx, float gy, float gz,
+                            float ax, float ay, float az,
+                            float dt)
+{
+  // -----------------------------------------------------------
+  // Normalize accelerometer
+  // -----------------------------------------------------------
+  float accMag = sqrtf(ax*ax + ay*ay + az*az);
+
+  bool accelValid = false;
+
+  if (accMag > 1e-6f) {
+    float recip = 1.0f / accMag;
+    ax *= recip;
+    ay *= recip;
+    az *= recip;
+
+    // accel gating: ignore accel when far from 1g
+    if (fabsf(accMag - 1.0f) < 0.25f) {
+      accelValid = true;
+    }
+  }
+
+  // -----------------------------------------------------------
+  // If accel is valid → compute correction terms (ex, ey, ez)
+  // -----------------------------------------------------------
+  float ex = 0.0f, ey = 0.0f, ez = 0.0f;
+
+  if (accelValid) {
+    // Estimated gravity direction from quaternion
+    float vx = 2.0f * (q1*q3 - q0*q2);
+    float vy = 2.0f * (q0*q1 + q2*q3);
+    float vz = q0*q0 - q1*q1 - q2*q2 + q3*q3;
+
+    // Cross product error
+    ex = (ay * vz - az * vy);
+    ey = (az * vx - ax * vz);
+    ez = (ax * vy - ay * vx);
+
+    // Integral feedback
+    if (twoKi > 0.0f) {
+      integralFBx += twoKi * ex * dt;
+      integralFBy += twoKi * ey * dt;
+      integralFBz += twoKi * ez * dt;
+
+      gx += integralFBx;
+      gy += integralFBy;
+      gz += integralFBz;
+    } else {
+      integralFBx = integralFBy = integralFBz = 0.0f;
+    }
+
+    // Proportional feedback
+    gx += twoKp * ex;
+    gy += twoKp * ey;
+    gz += twoKp * ez;
+  }
+  else {
+    // accel invalid → no correction, but clear integral
+    integralFBx = integralFBy = integralFBz = 0.0f;
+  }
+
+  // -----------------------------------------------------------
+  // Integrate gyro to update quaternion
+  // -----------------------------------------------------------
+  gx *= 0.5f * dt;
+  gy *= 0.5f * dt;
+  gz *= 0.5f * dt;
+
+  float qa = q0;
+  float qb = q1;
+  float qc = q2;
+  float qd = q3;
+
+  q0 += (-qb*gx - qc*gy - qd*gz);
+  q1 += ( qa*gx + qc*gz - qd*gy);
+  q2 += ( qa*gy - qb*gz + qd*gx);
+  q3 += ( qa*gz + qb*gy - qc*gx);
+
+  // -----------------------------------------------------------
+  // Normalize
+  // -----------------------------------------------------------
+  float norm = 1.0f / sqrtf(q0*q0 + q1*q1 + q2*q2 + q3*q3);
+  q0 *= norm;
+  q1 *= norm;
+  q2 *= norm;
+  q3 *= norm;
+}
+
 // ---------------- Reset Telemetry Stats ----------------
 // Clears telemetry blocking statistics so the next window
 // can be measured independently.
@@ -200,11 +297,10 @@ void resetTelemetryStats(Supervisor_typedef *sup) {
 //       * Run balance control law (TODO)
 //
 
-static int telem_counter = 0;
-
 static float ax_min = 999.0f, ax_max = -999.0f;
 static float gx_min = 999.0f, gx_max = -999.0f;
-static uint32_t dbg_timer = 0;
+static int dbg_counter = 0;
+static int telem_counter = 0;
 
 void controlLoop(ICM42688 &imu, Supervisor_typedef *sup,
                  FlexCAN_T4<CAN1, RX_SIZE_256, TX_SIZE_16> &can) {
@@ -235,57 +331,84 @@ void controlLoop(ICM42688 &imu, Supervisor_typedef *sup,
   }
 
   // ---- IMU: read & update pitch_rad / pitch_rate ----
+  // ---- IMU: read & update orientation / pitch using Mahony ----
   if (dataReady) {
     dataReady = false;
     imu.getAGT();
 
     uint32_t now_imu_us = micros();
 
-    // --- Raw sensor readings ---
+    // --- Raw accelerometer (assumed in "g" units) ---
     float ax = imu.accX();
     float ay = imu.accY();
     float az = imu.accZ();
 
-    float gx_dps = imu.gyrX(); 
-    float gyro_rate = gx_dps * DEG_TO_RAD;   // rad/s
+    // --- Raw gyro (deg/s) ---
+    float gx_dps = imu.gyrX();
+    float gy_dps = imu.gyrY();
+    float gz_dps = imu.gyrZ();
 
-    // Accelerometer-based pitch
-    float pitch_acc = atan2f(-ax, az);
+    // Convert gyro to rad/s for Mahony
+    float gx = gx_dps * DEG_TO_RAD;
+    float gy = gy_dps * DEG_TO_RAD;
+    float gz = gz_dps * DEG_TO_RAD;
 
-    // --- First-time initialization ---
-    if (!sup->imu.valid) {
-      sup->imu.pitch_rad  = pitch_acc;
-      sup->imu.pitch_rate = 0.0f;
-      sup->imu.valid = true;
-      sup->imu.last_update_us = now_imu_us;
-      return;   // exit early; no filtering yet
-    }
-
-    // --- Compute dt from last IMU update ---
+    // --- Compute dt since last update ---
     float dt = (now_imu_us - sup->imu.last_update_us) * 1e-6f;
     if (dt < 0.0005f || dt > 0.005f) {
       dt = CONTROL_PERIOD_US * 1e-6f;  // fallback ~1 ms
     }
 
-    // --- Complementary filter ---
-    const float tau = 0.10f;
-    float alpha = tau / (tau + dt);
+    // --- Run full 3D Mahony update ---
+    mahonyUpdateIMU(gx, gy, gz, ax, ay, az, dt);
 
-    // Predict angle
-    float pitch_pred = sup->imu.pitch_rad + gyro_rate * dt;
+    // --- Extract pitch from quaternion ---
+    // Using standard aerospace convention:
+    // roll  = atan2(2(q0q1 + q2q3), 1 - 2(q1^2 + q2^2))
+    // pitch =  asin(2(q0q2 - q3q1))
+    // yaw   = atan2(2(q0q3 + q1q2), 1 - 2(q2^2 + q3^2))
+    float pitch_rad = asinf(2.0f * (q0*q2 - q3*q1));
 
-    // Fuse
-    sup->imu.pitch_rad = alpha * pitch_pred + (1.0f - alpha) * pitch_acc;
+    // --- Approximate pitch rate from gyro (pick correct axis!) ---
+    // If your pitch axis is better aligned with gy, swap to gy.
+    float pitch_rate_raw = gx;   // rad/s
 
-    // Filter pitch rate (optional)
-    const float rate_alpha = 0.2f;
-    sup->imu.pitch_rate =
-      rate_alpha * gyro_rate + (1.0f - rate_alpha) * sup->imu.pitch_rate;
+    const float rate_alpha = 0.03f; // LPF against vibration
+    float pitch_rate =
+        rate_alpha * pitch_rate_raw +
+        (1.0f - rate_alpha) * sup->imu.pitch_rate;
 
+    // --- Store into supervisor IMU struct ---
+    sup->imu.pitch_rad      = pitch_rad;
+    sup->imu.pitch_rate     = pitch_rate;
+    sup->imu.valid          = true;
     sup->imu.last_update_us = now_imu_us;
+
+    // Optional: telemetry (re-enable if you want)
+    /*
+    if (++dbg_counter >= TELEMETRY_DECIMATE) {
+      dbg_counter = 0;
+      float pitch_deg      = pitch_rad * RAD_TO_DEG;
+      float pitch_rate_deg = pitch_rate * RAD_TO_DEG;
+
+      Serial.printf(
+        "{\"t\":%lu,"
+        "\"ax\":%.5f,\"ay\":%.5f,\"az\":%.5f,"
+        "\"gx\":%.5f,\"gy\":%.5f,\"gz\":%.5f,"
+        "\"pitch\":%.3f,"
+        "\"pitch_rate\":%.3f}\r\n",
+        micros(),
+        ax, ay, az,
+        gx_dps, gy_dps, gz_dps,
+        pitch_deg,
+        pitch_rate_deg
+      );
+    }
+    */
   }
 
-   // ---- Update RC PWM input ----
+
+  // ---- Update RC PWM input ----
   updateRC(sup);
 
   // ---- Core control loop body ----
@@ -294,24 +417,24 @@ void controlLoop(ICM42688 &imu, Supervisor_typedef *sup,
     // --- Send zero torque (motor free) ---
 
     if (++telem_counter >= TELEMETRY_DECIMATE) {
-        telem_counter = 0;
+      telem_counter = 0;
 
-	CAN_message_t msg1;
-	msg1.id = canMakeExtId(CAN_ID_IQREQ, TEENSY_NODE_ID, sup->esc[0].config.node_id);
-	msg1.len = 8;
-	msg1.flags.extended = 1;
-	canPackFloat(0.0f, msg1.buf);
-	canPackFloat(0.0f, msg1.buf + 4);
+      CAN_message_t msg1;
+      msg1.id = canMakeExtId(CAN_ID_IQREQ, TEENSY_NODE_ID, sup->esc[0].config.node_id);
+      msg1.len = 8;
+      msg1.flags.extended = 1;
+      canPackFloat(0.0f, msg1.buf);
+      canPackFloat(0.0f, msg1.buf + 4);
 
-	CAN_message_t msg2;
-	msg2.id = canMakeExtId(CAN_ID_IQREQ, TEENSY_NODE_ID, sup->esc[1].config.node_id);
-	msg2.len = 8;
-	msg2.flags.extended = 1;
-	canPackFloat(0.0f, msg2.buf);
-	canPackFloat(0.0f, msg2.buf + 4);
+      CAN_message_t msg2;
+      msg2.id = canMakeExtId(CAN_ID_IQREQ, TEENSY_NODE_ID, sup->esc[1].config.node_id);
+      msg2.len = 8;
+      msg2.flags.extended = 1;
+      canPackFloat(0.0f, msg2.buf);
+      canPackFloat(0.0f, msg2.buf + 4);
 
-	can.write(msg1);
-	can.write(msg2);
+      can.write(msg1);
+      can.write(msg2);
     }
 
     break;

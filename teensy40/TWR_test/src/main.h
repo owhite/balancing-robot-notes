@@ -20,7 +20,7 @@
 #define LED1_PIN        2
 #define LED2_PIN        3
 #define PUSHBUTTON_PIN  17
-#define SPEAKER_PIN     13
+#define SPEAKER_PIN     10
 #define CS_PIN          18
 #define INT_PIN         19
 

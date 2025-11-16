@@ -62,7 +62,7 @@ def main():
     ax_rms.set_ylabel("RMS (deg/s)")
     ax_rms.grid(True)
     ax_rms.legend()
-    ax_rms.set_ylim(0, 5)   # adjust as needed
+    ax_rms.set_ylim(0, 10)   # adjust as needed
 
     # --- Run button ---
     axbutton = plt.axes([0.8, 0.85, 0.15, 0.08])
@@ -82,11 +82,11 @@ def main():
     slider.on_changed(on_slider_change)
 
     # --- Data buffers ---
-    t_vals, roll_vals, rate_vals, rms_vals = [], [], [], []
+    t_vals, pitch_vals, rate_vals, rms_vals = [], [], [], []
     max_points = 2000  # rolling window
 
     def update(frame):
-        nonlocal t_vals, roll_vals, rate_vals, rms_vals
+        nonlocal t_vals, pitch_vals, rate_vals, rms_vals
 
         # Read serial data
         while ser.in_waiting:
@@ -96,11 +96,11 @@ def main():
                     continue
                 data = json.loads(line)
 
-                if all(k in data for k in ("t", "roll", "roll_rate")):
+                if all(k in data for k in ("t", "pitch", "pitch_rate")):
                     t_ms = (data["t"] - (t_vals[0] if t_vals else data["t"])) / 1000.0
                     t_vals.append(t_ms)
-                    roll_vals.append(data["roll"])
-                    rate_vals.append(data["roll_rate"])
+                    pitch_vals.append(data["pitch"])
+                    rate_vals.append(data["pitch_rate"])
 
                     # Compute rolling RMS (last 200 samples)
                     if len(rate_vals) > 200:
@@ -112,7 +112,7 @@ def main():
                     # Trim buffers
                     if len(t_vals) > max_points:
                         t_vals      = t_vals[-max_points:]
-                        roll_vals   = roll_vals[-max_points:]
+                        pitch_vals   = pitch_vals[-max_points:]
                         rate_vals   = rate_vals[-max_points:]
                         rms_vals    = rms_vals[-max_points:]
 
@@ -121,7 +121,7 @@ def main():
 
         # Update plots
         if t_vals:
-            line_roll.set_data(t_vals, roll_vals)
+            line_roll.set_data(t_vals, pitch_vals)
             line_rate.set_data(t_vals, rate_vals)
             line_rms.set_data(t_vals, rms_vals)
 

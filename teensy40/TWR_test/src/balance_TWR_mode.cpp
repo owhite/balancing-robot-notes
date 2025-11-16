@@ -28,7 +28,7 @@ static const float K_disc[4] = {
 };
 
 // ---------------- Control constants ----------------
-constexpr float TORQUE_CLAMP = 5.0f;     // max Nm per wheel
+constexpr float TORQUE_CLAMP = 1.0f;     // max Nm per wheel
 constexpr float SAFETY_SCALE = 0.02f;     // global scaling
 constexpr float THETA_EQ     = 0.0f;     // body upright = 0 rad
 
@@ -116,6 +116,8 @@ void balance_TWR_mode(Supervisor_typedef *sup,
                 K_disc[2]*x_wheel +
                 K_disc[3]*x_dot);
 
+    sup->last_u = u;
+
     // Clamp
     // u *= SAFETY_SCALE;
     if (u > TORQUE_CLAMP)  u = TORQUE_CLAMP;
@@ -123,34 +125,35 @@ void balance_TWR_mode(Supervisor_typedef *sup,
 
     // Symmetric torque to both wheels (you can add differential steering later)
     float torque_left  =  u;
-    float torque_right =  u;
+    float torque_right =  -u;
 
     // ---------------- Send torque over CAN ----------------
+
+    CAN_message_t msgL;
+    CAN_message_t msgR;
+    msgL.id = canMakeExtId(CAN_ID_IQREQ, TEENSY_NODE_ID, sup->esc[0].config.node_id);
+    msgR.id = canMakeExtId(CAN_ID_IQREQ, TEENSY_NODE_ID, sup->esc[1].config.node_id);
+
+    msgL.len = 8;
+    msgR.len = 8;
+    msgL.flags.extended = 1;
+    msgR.flags.extended = 1;
+    canPackFloat(torque_left, msgL.buf);
+    canPackFloat(torque_right, msgR.buf);
+    canPackFloat(0.0f, msgL.buf + 4);
+    canPackFloat(0.0f, msgR.buf + 4);
+
+    can.write(msgL);
+    can.write(msgR);
 
     if (++report_counter >= TELEMETRY_DECIMATE) {
       report_counter = 0;
 
-      float roll_deg = sup->imu.roll_rad * 180.0f / PI;
-      float roll_rate_deg = sup->imu.roll_rate * 180.0f / PI;
+      float pitch_deg = sup->imu.pitch_rad * 180.0f / PI;
+      float pitch_rate_deg = sup->imu.pitch_rate * 180.0f / PI;
 
-      Serial.printf("{\"t\":%lu,\"roll\":%.3f,\"roll_rate\":%.3f}\r\n", micros(), roll_deg, roll_rate_deg);
+      Serial.printf("{\"t\":%lu,\"pitch\":%.3f,\"pitch_rate\":%.3f,\"u\":%.3f}\r\n", micros(), pitch_deg, pitch_rate_deg, u);
 
-      CAN_message_t msgL;
-      CAN_message_t msgR;
-      msgL.id = canMakeExtId(CAN_ID_IQREQ, TEENSY_NODE_ID, sup->esc[0].config.node_id);
-      msgR.id = canMakeExtId(CAN_ID_IQREQ, TEENSY_NODE_ID, sup->esc[1].config.node_id);
-
-      msgL.len = 8;
-      msgR.len = 8;
-      msgL.flags.extended = 1;
-      msgR.flags.extended = 1;
-      canPackFloat(4.0, msgL.buf);
-      canPackFloat(4.0, msgR.buf);
-      canPackFloat(0.0f, msgL.buf + 4);
-      canPackFloat(0.0f, msgR.buf + 4);
-
-      can.write(msgL);
-      can.write(msgR);
     }
 
     // ---------------- Logging ----------------
