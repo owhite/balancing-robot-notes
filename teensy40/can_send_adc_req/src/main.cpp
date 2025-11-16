@@ -93,6 +93,12 @@ void setup() {
   Can1.setBaudRate(500000);
 }
 
+// #define LOOP1 0
+#define LOOP2 1
+// #define LOOP2 1
+
+// ------------------------------
+#if LOOP1
 void loop() {
   bool current = digitalRead(PUSHBUTTON_PIN);
 
@@ -128,8 +134,11 @@ void loop() {
 
   lastButtonState = current;
 }
+#endif 
 
-void loop3() {
+// ------------------------------
+#if LOOP2
+void loop() {
   static uint8_t state = 0;                 // 0=forward, 1=pause, 2=reverse
   static uint32_t last_switch_ms = 0;
   const uint32_t STATE_HOLD_MS = 400;      // duration per state [ms]
@@ -207,15 +216,18 @@ void loop3() {
                   state, cmd, esc_id, msg.id);
    }
 
-  delay(100);  // small loop delay (10 Hz update)
+  delay(100);
 }
+#endif 
+
+// ------------------------------
+#if LOOP3
 
 // Global or static buffer for line collection
 static char inputBuf[32];
 static uint8_t idx = 0;
 
-
-void loop2() {
+void loop() {
   if (Serial.available()) {
     String input = Serial.readStringUntil('\n');
     input.trim();
@@ -241,3 +253,4 @@ void loop2() {
     Serial.printf("Sent Iq_req=%.3f A to ESC node_id=%u (CAN ID=0x%08X)\r\n", cmd, ESC_NODE_ID2, msg.id);
   }
 }
+#endif 

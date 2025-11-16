@@ -114,7 +114,6 @@ struct Supervisor_typedef {
   GaitMode       gait_mode;                                // Current gait mode
   uint32_t       last_imu_update_us;                       // Timestamp of last IMU update
 
-  float last_u;
   float user_setpoint = M_PI;
   float user_Kp_term = 0.0f;
   float user_Kd_term = 0.0f; 
