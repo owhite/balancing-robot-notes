@@ -33,7 +33,6 @@ constexpr float WHEEL_RADIUS_M = 0.040f; // use your real value
 
 #define SEND_TORQUE 1
 
-
 // ---------------- Control constants ----------------
 constexpr float TORQUE_CLAMP   = 4.0f;    // max |Nm| per wheel
 constexpr float SAFETY_SCALE   = 0.5f;   // global scaling (tune; set to 1.0f when confident)
