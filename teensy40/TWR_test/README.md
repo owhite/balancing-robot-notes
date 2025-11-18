@@ -1,8 +1,6 @@
 # Preamble
 
-See [this entry](../../DOCS/nov16_IMU.md) on using a Mahony filter to improve readings from the ICM42688. The filter automatically rejects vibration-induced accelerometer noise and uses gyro bias correction to keep the angle accurate over time. The code used for SPI communications with the ICM42688 was slightly modified from [here](https://github.com/finani/ICM42688.git) and the Mahony filter in [supervisor.cpp](src/supervisor.cpp) in `mahonyUpdateIMU()`. Also have a look at `controlLoop()` in [balance_TWR_mode.cpp](src/balance_TWR_mode.cpp). 
-
-A lot of this work was done at this commit: hash id: `9633b44677406c790000eb56cd1858c216e7f7b5`
+See [this entry](../../DOCS/nov16_IMU.md) on using a Mahony filter to improve readings from the ICM42688. The filter automatically rejects vibration-induced accelerometer noise and uses gyro bias correction to keep the angle accurate over time. The code used for SPI communications with the ICM42688 was slightly modified from [here](https://github.com/finani/ICM42688.git) and the Mahony filter in [supervisor.cpp](src/supervisor.cpp) in `mahonyUpdateIMU()`. Also have a look at `controlLoop()` in [balance_TWR_mode.cpp](src/balance_TWR_mode.cpp) to get a general idea. This work was done at this commit: hash id: `9633b44677406c790000eb56cd1858c216e7f7b5`
 
 Running `./IMU_test.py -p /dev/cu.usbmodem178888901` created the IMU plots of [this entry](../../DOCS/nov16_IMU.md) 
 
