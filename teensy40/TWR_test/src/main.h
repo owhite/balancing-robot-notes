@@ -23,6 +23,7 @@
 #define SPEAKER_PIN     10
 #define CS_PIN          18
 #define INT_PIN         19
+#define TEST_PIN        14
 
 // ================= RC PWM (4 channels) =================
 #define RC_INPUT1       9

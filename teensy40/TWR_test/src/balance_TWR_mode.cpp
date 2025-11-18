@@ -103,6 +103,8 @@ static void updateWheelUnwrap(float pos_L_raw, float pos_R_raw,
     x_dot   *= WHEEL_RADIUS_M;
 }
 
+bool test_pin_state = true;
+
 // ---------------- Main TWR balance mode ----------------
 void balance_TWR_mode(Supervisor_typedef *sup,
                       FlexCAN_T4<CAN1, RX_SIZE_256, TX_SIZE_16> &can)
@@ -164,6 +166,9 @@ void balance_TWR_mode(Supervisor_typedef *sup,
     float x_wheel = 0.0f;
     float x_dot   = 0.0f;
     updateWheelUnwrap(pos_L, pos_R, x_wheel, x_dot, vel_L, vel_R, dt);
+
+    digitalWrite(TEST_PIN, test_pin_state);
+    test_pin_state = !test_pin_state;
 
     // ---------------- Safety: fall detection ----------------
     // If robot is too far from upright, cut torque and exit.
@@ -245,7 +250,8 @@ void balance_TWR_mode(Supervisor_typedef *sup,
           "\"x_dot\":%.3f}\r\n",
           micros(),
           pitch_deg,
-          pitch_rate_deg,
+	  (sup->esc[0].state.pos_rad  * 90.0f / PI) - 24, 
+          // pitch_rate_deg,
           u,
           x_wheel,
           x_dot

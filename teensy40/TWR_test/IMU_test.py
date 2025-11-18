@@ -33,7 +33,7 @@ def main():
     print(f"✅ Connected to {args.port}")
 
     # initial y-axis range for plots
-    Y_LIMIT_RANGE = 2
+    Y_LIMIT_RANGE = 60
 
     # --- Setup plots (NOW 3 plots) ---
     fig, (ax_roll, ax_rate, ax_rms) = plt.subplots(3, 1, figsize=(10, 9), sharex=True)

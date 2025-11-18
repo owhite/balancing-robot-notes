@@ -55,6 +55,8 @@ void setup() {
   Can1.setBaudRate(500000);
   Can1.enableFIFO();
 
+  pinMode(TEST_PIN, OUTPUT);
+
   init_supervisor(&supervisor,
 		  imu,
                   2,           // esc_count -- FIX: dont hard code this number
