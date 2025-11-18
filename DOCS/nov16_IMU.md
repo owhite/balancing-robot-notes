@@ -95,4 +95,8 @@ Here is an example of running the bot with the wheels off the ground, but still 
 
 <img src="IMAGES/IMU5.png" alt="Plot result" width="600"/>
 
+## Deets
 
+Most of the work done here should be reproducible with this commit:
+
+hash id: `9633b44677406c790000eb56cd1858c216e7f7b5`

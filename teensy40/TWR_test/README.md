@@ -2,6 +2,19 @@
 
 See [this entry](../../DOCS/nov16_IMU.md) on using a Mahony filter to improve readings from the ICM42688. The filter automatically rejects vibration-induced accelerometer noise and uses gyro bias correction to keep the angle accurate over time. The code used for SPI communications with the ICM42688 was slightly modified from [here](https://github.com/finani/ICM42688.git) and the Mahony filter in [supervisor.cpp](src/supervisor.cpp) in `mahonyUpdateIMU()`. Also have a look at `controlLoop()` in [balance_TWR_mode.cpp](src/balance_TWR_mode.cpp). 
 
+A lot of this work was done at this commit: hash id: `9633b44677406c790000eb56cd1858c216e7f7b5`
+
+Running `./IMU_test.py -p /dev/cu.usbmodem178888901` created the IMU plots of [this entry](../../DOCS/nov16_IMU.md) 
+
+## It's time to test a few things. 
+
+- Verify that the IMU reports correct angle vs. actual mechanical tilt.
+- Quantify how much noise the motor injects into the IMU.
+- Determine whether torque request → torque output is linear and symmetric.
+- Verify that identical torque commands produce identical reaction torque.
+- Check whether identical torque commands produce repeatable motor currents.
+- See how quickly a torque command is actually applied at the motor. Use Teensy pin toggle (which you already added) to mark the instant when torque command is sent. Use oscilloscope to measure phase current rise time, voltage behavior, ESC PWM switching pattern. 
+
 
 ## Test rigs
 
