@@ -20,6 +20,8 @@
 #define CONTROL_LOOP_PRIORITY 16
 #define CONTROL_PERIOD_US     1000   // 1 kHz
 
+extern volatile bool test_pin_state; 
+
 // ---------------- Defaults ----------------
 const uint32_t DEFAULT_PULSE_US     = 0;
 const uint32_t DEFAULT_TOTAL_US     = 0;
@@ -89,6 +91,8 @@ enum SupervisorMode {
   SUP_MODE_SINUSOIDAL,
   SUP_MODE_TORQUE_RESPONSE,
   SUP_MODE_BALANCE_TWR,
+  SUP_VERIFY_ANGLE,
+  SUP_TORQUE_REPS,
   SUP_MODE_SET_POSITION,
   SUP_MODE_SIN_TORQUE,
   SUP_MODE_FAULT       // Fault state (error, timeout, etc.)

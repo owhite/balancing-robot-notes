@@ -115,29 +115,36 @@ void loop() {
 	  supervisor.user_Kd_term      = DEFAULT_KD_TERM;
 	  supervisor.user_Kp_term      = DEFAULT_KP_TERM;
 
-	  // {'cmd': 'send', 'pulse_torque': 0.2, 'pulse_us': 250000, 'total_us': 3000000, 'user_Kp_term': 6.26, 'user_Kd_term': 0.6}
+	  if (doc.containsKey("cmd") && doc["cmd"] == "verify_angle") {
+	    tone_start(&g_tone, PB_BEEP_HZ, PB_BEEP_MS, PB_GAP_MS);
+	    if (supervisor.mode == SUP_VERIFY_ANGLE) {
+	      supervisor.mode = SUP_MODE_IDLE;
+	    }
+	    else {
+	      supervisor.mode = SUP_VERIFY_ANGLE;
+	    }
+	  }
 
-	  if (doc.containsKey("cmd") && doc["cmd"] == "run_balance") {
-	    /* 
+ 	  // {'cmd': 'torque_reps', 'pulse_torque': 0.4, 'pulse_us': 250000}
+
+	  if (doc.containsKey("cmd") && doc["cmd"] == "torque_reps") {
 	    if (doc.containsKey("pulse_torque"))
 	      supervisor.user_pulse_torque = doc["pulse_torque"];
 	    if (doc.containsKey("pulse_us"))
 	      supervisor.user_pulse_us = doc["pulse_us"];
-	    if (doc.containsKey("total_us"))
-	      supervisor.user_total_us = doc["total_us"];
-	    if (doc.containsKey("user_Kp_term"))
-	      supervisor.user_Kp_term = doc["user_Kp_term"];
-	    if (doc.containsKey("user_Kd_term"))
-	      supervisor.user_Kd_term = doc["user_Kd_term"];
-	    */ 
 
 	    tone_start(&g_tone, PB_BEEP_HZ, PB_BEEP_MS, PB_GAP_MS);
-	    if (supervisor.mode == SUP_MODE_BALANCE_TWR) {
+	    if (supervisor.mode == SUP_TORQUE_REPS) {
 	      supervisor.mode = SUP_MODE_IDLE;
 	    }
 	    else {
-	      supervisor.mode = SUP_MODE_BALANCE_TWR;
+	      supervisor.mode = SUP_TORQUE_REPS;
 	    }
+
+	    Serial.printf("{\"cmd\":\"PRINT\",\"note\":\"%s\",\"pulse_torque\":%.3f,\"pulse_us\":%lu}\r\n",
+                          "Torque response run started",
+                          supervisor.user_pulse_torque,
+                          supervisor.user_pulse_us);
 	  }
 	}
 	input = "";  // reset buffer
@@ -168,14 +175,7 @@ void loop() {
       }
       else if (pb_state == PB_RELEASED && g_button.isArmed()) {
 
-	// User can switch mode by pressing button
-	SupervisorMode test_mode = SUP_MODE_BALANCE_TWR;
-
-	if (supervisor.mode == test_mode) {
-	  supervisor.mode = SUP_MODE_IDLE;
-	} else {
-	  supervisor.mode = test_mode;
-	}
+	supervisor.mode = SUP_MODE_IDLE;
 
 	LEDState cur  = g_led_red.state;
 	LEDState next = (cur == LED_BLINK_FAST) ? LED_BLINK_SLOW : LED_BLINK_FAST;

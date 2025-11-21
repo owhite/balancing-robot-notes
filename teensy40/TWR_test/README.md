@@ -6,13 +6,60 @@ Running `./IMU_test.py -p /dev/cu.usbmodem178888901` created the IMU plots of [t
 
 ## It's time to test a few things. 
 
-- Verify that the IMU reports correct angle vs. actual mechanical tilt.
-- Quantify how much noise the motor injects into the IMU.
+- Verify IMU reports correct angle vs. actual mechanical tilt.
+- Quantify the noise the motor injects into the IMU.
 - Determine whether torque request → torque output is linear and symmetric.
-- Verify that identical torque commands produce identical reaction torque.
+- Verify identical torque commands produce identical reaction torque.
 - Check whether identical torque commands produce repeatable motor currents.
-- See how quickly a torque command is actually applied at the motor. Use Teensy pin toggle (which you already added) to mark the instant when torque command is sent. Use oscilloscope to measure phase current rise time, voltage behavior, ESC PWM switching pattern. 
+- Timing of torque command applied to motor. Use Teensy pin toggle to mark when torque command is sent. Use oscilloscope to measure phase current rise time, voltage behavior, ESC PWM switching pattern. 
 
+## IMU noise
+
+During the process comparing the IMU with the mechanical angle of the wheel encoders I tested this
+
+I put this the code:
+```
+    float a_mag = sqrtf(ax*ax + ay*ay + az*az);
+    Serial.printf("a_mag=%.5f\r\n", a_mag);
+```
+
+and when the motor is running, I get these type of values: 
+```
+a_mag=3.05135
+a_mag=5.25944
+a_mag=3.85885
+a_mag=6.80106
+a_mag=3.69635
+a_mag=5.77368
+a_mag=9.36287
+a_mag=10.89755
+a_mag=4.79244
+a_mag=2.57672
+a_mag=8.32236
+a_mag=1.29584
+a_mag=2.59398
+```
+
+That's pretty horrendous. To reduce noise, I changed the FOC PWM from 20,000 to 10,000, and fooled around with physical dampening of the IMU. and used this to view the vibration: `./IMU_test.py -p /dev/cu.usbmodem178888901` 
+
+[supervisor.cpp](src/supervisor.cpp) applies a Mahony filter which fuses acceleration  and gyro values from the IMU. I added this code: 
+
+```c
+  if (accMag > 1e-6f) {
+    float recip = 1.0f / accMag;
+    ax *= recip;
+    ay *= recip;
+    az *= recip;
+
+    if (accMag > 0.85f && accMag < 1.15f) {
+      accelValid = true;
+    } else {
+      accelValid = false;
+    }
+  }
+```
+
+Which only blends accel + gyro if vibrations are at a dull roar. This took `a_mag` to < 2, which is reasonable. This is by no means noise free, but it seems reasoanble. ChatG says we could use an improved gating strategy, a hysteresis-based accel valid window, or a frequency-domain vibration rejection trick -- which I have yet to try. 
 
 ## Test rigs
 

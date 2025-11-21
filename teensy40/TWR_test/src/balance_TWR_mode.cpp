@@ -1,5 +1,5 @@
 #include "supervisor.h"
-#include "balance_TWR_mode.h"
+#include "verify_angle.h"
 #include <Arduino.h>
 #include <FlexCAN_T4.h>
 #include <math.h>
@@ -102,8 +102,6 @@ static void updateWheelUnwrap(float pos_L_raw, float pos_R_raw,
     x_wheel *= WHEEL_RADIUS_M;
     x_dot   *= WHEEL_RADIUS_M;
 }
-
-bool test_pin_state = true;
 
 // ---------------- Main TWR balance mode ----------------
 void balance_TWR_mode(Supervisor_typedef *sup,

@@ -5,10 +5,16 @@
 void balance_TWR_mode(Supervisor_typedef *sup,
 		      FlexCAN_T4<CAN1, RX_SIZE_256, TX_SIZE_16> &can);
 
+void verify_angle(Supervisor_typedef *sup, FlexCAN_T4<CAN1, RX_SIZE_256, TX_SIZE_16> &can);
+
+void torque_reps(Supervisor_typedef *sup, FlexCAN_T4<CAN1, RX_SIZE_256, TX_SIZE_16> &can);
+
 // ---------------- Global Flags ----------------
 // These are set by the control ISR to signal the main loop.
 volatile bool g_control_due = false;
 volatile uint32_t g_control_now_us = 0;
+
+volatile bool test_pin_state = true;
 
 // Note there are multiple ISRs, some for the controlLoop(),
 // and some for RC transmitter input capture.
@@ -202,9 +208,10 @@ static void mahonyUpdateIMU(float gx, float gy, float gz,
     ay *= recip;
     az *= recip;
 
-    // accel gating: ignore accel when far from 1g
-    if (fabsf(accMag - 1.0f) < 0.25f) {
+    if (accMag > 0.85f && accMag < 1.15f) {
       accelValid = true;
+    } else {
+      accelValid = false;
     }
   }
 
@@ -342,6 +349,9 @@ void controlLoop(ICM42688 &imu, Supervisor_typedef *sup,
     float ay = imu.accY();
     float az = imu.accZ();
 
+    float a_mag = sqrtf(ax*ax + ay*ay + az*az);
+    // Serial.printf("{\"t\":%lu,\"a_mag\":%.5f}\r\n", micros(), a_mag);
+
     // --- Raw gyro (deg/s) ---
     float gx_dps = imu.gyrX();
     float gy_dps = imu.gyrY();
@@ -370,7 +380,7 @@ void controlLoop(ICM42688 &imu, Supervisor_typedef *sup,
 
     // --- Approximate pitch rate from gyro (pick correct axis!) ---
     // If your pitch axis is better aligned with gy, swap to gy.
-    float pitch_rate_raw = gx;   // rad/s
+    float pitch_rate_raw = gy;   // rad/s
 
     const float rate_alpha = 0.03f; // LPF against vibration
     float pitch_rate =
@@ -383,27 +393,6 @@ void controlLoop(ICM42688 &imu, Supervisor_typedef *sup,
     sup->imu.valid          = true;
     sup->imu.last_update_us = now_imu_us;
 
-    // Optional: telemetry (re-enable if you want)
-    /*
-    if (++dbg_counter >= TELEMETRY_DECIMATE) {
-      dbg_counter = 0;
-      float pitch_deg      = pitch_rad * RAD_TO_DEG;
-      float pitch_rate_deg = pitch_rate * RAD_TO_DEG;
-
-      Serial.printf(
-        "{\"t\":%lu,"
-        "\"ax\":%.5f,\"ay\":%.5f,\"az\":%.5f,"
-        "\"gx\":%.5f,\"gy\":%.5f,\"gz\":%.5f,"
-        "\"pitch\":%.3f,"
-        "\"pitch_rate\":%.3f}\r\n",
-        micros(),
-        ax, ay, az,
-        gx_dps, gy_dps, gz_dps,
-        pitch_deg,
-        pitch_rate_deg
-      );
-    }
-    */
   }
 
 
@@ -441,6 +430,16 @@ void controlLoop(ICM42688 &imu, Supervisor_typedef *sup,
  
   case SUP_MODE_BALANCE_TWR: {
     balance_TWR_mode(sup, can);
+    break;
+  }
+
+  case SUP_VERIFY_ANGLE: {
+    verify_angle(sup, can);
+    break;
+  }
+
+  case SUP_TORQUE_REPS: {
+    torque_reps(sup, can);
     break;
   }
 

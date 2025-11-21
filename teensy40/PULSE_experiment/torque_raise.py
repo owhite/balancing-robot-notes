@@ -5,22 +5,6 @@ import matplotlib.animation as animation
 from matplotlib.widgets import TextBox, Button
 import numpy as np
 
-# --- Motor Torque Command Calculation ---
-# 1. From motor specs we know Kv (RPM/V). The torque constant Kt is its reciprocal:
-#        Kt = 60 / (2π * Kv)   [Nm/A]
-#    For Kv = 170 RPM/V, Kt ≈ 0.056 Nm/A.
-#
-# 2. To request a desired torque T (in Nm), compute the required phase current:
-#        I = T / Kt
-#    Example: For T = 0.2 Nm, I ≈ 3.57 A.
-#
-# 3. The ESC command is normalized from -1.0 to +1.0, where ±1.0 corresponds
-#    to ±I_max (the max current limit set in the ESC configuration).
-#        command = I / I_max
-#    Example: With I_max = 30 A, command = 3.57 / 30 ≈ 0.12.
-#
-# => So sending a normalized torque command of ~0.12 will request ~0.2 Nm.
-
 # --- ESC Configuration ---
 I_MAX = 30.0  # Amps, max current limit configured in ESC
 

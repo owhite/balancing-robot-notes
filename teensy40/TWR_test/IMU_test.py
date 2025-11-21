@@ -20,7 +20,7 @@ def compute_rms(values):
 
 def send_run_command(event, ser):
     """Handle Run button click → tell Teensy to enter balance mode."""
-    msg = {"cmd": "run_balance"}
+    msg = {"cmd": "verify_angle"}
     print("TX:", msg)
     ser.write((json.dumps(msg) + "\n").encode("utf-8"))
 
