@@ -3,8 +3,28 @@ import sys, json, serial, argparse
 import matplotlib.pyplot as plt
 import matplotlib.animation as animation
 
+"""
+Load this into supervisor controlLoop()
+
+    Serial.printf(
+		  "{\"t\":%lu,"
+		  "\"a_mag\":%.3f,"
+		  "\"accelValid\":%d,"
+		  "\"pitch_rad\":%.3f,"
+		  "\"pitch_rate_raw\":%.3f,"
+		  "\"pitch_rate_filt\":%.3f}\r\n",
+		  micros(),
+		  a_mag,
+		  accelValid ? 1 : 0,
+		  pitch_rad * 180.0f / PI,
+		  pitch_rate_raw * 180.0f / PI,
+		  pitch_rate * 180.0f / PI
+		  );
+
+"""
+
 def main():
-    parser = argparse.ArgumentParser(description="Plot a_mag from serial JSON")
+    parser = argparse.ArgumentParser(description="Plot IMU debug JSON signals")
     parser.add_argument("-p", "--port", required=True, help="Serial port")
     args = parser.parse_args()
 
@@ -12,25 +32,40 @@ def main():
     ser = serial.Serial(args.port, 115200, timeout=0.05)
     print(f"Connected to {args.port}")
 
-    # Matplotlib setup
-    fig, ax = plt.subplots(figsize=(10,5))
-    ax.set_title("a_mag over time (last 200 samples)")
-    ax.set_xlabel("Sample index")
-    ax.set_ylabel("a_mag")
-    ax.grid(True)
+    # Matplotlib setup: 6 plots
+    fig, axes = plt.subplots(5, 1, figsize=(10,10), sharex=True)
+    titles = [
+        "a_mag",
+        "accelValid",
+        "pitch_rad (deg)",
+        "pitch_rate_raw (deg/s)",
+        "pitch_rate_filt (deg/s)"
+    ]
 
-    line_mag, = ax.plot([], [], label="a_mag")
-    ax.legend()
-
-    # Buffers
-    amag_vals = []
-
+    lines = []
+    buffers = []
     WINDOW = 200
 
-    def update(frame):
-        nonlocal amag_vals
+    for ax, title in zip(axes, titles):
+        ax.set_title(title)
+        ax.grid(True)
+        line, = ax.plot([], [])
+        lines.append(line)
+        buffers.append([])
 
-        # Read whatever is in the buffer
+    # Mapping from JSON keys → buffer index
+    key_map = {
+        "a_mag": 0,
+        "accelValid": 1,
+        "pitch_rad": 2,
+        "pitch_rate_raw": 3,
+        "pitch_rate_filt": 4
+    }
+
+    def update(frame):
+        nonlocal buffers
+
+        # Read all available serial lines
         while ser.in_waiting:
             try:
                 line = ser.readline().decode("utf-8").strip()
@@ -39,25 +74,44 @@ def main():
 
                 data = json.loads(line)
 
-                if "a_mag" in data:
-                    amag_vals.append(data["a_mag"])
-
-                    # keep only last 200 values
-                    if len(amag_vals) > WINDOW:
-                        amag_vals = amag_vals[-WINDOW:]
+                # Store values
+                for key, idx in key_map.items():
+                    if key in data:
+                        buffers[idx].append(data[key])
+                        # retain last WINDOW samples
+                        if len(buffers[idx]) > WINDOW:
+                            buffers[idx] = buffers[idx][-WINDOW:]
 
             except (UnicodeDecodeError, json.JSONDecodeError):
                 continue
 
-        if len(amag_vals) > 1:
-            x = list(range(len(amag_vals)))
-            y = amag_vals
-            line_mag.set_data(x, y)
+        # Update each graph
+        for idx, line in enumerate(lines):
+            buf = buffers[idx]
+            if len(buf) > 1:
+                x = list(range(len(buf)))
+                y = buf
+                line.set_data(x, y)
+                axes[idx].set_xlim(0, WINDOW-1)
+                ymin = min(y)
+                ymax = max(y)
+                if ymin == ymax:
+                    ymin -= 0.1
+                    ymax += 0.1
+                elif idx == 0:
+                    axes[idx].set_ylim(-0.2, 4.2)
+                elif idx == 1:
+                    axes[idx].set_ylim(-0.2, 1.2)
+                elif idx == 2:
+                    axes[idx].set_ylim(-30, 30)
+                elif idx == 3:
+                    axes[idx].set_ylim(-30, 30)
+                elif idx == 4:
+                    axes[idx].set_ylim(-30, 30)
+                else:
+                    axes[idx].set_ylim(ymin - 0.1*abs(ymin), ymax + 0.1*abs(ymax))
 
-            ax.set_xlim(0, WINDOW-1)
-            ax.set_ylim(min(y) - 0.5, max(y) + 0.5)
-
-        return line_mag,
+        return lines
 
     ani = animation.FuncAnimation(
         fig,
@@ -66,6 +120,7 @@ def main():
         blit=False
     )
 
+    plt.tight_layout()
     plt.show()
 
 if __name__ == "__main__":

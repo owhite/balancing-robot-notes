@@ -34,10 +34,10 @@ constexpr float WHEEL_RADIUS_M = 0.040f; // use your real value
 #define SEND_TORQUE 1
 
 // ---------------- Control constants ----------------
-constexpr float TORQUE_CLAMP   = 4.0f;    // max |Nm| per wheel
-constexpr float SAFETY_SCALE   = 0.5f;   // global scaling (tune; set to 1.0f when confident)
-constexpr float THETA_EQ       = 0.0f;    // body upright = 0 rad
-constexpr float THETA_FAIL_RAD = 0.78f;    // ~34 deg: beyond this, bail to idle
+constexpr float TORQUE_CLAMP   = 4.0f;   // max |Nm| per wheel
+constexpr float SAFETY_SCALE   = 0.5f;   // global scaling 
+constexpr float THETA_EQ       = 0.0f;   // body upright = 0 rad
+constexpr float THETA_FAIL_RAD = 0.78f;  // ~34 deg: beyond this, bail to idle
 
 static int report_counter = 0;
 
@@ -253,7 +253,6 @@ void verify_angle(Supervisor_typedef *sup,
           micros(),
           pitch_deg,
 	  enc_deg,
-          // pitch_rate_deg,
           u,
           x_wheel,
           x_dot

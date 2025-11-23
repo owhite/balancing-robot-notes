@@ -192,6 +192,8 @@ static float integralFBx = 0.0f, integralFBy = 0.0f, integralFBz = 0.0f;
 static const float twoKp = 2.0f * 0.5f;  // Kp = 0.5
 static const float twoKi = 2.0f * 0.1f;  // Ki = 0.1
 
+bool accelValid = false;
+
 static void mahonyUpdateIMU(float gx, float gy, float gz,
                             float ax, float ay, float az,
                             float dt) {
@@ -200,7 +202,7 @@ static void mahonyUpdateIMU(float gx, float gy, float gz,
   // -----------------------------------------------------------
   float accMag = sqrtf(ax*ax + ay*ay + az*az);
 
-  bool accelValid = false;
+  accelValid = false;
 
   if (accMag > 1e-6f) {
     float recip = 1.0f / accMag;
@@ -220,6 +222,7 @@ static void mahonyUpdateIMU(float gx, float gy, float gz,
   // -----------------------------------------------------------
   float ex = 0.0f, ey = 0.0f, ez = 0.0f;
 
+  // only perform filter if vibration levels are down to a dull roar
   if (accelValid) {
     // Estimated gravity direction from quaternion
     float vx = 2.0f * (q1*q3 - q0*q2);
@@ -335,8 +338,6 @@ void controlLoop(ICM42688 &imu, Supervisor_typedef *sup,
   if (dt_us > CONTROL_PERIOD_US + 100){
     sup->timing.overruns++;
   }
-
-  // ---- IMU: read & update pitch_rad / pitch_rate ----
   // ---- IMU: read & update orientation / pitch using Mahony ----
   if (dataReady) {
     dataReady = false;
@@ -350,7 +351,6 @@ void controlLoop(ICM42688 &imu, Supervisor_typedef *sup,
     float az = imu.accZ();
 
     float a_mag = sqrtf(ax*ax + ay*ay + az*az);
-    // Serial.printf("{\"t\":%lu,\"a_mag\":%.5f}\r\n", micros(), a_mag);
 
     // --- Raw gyro (deg/s) ---
     float gx_dps = imu.gyrX();
@@ -392,6 +392,26 @@ void controlLoop(ICM42688 &imu, Supervisor_typedef *sup,
     sup->imu.pitch_rate     = pitch_rate;
     sup->imu.valid          = true;
     sup->imu.last_update_us = now_imu_us;
+    /*
+    use with:
+    ./plot_amag.py -p /dev/cu.usbmodem178888901
+
+    Serial.printf(
+		  "{\"t\":%lu,"
+		  "\"a_mag\":%.3f,"
+		  "\"accelValid\":%d,"
+		  "\"pitch_rad\":%.3f,"
+		  "\"pitch_rate_raw\":%.3f,"
+		  "\"pitch_rate_filt\":%.3f}\r\n",
+		  micros(),
+		  a_mag,
+		  accelValid ? 1 : 0,
+		  pitch_rad * 180.0f / PI,
+		  pitch_rate_raw * 180.0f / PI,
+		  pitch_rate * 180.0f / PI
+		  );
+
+    */
 
   }
 

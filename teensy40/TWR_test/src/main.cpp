@@ -125,7 +125,8 @@ void loop() {
 	    }
 	  }
 
- 	  // {'cmd': 'torque_reps', 'pulse_torque': 0.4, 'pulse_us': 250000}
+ 	  // start with json command:
+	  //   {'cmd': 'torque_reps', 'pulse_torque': 0.4, 'pulse_us': 250000}
 
 	  if (doc.containsKey("cmd") && doc["cmd"] == "torque_reps") {
 	    if (doc.containsKey("pulse_torque"))
