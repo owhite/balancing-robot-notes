@@ -5,6 +5,10 @@
 void balance_TWR_mode(Supervisor_typedef *sup,
 		      FlexCAN_T4<CAN1, RX_SIZE_256, TX_SIZE_16> &can);
 
+void verify_angle(Supervisor_typedef *sup, FlexCAN_T4<CAN1, RX_SIZE_256, TX_SIZE_16> &can);
+
+void torque_reps(Supervisor_typedef *sup, FlexCAN_T4<CAN1, RX_SIZE_256, TX_SIZE_16> &can);
+
 // ---------------- Global Flags ----------------
 // These are set by the control ISR to signal the main loop.
 volatile bool g_control_due = false;
@@ -378,14 +382,7 @@ void controlLoop(ICM42688 &imu, Supervisor_typedef *sup,
     // If your pitch axis is better aligned with gy, swap to gy.
     float pitch_rate_raw = gy;   // rad/s
 
-    // rate_alpha is the knob that controls how trust is put into the
-    //   current gyro reading vs. the previous filtered value
-    // 
-    // small  (0.01 – 0.05) ignores most new gyro readings, sluggish
-    // medium (0.1 – 0.2) is a good balance of values
-    // large  (0.3 – 1.0) trust raw gyro a lot, fast response but more noise
-
-    const float rate_alpha = 0.15f; // LPF against vibration
+    const float rate_alpha = 0.03f; // LPF against vibration
     float pitch_rate =
         rate_alpha * pitch_rate_raw +
         (1.0f - rate_alpha) * sup->imu.pitch_rate;
@@ -395,6 +392,26 @@ void controlLoop(ICM42688 &imu, Supervisor_typedef *sup,
     sup->imu.pitch_rate     = pitch_rate;
     sup->imu.valid          = true;
     sup->imu.last_update_us = now_imu_us;
+    /*
+    use with:
+    ./plot_amag.py -p /dev/cu.usbmodem178888901
+
+    Serial.printf(
+		  "{\"t\":%lu,"
+		  "\"a_mag\":%.3f,"
+		  "\"accelValid\":%d,"
+		  "\"pitch_rad\":%.3f,"
+		  "\"pitch_rate_raw\":%.3f,"
+		  "\"pitch_rate_filt\":%.3f}\r\n",
+		  micros(),
+		  a_mag,
+		  accelValid ? 1 : 0,
+		  pitch_rad * 180.0f / PI,
+		  pitch_rate_raw * 180.0f / PI,
+		  pitch_rate * 180.0f / PI
+		  );
+
+    */
 
   }
 
@@ -433,6 +450,16 @@ void controlLoop(ICM42688 &imu, Supervisor_typedef *sup,
  
   case SUP_MODE_BALANCE_TWR: {
     balance_TWR_mode(sup, can);
+    break;
+  }
+
+  case SUP_VERIFY_ANGLE: {
+    verify_angle(sup, can);
+    break;
+  }
+
+  case SUP_TORQUE_REPS: {
+    torque_reps(sup, can);
     break;
   }
 

@@ -1,5 +1,5 @@
 #include "supervisor.h"
-#include "balance_TWR_mode.h"
+#include "verify_angle.h"
 #include <Arduino.h>
 #include <FlexCAN_T4.h>
 #include <math.h>
@@ -20,55 +20,41 @@ static LogEntry logBuffer[LOGLEN];
 static int logIndex = 0;
 
 // ---------------- Discrete LQR gains ----------------
-// State ordering: [theta, theta_dot, x_wheel, x_dot]^T
-//  10.28f,
-//  1.03f,
-//  -2.97f,
-//  -5.94f
-
+// State ordering assumed: [theta, theta_dot, x_wheel, x_dot]^T
 static const float K_disc[4] = {
-    10.28f,
-    1.40f,
-   -2.97f,
-   -5.94f
+    10.28505873560549f,
+    1.0301541575776232f,
+    -2.9755190901969173f,
+    -5.948216517508814f
 };
 
-// Wheel radius in meters
-constexpr float WHEEL_RADIUS_M = 0.040f;
+constexpr float WHEEL_RADIUS_M = 0.040f; // use your real value
 
-// Enable / disable actual torque sending
+
 #define SEND_TORQUE 1
 
 // ---------------- Control constants ----------------
-constexpr float TORQUE_CLAMP   = 8.0f;   // max |Nm| per wheel
-constexpr float SAFETY_SCALE   = 1.0f;   // global scaling (increase once stable)
-constexpr float THETA_FAIL_RAD = 0.6f;   // ~34 deg: beyond this, bail to idle
-static    float THETA_EQ       = 0.0f;   // upright body angle = 0 rad
-static float theta_eq_accum = 0.0f;
-static int   theta_eq_count = 0;
-static const int THETA_EQ_SAMPLES = 200; 
+constexpr float TORQUE_CLAMP   = 4.0f;    // max |Nm| per wheel
+constexpr float SAFETY_SCALE   = 0.5f;   // global scaling (tune; set to 1.0f when confident)
+constexpr float THETA_EQ       = 0.0f;    // body upright = 0 rad
+constexpr float THETA_FAIL_RAD = 0.6f;    // ~34 deg: beyond this, bail to idle
 
 static int report_counter = 0;
 
-// Continuous wheel angle state (unwrap)
+// Continuous wheel angle state
 static bool  unwrap_init = false;
-static float prev_L      = 0.0f;
-static float prev_R      = 0.0f;
-static float unwrap_L    = 0.0f;
-static float unwrap_R    = 0.0f;
+static float prev_L = 0.0f, prev_R = 0.0f;
+static float unwrap_L = 0.0f, unwrap_R = 0.0f;
 
 // Velocity filtering state
-static float vel_filt_L  = 0.0f;
-static float vel_filt_R  = 0.0f;
+static float vel_filt_L = 0.0f;
+static float vel_filt_R = 0.0f;
 
 // One-shot per entry
-static bool          first_entry = true;
-static unsigned long start_time  = 0;
+static bool first_entry = true;
+static unsigned long start_time = 0;
 
 // ---------------- Helper: update continuous wheel angles ----------------
-// pos_L_raw / pos_R_raw : wrapped wheel angle [rad] from ESC (0..2π or -π..π)
-// vel_L / vel_R         : wheel angular velocity [rad/s] from ESC
-// dt                    : control loop period [s]
 static void updateWheelUnwrap(float pos_L_raw, float pos_R_raw,
                               float &x_wheel, float &x_dot,
                               float vel_L, float vel_R,
@@ -76,10 +62,10 @@ static void updateWheelUnwrap(float pos_L_raw, float pos_R_raw,
 {
     // Initialize unwrap on first call in this mode
     if (!unwrap_init) {
-        prev_L     = pos_L_raw;
-        prev_R     = pos_R_raw;
-        unwrap_L   = 0.0f;
-        unwrap_R   = 0.0f;
+        prev_L = pos_L_raw;
+        prev_R = pos_R_raw;
+        unwrap_L = 0.0f;
+        unwrap_R = 0.0f;
         vel_filt_L = vel_L;
         vel_filt_R = vel_R;
         unwrap_init = true;
@@ -100,7 +86,8 @@ static void updateWheelUnwrap(float pos_L_raw, float pos_R_raw,
     prev_L = pos_L_raw;
     prev_R = pos_R_raw;
 
-    // --- Velocity low-pass filter (simple 1st-order, ~20 Hz cutoff) ---
+    // Optional velocity low-pass filter (simple 1st-order)
+    // Cutoff ~20 Hz at CONTROL_PERIOD
     const float fc    = 20.0f;
     const float RC    = 1.0f / (2.0f * PI * fc);
     const float alpha = dt / (dt + RC);
@@ -108,13 +95,12 @@ static void updateWheelUnwrap(float pos_L_raw, float pos_R_raw,
     vel_filt_L += alpha * (vel_L - vel_filt_L);
     vel_filt_R += alpha * (vel_R - vel_filt_R);
 
-    // Forward position and velocity (average of two wheels, in radians)
-    float x_wheel_rad = 0.5f * (unwrap_L + unwrap_R);
-    float x_dot_rad   = 0.5f * (vel_filt_L + vel_filt_R);
+    // Forward position and velocity (average of two wheels)
+    x_wheel = 0.5f * (unwrap_L + unwrap_R);
+    x_dot   = 0.5f * (vel_filt_L + vel_filt_R);
 
-    // Convert from wheel angle → linear distance [m]
-    x_wheel = x_wheel_rad * WHEEL_RADIUS_M;
-    x_dot   = x_dot_rad   * WHEEL_RADIUS_M;
+    x_wheel *= WHEEL_RADIUS_M;
+    x_dot   *= WHEEL_RADIUS_M;
 }
 
 // ---------------- Main TWR balance mode ----------------
@@ -126,26 +112,23 @@ void balance_TWR_mode(Supervisor_typedef *sup,
     // Must have both ESCs alive before we attempt torque control
     if (!sup->esc[0].state.alive || !sup->esc[1].state.alive) {
         // If either ESC died mid-balance, immediately go idle
-        first_entry  = true;
-        unwrap_init  = false;
-        logIndex     = 0;
+        first_entry = true;
+        unwrap_init = false;
 
         // Send zero torque
         CAN_message_t msgL, msgR;
-        msgL.id = canMakeExtId(CAN_ID_IQREQ, TEENSY_NODE_ID,
-                               sup->esc[0].config.node_id);
-        msgR.id = canMakeExtId(CAN_ID_IQREQ, TEENSY_NODE_ID,
-                               sup->esc[1].config.node_id);
+        msgL.id = canMakeExtId(CAN_ID_IQREQ, TEENSY_NODE_ID, sup->esc[0].config.node_id);
+        msgR.id = canMakeExtId(CAN_ID_IQREQ, TEENSY_NODE_ID, sup->esc[1].config.node_id);
         msgL.len = msgR.len = 8;
         msgL.flags.extended = msgR.flags.extended = 1;
         canPackFloat(0.0f, msgL.buf);
         canPackFloat(0.0f, msgL.buf + 4);
         canPackFloat(0.0f, msgR.buf);
         canPackFloat(0.0f, msgR.buf + 4);
-    #if SEND_TORQUE
+#if SEND_TORQUE
         can.write(msgL);
         can.write(msgR);
-    #endif
+#endif 
         sup->mode = SUP_MODE_IDLE;
         return;
     }
@@ -157,28 +140,14 @@ void balance_TWR_mode(Supervisor_typedef *sup,
         logIndex    = 0;
         start_time  = micros();
 
-	// use sup->imu.pitch_rad THETA_EQ
-	theta_eq_accum = 0.0f;
-	theta_eq_count = 0;
-
         Serial.println("{\"cmd\":\"PRINT\",\"note\":\"Balance mode started\"}");
-    }
-
-    if (theta_eq_count < THETA_EQ_SAMPLES) {
-      theta_eq_accum += sup->imu.pitch_rad;
-      theta_eq_count++;
-
-      if (theta_eq_count == THETA_EQ_SAMPLES) {
-        THETA_EQ = theta_eq_accum / (float)THETA_EQ_SAMPLES;
-        Serial.printf("{\"cmd\":\"PRINT\",\"note\":\"Tare complete: THETA_EQ=%.4f rad\"}\r\n", THETA_EQ);
-      }
     }
 
     unsigned long now_time = micros();
     unsigned long elapsed  = now_time - start_time;
 
     // ---------------- Sensor feedback ----------------
-    // Body angle and rate from IMU (assumed already filtered, rad / rad/s)
+    // Body angle and rate from IMU (radians and rad/s)
     float theta     = sup->imu.pitch_rad - THETA_EQ;
     float theta_dot = sup->imu.pitch_rate;
 
@@ -186,7 +155,6 @@ void balance_TWR_mode(Supervisor_typedef *sup,
     float pos_L = sup->esc[0].state.pos_rad;
     float pos_R = sup->esc[1].state.pos_rad;
 
-    // Wheel angular velocities [rad/s]
     float vel_L = sup->esc[0].state.vel_rad_s;
     float vel_R = sup->esc[1].state.vel_rad_s;
 
@@ -197,23 +165,15 @@ void balance_TWR_mode(Supervisor_typedef *sup,
     float x_dot   = 0.0f;
     updateWheelUnwrap(pos_L, pos_R, x_wheel, x_dot, vel_L, vel_R, dt);
 
-    // Optional: scope pin to check controlLoop rate
     digitalWrite(TEST_PIN, test_pin_state);
     test_pin_state = !test_pin_state;
 
-    const float RPM_FAIL = max(fabsf(vel_R), fabsf(vel_L));
-
-
     // ---------------- Safety: fall detection ----------------
     // If robot is too far from upright, cut torque and exit.
-    if (fabsf(theta) > THETA_FAIL_RAD ||
-	!sup->imu.valid ||
-	RPM_FAIL > 30) {
+    if (fabsf(theta) > THETA_FAIL_RAD) {
         CAN_message_t msgL, msgR;
-        msgL.id = canMakeExtId(CAN_ID_IQREQ, TEENSY_NODE_ID,
-                               sup->esc[0].config.node_id);
-        msgR.id = canMakeExtId(CAN_ID_IQREQ, TEENSY_NODE_ID,
-                               sup->esc[1].config.node_id);
+        msgL.id = canMakeExtId(CAN_ID_IQREQ, TEENSY_NODE_ID, sup->esc[0].config.node_id);
+        msgR.id = canMakeExtId(CAN_ID_IQREQ, TEENSY_NODE_ID, sup->esc[1].config.node_id);
         msgL.len = msgR.len = 8;
         msgL.flags.extended = msgR.flags.extended = 1;
 
@@ -221,12 +181,12 @@ void balance_TWR_mode(Supervisor_typedef *sup,
         canPackFloat(0.0f, msgL.buf + 4);
         canPackFloat(0.0f, msgR.buf);
         canPackFloat(0.0f, msgR.buf + 4);
-    #if SEND_TORQUE
+
+#if SEND_TORQUE
         can.write(msgL);
         can.write(msgR);
-    #endif
-
-        Serial.println("{\"cmd\":\"PRINT\",\"note\":\"Balance aborted: speed to fast, tilt too large or IMU invalid\"}");
+#endif
+        Serial.println("{\"cmd\":\"PRINT\",\"note\":\"Balance aborted: tilt too large\"}");
 
         sup->mode = SUP_MODE_IDLE;
         first_entry = true;
@@ -245,7 +205,7 @@ void balance_TWR_mode(Supervisor_typedef *sup,
     u *= SAFETY_SCALE;
 
     // Clamp commanded torque
-    if (u > TORQUE_CLAMP)  u =  TORQUE_CLAMP;
+    if (u > TORQUE_CLAMP)  u = TORQUE_CLAMP;
     if (u < -TORQUE_CLAMP) u = -TORQUE_CLAMP;
 
     // Symmetric torque to both wheels (signs match ESC expectations)
@@ -263,8 +223,8 @@ void balance_TWR_mode(Supervisor_typedef *sup,
     msgR.flags.extended = 1;
 
     canPackFloat(torque_left,  msgL.buf);
-    canPackFloat(torque_right, msgR.buf);
     canPackFloat(0.0f,         msgL.buf + 4);
+    canPackFloat(torque_right, msgR.buf);
     canPackFloat(0.0f,         msgR.buf + 4);
 
 #if SEND_TORQUE
@@ -276,7 +236,7 @@ void balance_TWR_mode(Supervisor_typedef *sup,
     if (++report_counter >= TELEMETRY_DECIMATE) {
         report_counter = 0;
 
-        float pitch_deg      = sup->imu.pitch_rad  * 180.0f / PI;
+        float pitch_deg      = sup->imu.pitch_rad * 180.0f / PI;
         float pitch_rate_deg = sup->imu.pitch_rate * 180.0f / PI;
 
         Serial.printf(
@@ -288,7 +248,8 @@ void balance_TWR_mode(Supervisor_typedef *sup,
           "\"x_dot\":%.3f}\r\n",
           micros(),
           pitch_deg,
-          pitch_rate_deg,
+	  (sup->esc[0].state.pos_rad  * 90.0f / PI) - 24, 
+          // pitch_rate_deg,
           u,
           x_wheel,
           x_dot
@@ -309,7 +270,7 @@ void balance_TWR_mode(Supervisor_typedef *sup,
     }
 
     // ---------------- Optional timed exit ----------------
-    // Keep disabled while tuning.
+    // Currently disabled (as you had it).
     if (elapsed > sup->user_total_us && false) {
         Serial.println("{\"samples\":[");
         for (int i = 0; i < logIndex; i++) {
@@ -332,6 +293,5 @@ void balance_TWR_mode(Supervisor_typedef *sup,
         sup->mode = SUP_MODE_IDLE;
         first_entry = true;
         unwrap_init = false;
-        logIndex = 0;
     }
 }

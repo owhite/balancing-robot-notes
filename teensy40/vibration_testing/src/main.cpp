@@ -121,7 +121,7 @@ void loop() {
 	      supervisor.mode = SUP_MODE_IDLE;
 	    }
 	    else {
-	      supervisor.mode = SUP_MODE_BALANCE_TWR;
+	      supervisor.mode = SUP_VERIFY_ANGLE;
 	    }
 	  }
 
@@ -176,14 +176,7 @@ void loop() {
       }
       else if (pb_state == PB_RELEASED && g_button.isArmed()) {
 
-        if (supervisor.mode == SUP_MODE_BALANCE_TWR) {
-          supervisor.mode = SUP_MODE_IDLE;
-        } else {
-          supervisor.mode = SUP_MODE_BALANCE_TWR;
-        }
-
-	Serial.print(supervisor.mode);
-	Serial.println("\r");
+	supervisor.mode = SUP_MODE_IDLE;
 
 	LEDState cur  = g_led_red.state;
 	LEDState next = (cur == LED_BLINK_FAST) ? LED_BLINK_SLOW : LED_BLINK_FAST;

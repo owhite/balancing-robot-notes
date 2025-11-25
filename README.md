@@ -80,6 +80,48 @@ This project would never happen without:
 * [Netzpfuscher's](https://github.com/Netzpfuscher/TTerm) incredible TTerm and CAN work.
 * [MP2](https://github.com/badgineer/MP2-ESC) an open source motor controller from badgineer. 
 
+## Let's be real
+
+You might assume building a balancing robot is mostly a matter of assembling parts and flashing someone else’s code onto it. I used to think that too — until I built one. What I’ve learned is that balancing robots aren’t really built, they’re tuned. Everything about them depends on tight interactions between hardware, sensors, motors, and feedback loops, and those interactions are different for every single robot.
+
+A balancing robot is a dynamic control system, not a static device. It’s constantly trying to predict its own motion, measure its own tilt, compensate for delays, cancel vibration, and stabilize itself against gravity — hundreds of times per second. That means even small differences in hardware completely change the way the controller behaves. For example:
+
+- Motors & ESCs: Different torque curves, different dead zones, different current limits, different FOC tuning.
+- Wheels & tires: Diameter, traction, inertia, compliance — all change how the robot responds to torque.
+- IMU: Sensitivity, noise, mounting vibration, sample timing, bias drift — all affect measured tilt.
+- Microcontroller timing: Loop rate, jitter, scheduling delays, filter performance — all shift the controller behavior.
+- Physical build: Height of the center of mass, frame stiffness, mass distribution — all change the robot’s dynamics.
+
+If you change any of these, even slightly, the controller behaves differently. That’s why tuning is so time-consuming: you’re adjusting a control law to match the physics and imperfections of your specific robot.
+
+You are welcome to take my code and run it on your bot. But remember:
+- You can absolutely start with my code
+- It will not balance your robot without a lot of tuning.
+- What's most important to use this project as a prompt for making your own system
+- tuning is the real work — not a flaw, but part of the fun
+- What really makes a robot stand is eliminating all the problems like jitter, timing issues, CAN communications, and modeling
+
+Just like musical instruments or high-performance cars, balancing robots need to be customized, adjusted, and dialed in until the system “feels right.” The code is just the beginning; the tuning is the craft.
+
+## The really great news is there is a new source of help. 
+
+I want to be transparent about this: building this robot wasn’t just me writing code. I've written code for 20 plus years, but in this case I worked through the entire project with ChatGPT as a kind of engineering partner. ChatG helps with asking questions, testing ideas, refining approaches, debugging weird behavior, and iterating the design over and over.
+
+A balancing robot is a complex closed-loop control problem. As far as I know I never would have been able to use Google to address how robots behaves. ChatGPT creates the ability to explore those problems conversationally:
+
+- When I wasn’t sure whether the IMU filtering was right, I asked it to analyze my data.
+- It is incredible at helping with plotting results
+- When I had motor vibration I couldn’t explain, I used chat to brainstorm possible causes and experiments.
+- It taught me everything about LQR, interpretted equations, supplied python code to perform most of the calculations. It involved a lot of debugging -- when the LQR gains seemed wrong, I walked through the math with it.
+- When the ESC behavior looked inconsistent, we debugged line by line until we understood it.
+- When I needed to test an assumption, it helped me design the test.
+- When something behaved strangely, I could describe it and get three possible hypotheses to try.
+
+The project was far less like copying code from the internet and more like having a very patient senior engineer building one-off code bundles to eventually get this thing to stand. 
+
+**We live in a world of prompt-driven engineering:** I shaped my thinking through prompts, refined those prompts based on the robot’s behavior, and used those conversations to build understanding that would have taken weeks on my own. ChatGPT didn’t “solve the problem” — it helped me reason through it, step by step.
+
+So if you see this robot standing and balancing in a video, know that behind the scenes was not just hardware and code — it was hundreds of micro-conversations, experiments, adjustments, and iterations. ChatGPT was the scaffolding that helped me structure that process.
 
 ## NOTES
 Ever wanted to change all the names of kicad files at once?

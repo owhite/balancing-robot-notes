@@ -1,4 +1,4 @@
-  adc1                  | 640               |
+  adc1                  | 660               |
   adc1_max              | 2700              |
   adc1_min              | 500               |
   adc1_pol              | 1.000000          |
@@ -6,15 +6,15 @@
   adc2_min              | 1200              |
   adc2_pol              | 1.000000          |
   can_adc               | 3                 |
-  ehz                   | -0.283872         |
+  ehz                   | -0.097571         |
   error                 | 0                 |
   error_all             | 0                 |
   FOC_Advance           | 0.000000          |
-  FOC_angle             | 40500             |
+  FOC_angle             | 25000             |
   FOC_curr_BW           | 3000.000000       |
-  FOC_enc_ang           | 40500             |
-  FOC_enc_oset          | 40500             |
-  FOC_enc_pol           | 1                 |
+  FOC_enc_ang           | 25000             |
+  FOC_enc_oset          | 25000             |
+  FOC_enc_pol           | 0                 |
   FOC_enc_PPR           | 4096              |
   FOC_flux_gain         | 0.367423          |
   FOC_flux_gain         | 0.367423          |
@@ -32,14 +32,14 @@
   FOC_ol_step           | 10                |
   FOC_ortega_gain       | 1000000.000000    |
   Hall_flux             | Array[12]         |
-  id                    | -0.007379         |
+  id                    | -0.006298         |
   input_opt             | 32                |
-  iq                    | -0.000819         |
+  iq                    | -0.004596         |
   iqreq                 | 0.000000          |
   meas_cl_curr          | 8.500000          |
   meas_curr             | 20.000000         |
   meas_volt             | 4.000000          |
-  node_id               | 12                |
+  node_id               | 11                |
   opt_app_type          | 0                 |
   opt_circ_lim          | 2                 |
   opt_cont_type         | 0                 |
@@ -64,17 +64,17 @@
   par_pp                | 14                |
   par_r                 | 0.070000          |
   par_rpm_max           | 0                 |
-  par_SL_sensor         | 0                 |
-  password              |                   |
+  par_SL_sensor         | 4                 |
+  password              |                                         |
   safe_count            | 100               |
   safe_start            | 100               |
   speed_ki              | 0.100000          |
   speed_kp              | 0.500000          |
   speed_req             | 0.000000          |
-  TMOS                  | 299.611572        |
-  TMOT                  | 199.968307        |
+  TMOS                  | 295.772736        |
+  TMOT                  | 200.938385        |
   uart_dreq             | 0.000000          |
   uart_req              | 0.000000          |
-  vbus                  | 29.723145         |
-  Vd                    | -0.004284         |
-  Vq                    | 0.006748          |
+  vbus                  | 29.919287         |
+  Vd                    | 0.009565          |
+  Vq                    | 0.006794          |
