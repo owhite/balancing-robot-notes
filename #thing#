@@ -1,0 +1,91 @@
+_motor->FOC.zero_window
+_motor->FOC.was_outside
+_motor->FOC.offset_accumulator
+_motor->FOC.offset_count
+_motor->FOC.manual_enc_offset 
+
+_motor->FOC.zero_window
+_motor->FOC.was_outside
+_motor->FOC.offset_accumulator
+_motor->FOC.offset_count
+_motor->FOC.manual_enc_offset 
+
+					// PLACE BREAK HERE
+					_motor->FOC.offset_accumulator = 0;
+					_motor->FOC.offset_count = 0;
+
+
+13c15
+<   FOC_enc_ang           | 25000             |
+---
+>   FOC_enc_ang           | 25224             |
+15c17
+<   FOC_enc_pol           | 0                 |
+---
+>   FOC_enc_pol           | 1                 |
+20c22
+<   FOC_fpwm              | 10000.000000      |
+---
+>   FOC_fpwm              | 20000.000000      |
+33c35
+<   id                    | -0.002030         |
+---
+>   id                    | -0.230357         |
+35,36c37,38
+<   iq                    | 0.002075          |
+<   iqreq                 | 3.000000          |
+---
+>   iq                    | 0.001994          |
+>   iqreq                 | 0.000000          |
+40c42
+<   node_id               | 12                |
+---
+>   node_id               | 11                |
+54,55c56,57
+<   par_i_max             | 200.000000        |
+<   par_i_min             | -200.000000       |
+---
+>   par_i_max             | 30.000000         |
+>   par_i_min             | -30.000000        |
+57c59
+<   par_ibat_max          | 100.000000        |
+---
+>   par_ibat_max          | 10.000000         |
+61c63
+<   par_p_max             | 6000.000000       |
+---
+>   par_p_max             | 100.000000        |
+
+
+
+
+
+				getIncEncAngle(_motor);
+				uint16_t a = _motor->FOC.FOCAngle;
+
+				// Detect wraparound zone (near zero)
+				if (a > (65536 - _motor->FOC.zero_window) || a < _motor->FOC.zero_window)
+				{
+					// edge detect: only capture once per pass
+					if (_motor->FOC.was_outside)
+					{
+						_motor->FOC.was_outside = 0;
+
+						int16_t err = (int16_t)_motor->FOC.enc_angle;
+
+						_motor->FOC.offset_accumulator += err;
+						_motor->FOC.offset_count++;
+					}
+				}
+				else
+				{
+					_motor->FOC.was_outside = 1;
+				}
+				if (_motor->FOC.offset_count >= _motor->FOC.offset_samples)
+				{
+					_motor->FOC.manual_enc_offset = (int16_t)(_motor->FOC.offset_accumulator / (int32_t)_motor->FOC.offset_count);
+
+
+					// Reset so you can re-run if needed
+					_motor->FOC.offset_accumulator = 0;
+					_motor->FOC.offset_count = 0;

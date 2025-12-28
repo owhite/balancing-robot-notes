@@ -250,7 +250,7 @@ void balance_TWR_mode(Supervisor_typedef *sup,
 
     // Symmetric torque to both wheels (signs match ESC expectations)
     float torque_left  =  u;
-    float torque_right = -u;
+    float torque_right = u;
 
     // ---------------- Send torque over CAN ----------------
     CAN_message_t msgL, msgR;

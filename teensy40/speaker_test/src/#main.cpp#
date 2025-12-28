@@ -1,0 +1,13 @@
+#include "main.h"
+
+
+
+void setup() {
+  pinMode(SPEAKER_PIN, OUTPUT);
+}
+
+void loop() {
+  tone(SPEAKER_PIN, 1000, 1000); // 1 kHz tone
+  delay(1000);
+}
+

@@ -1,0 +1,20 @@
+<   FOC_fpwm              | 20000.000000      | 0.00     | 100000.00| PWM frequency
+>   FOC_fpwm              | 10000.000000      | 0.00     | 100000.00| PWM frequency
+
+<   id                    | 0.013038          | -inf     | inf      | Phase Idq_d smoothed
+>   id                    | 0.007793          | -inf     | inf      | Phase Idq_d smoothed
+
+<   iq                    | -0.012739         | -inf     | inf      | Phase Idq_q smoothed
+>   iq                    | -0.002994         | -inf     | inf      | Phase Idq_q smoothed
+
+<   par_i_max             | 200.000000        | 0.00     | 1000.00  | Max motor current
+<   par_i_min             | -200.000000       | -1000.00 | 0.00     | Min motor current
+
+>   par_i_max             | 100.000000        | 0.00     | 1000.00  | Max motor current
+>   par_i_min             | -100.000000       | -1000.00 | 0.00     | Min motor current
+
+<   par_ibat_max          | 10.000000         | 0.00     | 1000.00  | Max battery current power
+>   par_ibat_max          | 200.000000        | 0.00     | 1000.00  | Max battery current power
+
+<   par_p_max             | 100.000000        | 0.00     | 50000.00 | Max power
+>   par_p_max             | 6000.000000       | 0.00     | 50000.00 | Max power

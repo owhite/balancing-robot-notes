@@ -82,7 +82,7 @@ This project would never happen without:
 
 ## Let's be real
 
-You might assume building a balancing robot is mostly a matter of assembling parts and flashing someone else’s code onto it. I used to think that too — until I built one. What I’ve learned is that balancing robots aren’t really built, they’re tuned. Everything about them depends on tight interactions between hardware, sensors, motors, and feedback loops, and those interactions are different for every single robot.
+You might assume building a balancing robot is mostly a matter of assembling parts and flashing someone else’s code onto it. I used to think that too — until I finally worked out how to create on one. Balancing robots are not just bolted together -- they are tuned and integrated. Everything about them depends on tight interactions between hardware, sensors, motors, and feedback loops, and those interactions are different for every single robot.
 
 A balancing robot is a dynamic control system, not a static device. It’s constantly trying to predict its own motion, measure its own tilt, compensate for delays, cancel vibration, and stabilize itself against gravity — hundreds of times per second. That means even small differences in hardware completely change the way the controller behaves. For example:
 
@@ -95,11 +95,11 @@ A balancing robot is a dynamic control system, not a static device. It’s const
 If you change any of these, even slightly, the controller behaves differently. That’s why tuning is so time-consuming: you’re adjusting a control law to match the physics and imperfections of your specific robot.
 
 You are welcome to take my code and run it on your bot. But remember:
-- You can absolutely start with my code
 - It will not balance your robot without a lot of tuning.
 - What's most important to use this project as a prompt for making your own system
 - tuning is the real work — not a flaw, but part of the fun
 - What really makes a robot stand is eliminating all the problems like jitter, timing issues, CAN communications, and modeling
+- The code, and any intellectual ideas found here should remain in the public domain
 
 Just like musical instruments or high-performance cars, balancing robots need to be customized, adjusted, and dialed in until the system “feels right.” The code is just the beginning; the tuning is the craft.
 
