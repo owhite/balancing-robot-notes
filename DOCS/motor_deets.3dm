@@ -1,0 +1,15 @@
+GBM5208-200T
+par_ld ≈ 0.0054 mH
+par_lq ≈ 0.009  mH
+8.5 Ω per phase
+
+GIM4305-10 Steadywin
+0.00014 to 0.00021 mH
+.65 Ω per phase
+
+FLIPSKY 6215 KV170
+par_ld                | 0.000015
+par_lq                | 0.000022
+par_pp                | 14      
+par_r                 | 0.070000
+
