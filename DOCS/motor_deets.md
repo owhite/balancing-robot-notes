@@ -19,3 +19,9 @@
 - set par_lq 0.00082
 - set par_pp 21
 - set par_r  1.13
+
+## QS165 V2
+- set par_ld 0.000042
+- set par_lq 0.000065
+- set par_pp 14 ?? 
+- set par_r 0.006000
