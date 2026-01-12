@@ -1,7 +1,7 @@
 ## GBM5208-200T
--set par_ld 0.0054
--set par_lq 0.009 
--set par_r 8.5 Ω per phase
+- set par_ld 0.0054
+- set par_lq 0.009 
+- set par_r 8.5 Ω per phase
 
 ## GIM4305-10 Steadywin
 -set par_ld 0.00014
