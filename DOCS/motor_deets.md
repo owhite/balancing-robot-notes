@@ -25,3 +25,14 @@
 - set par_lq 0.000065
 - set par_pp 14 ?? 
 - set par_r 0.006000
+
+## Generic skateboard motor
+
+36v 1600rpm skateboard motor, 
+- No-load Current: 0.3A
+- Maximum Current: 12A
+- Speed: 15-20KM/h.
+- KV ≈ 1600 / 36 ≈ 44.4 rpm/V
+- set par_r 0.357
+- set par_ld 0.000081
+- set par_lq 0.000162

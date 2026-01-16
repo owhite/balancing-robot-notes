@@ -323,26 +323,29 @@ Lq / Ld ≈ 1.67
 ## Prompt with chatgpt
 Walk me through measuring BLDC motor phase resistance and inductance using simple bench equipment.
 
-Available equipment:
-- Adjustable DC power supply (voltage & current limit)
+## Available equipment: ##
+- Isolated, adjustable bench DC power supply (voltage & current limit)
 - 1 Ω, 10 W resistor
-- Oscilloscope (≥2 channels)
+- Earth-grounded Oscilloscope (≥2 channels)
 - Multimeter
 - BLDC motor (three-phase, disconnected from any controller)
 
-Goals:
+## Connections: ##
+PSU+ → Motor lead A → Motor lead B → switch → 1 Ω resistor → PSU−
+
+## Goals: ##
 - Measure per-phase resistance (Ω).
 - Measure per-phase inductance (H).
 - Sanity-check the results against motor physics and expected KV / torque constant.
 
-Constraints & style:
+## Constraints & style: ##
 - We will not use an LCR meter
 - Use step-response and RL time-constant methods, not impedance analyzers.
 - Be explicit about wye vs delta assumptions and conversions.
 - Ask me to confirm scope probe placement and safety limits before applying power.
 - Keep units consistent and report final inductance in henries (not mH).
 
-Before beginning 
+## Before beginning  ##
 - Ask me for my best guess of the motor’s key specs:
 - Approximate KV (rpm/V)
 - Expected phase-to-phase resistance range
@@ -350,12 +353,12 @@ Before beginning
 - Intended application (e.g., balancing robot, gimbal, scooter, etc.)
 - Ask what supply voltage and current limit I plan to start with.
 
-Measurement approach
+## Measurement approach ##
 - First: DC resistance measurement using the resistor as a current sense element.
 - Second: Inductance measurement using a voltage step, capturing the current rise on the oscilloscope, extracting τ = L/R, and solving for L.
 - Explain each step briefly, then wait for my measured values before continuing.
 
-Behavior:
+## Behavior: ##
 - Do not skip steps.
 - Do not assume ideal components.
 - Question results that look physically inconsistent.
