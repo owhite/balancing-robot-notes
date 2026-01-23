@@ -1,0 +1,25 @@
+{
+    "meshes": {
+	"wheels.stl": {
+	    "mass": 760.0
+	}, 
+	"ESC.stl": {
+	    "mass": 160.0
+	}, 
+	"wood.stl": {
+	    "mass": 139.0
+	}, 
+	"connector.stl": {
+	    "mass": 20.0
+	}, 
+	"battery.stl": {
+	    "mass": 235.0
+	}, 
+	"PCB.stl": {
+	    "mass": 46.0
+	}
+    }, 
+    "axle_origin": [0.0, 0.0, 40.0],
+    "axle_vector": [0.0, 1.0, 0.0],
+    "file_path": "/Users/owhite/MESC_brain_board/modeling/"
+}
