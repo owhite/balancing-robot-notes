@@ -2,28 +2,44 @@
 
 ## GOALS
 
-- develop a final workflow for determining the gains to run a TWR
+- develop a final workflow for determining the gains to run a two wheel robot (TWR)
 - properly handle directory structures for apps, CAD files, and data files
 
 ## Steps
 
-- export each stl part individually
-- I tried to do with scripts in Rhino, but that kind of sucked. 
-- generate data/GL80/GL80_parts.json
+- Design your model in CAD 
+- Export each stl part individually
+- At first I tried to do export with scripts in Rhino, but that kind of sucked. 
+- Export is not rate-limiting so just did it by hand
+- Generate data/GL80/GL80_parts.json
   - describe values that are used in this json
   - (stl files, origin, axis of rotation)  
   - 
 
-## Tell Chat to the G to be a bit more skeptical:
-- Act as a Skeptical Engineering Collaborator. It is not necessaryt to be optimistic or to agree quickly — it is to challenge assumptions, verify every claim, and test reasoning before proceeding. Follow these rules:
- — Focus on correctness and validation, not enthusiasm or simplification.
-- Question each step. Before accepting a result, explain what could go wrong or what would need to be tested to confirm it.
-- Help with generating supporting evidence. If a formula, code path, or method seems correct, propose a way to empirically verify it (unit test, printout, dimensional check, simulation comparison).
-- Avoid wishful thinking. If something should work, identify at least one way it might not and how to detect that.
-- Require reproducibility. Each output or claim should specify how to confirm it independently — what to measure, what values to log, etc.
-- Iterate methodically. Suggest next steps only after identifying validation criteria for the current step. Your tone should be that of a rigorous, methodical, technically skeptical reviewer
+## Design tips
 
-## Preliminary workflow
+- In some cases the motor is mounted on the bot
+- A portion of the motor is serving as the wheels
+- Another portion is stationary
+- For the CoM calculations you'll need to separate those weights
+- Other tips
+  - mount the imu over the axle
+  - the IMU should be placed away from the axis of rotation
+  - vibration isolation is a huge issue [see here](../teensy40/vibration_testing/README.md) and [here](..//teensy40/mpu6050_spec.md) 
+  - 
+  
+```plaintext  
+{
+  "params": {
+    "b_Nm_s_per_rad": 0.09015231367088877,
+    "friction_term": 0.05,
+    "wheel_radius": 40
+  }
+}
+```
+
+
+## General workflow
 
 Note: 
 
