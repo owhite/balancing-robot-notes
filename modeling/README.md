@@ -60,6 +60,51 @@ View results:
    └── ./graph_angle_torque.py pendulum_LQR_data.json 
 ```
 
+## Flywheel inertia 𝐽 calculation 
+
+b_Nm_s_per_rad is the rotational viscous damping coefficient. It models torque loss proportional to angular velocity: `𝜏_loss = 𝑏𝜔`
+
+It is needed to:
+- correctly capture energy dissipation in the motor + drivetrain
+- place realistic damping terms in the state-space model
+- prevent overly aggressive or unstable LQR gains
+- make simulation and real hardware match.
+
+To get this value:
+- This is the rig I used: [LINK](rig1.png)
+- Spun with a cordless drill
+- Flywheel treated as a solid flat disk
+- Measured mass: 𝑀 = 429g = 0.429 kg
+- Measured diameter: 240 mm → radius
+- 𝑅 = 0.12 m
+- For a solid disk about its central axis:
+  - 𝐽 = 1/2 ⋅ M ⋅ R²
+
+Substituting:
+- 𝐽 = 1 / 2 ⋅ 0.429 (0.12)² ≈ 0.00309 kg ⋅ m²
+- This J was used to convert the measured spin-down time constant b=J/τ
+- With this command:
+```
+./spin_decay.py /dev/cu.usbmodem181813701 --J 0.00309
+```
+
+**Result:** 
+<img src="graph1.png" alt="Plot result" width="600"/>
+
+From the plot text:
+
+τ = 2.246 s (since 𝑏/𝐽 = 0.4463)
+R² = 0.932 → solid fit for real hardware
+J = 0.00309 kg·m² (flywheel)
+
+"b_Nm_s_per_rad" = b=τ / J​ = 0.001379 N 
+
+This is exactly the right order of magnitude for:
+- a 300 g BLDC
+- decent bearings
+- open-circuit (no electrical braking)
+- moderate windage
+
 ## Review of TWR data
 
 These are useful prompts for ChatG:
