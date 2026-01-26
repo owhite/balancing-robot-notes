@@ -1,9 +1,8 @@
 # Pendulum State-space Model Generation and Validation
 
-## GOALS
+## GOAL:
 
-- develop a final workflow for determining the gains to run a two wheel robot (TWR)
-- properly handle directory structures for apps, CAD files, and data files
+**Develop a final workflow for determining the gains to run a two wheel robot (TWR)**
 
 ## Steps
 - Design your model in CAD 
