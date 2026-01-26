@@ -22,8 +22,7 @@
 - Other tips
   - mount the imu over the axle
   - the IMU should be placed away from the axis of rotation
-  - vibration isolation is a huge issue [see here](../teensy40/vibration_testing/README.md) and [here](..//teensy40/mpu6050_spec.md) 
-  - 
+  - vibration isolation is a huge issue [see here](../teensy40/vibration_testing/README.md) and [here](..//teensy40/mpu6050_spec.md)
 
 ## General workflow
 
@@ -88,6 +87,7 @@ From the plot text:
 - R² = 0.932 → solid fit for real hardware
 - J = 0.00309 kg·m² (flywheel)
 
+Therefore:  
 `b_Nm_s_per_rad` = b=τ / J​ = 0.001379 N 
 
 ChatG says this is exactly the right order of magnitude for:
