@@ -6,7 +6,6 @@
 - properly handle directory structures for apps, CAD files, and data files
 
 ## Steps
-
 - Design your model in CAD 
 - Export each stl part individually
 - At first I tried to do export with scripts in Rhino, but that kind of sucked. 
@@ -16,8 +15,7 @@
   - (stl files, origin, axis of rotation)  
   - 
 
-## Design tips
-
+## Robot design tips
 - In some cases the motor is mounted on the bot
 - A portion of the motor is serving as the wheels
 - Another portion is stationary
@@ -28,22 +26,16 @@
   - vibration isolation is a huge issue [see here](../teensy40/vibration_testing/README.md) and [here](..//teensy40/mpu6050_spec.md) 
   - 
   
-```plaintext  
-{
-  "params": {
-    "b_Nm_s_per_rad": 0.09015231367088877,
-    "friction_term": 0.05,
-    "wheel_radius": 40
-  }
-}
-```
-
 
 ## General workflow
 
 Note: 
 
 ```plaintext
+$ ./spin_decay.py /dev/cu.usbmodem181813701 --J 0.00309
+   ↓
+   └── compute damping coefficient (b_Nm_s_per_rad)
+
 $ ./generate_TWR_data.py -i LQR_bot_metadata.json -r robot_params.json
    ↓
    ├── computes mass, CoM, inertia
@@ -60,32 +52,36 @@ View results:
    └── ./graph_angle_torque.py pendulum_LQR_data.json 
 ```
 
-## Flywheel inertia 𝐽 calculation 
+## Motor / flywheel inertia calculation 
+
+One part of modeling is calculating the damping coefficient of the motor. 
 
 b_Nm_s_per_rad is the rotational viscous damping coefficient. It models torque loss proportional to angular velocity: `𝜏_loss = 𝑏𝜔`
 
 It is needed to:
-- correctly capture energy dissipation in the motor + drivetrain
-- place realistic damping terms in the state-space model
-- prevent overly aggressive or unstable LQR gains
-- make simulation and real hardware match.
+- Correctly capture energy dissipation in the motor + drivetrain
+- Place realistic damping terms in the state-space model
+- Prevent overly aggressive or unstable LQR gains
+- Get the simulation and real hardware to match.
 
-To get this value:
+Set up value:
+- Load ../teensy40/can_posvel_on to the teensy
 - This is the rig I used: [LINK](rig1.png)
 - Spun with a cordless drill
 - Flywheel treated as a solid flat disk
+- Phase wires on motor were not connected to ESC
 - Measured mass: 𝑀 = 429g = 0.429 kg
 - Measured diameter: 240 mm → radius
 - 𝑅 = 0.12 m
 - For a solid disk about its central axis:
   - 𝐽 = 1/2 ⋅ M ⋅ R²
 
-Substituting:
-- 𝐽 = 1 / 2 ⋅ 0.429 (0.12)² ≈ 0.00309 kg ⋅ m²
+Substitute in mass:
+- 𝐽 = 1/2 ⋅ 0.429 (0.12)² ≈ 0.00309 kg ⋅ m²
 - This J was used to convert the measured spin-down time constant b=J/τ
 - With this command:
 ```
-./spin_decay.py /dev/cu.usbmodem181813701 --J 0.00309
+./apps/spin_decay.py /dev/cu.usbmodem181813701 --J 0.00309
 ```
 
 **Result:** 
@@ -99,13 +95,23 @@ J = 0.00309 kg·m² (flywheel)
 
 "b_Nm_s_per_rad" = b=τ / J​ = 0.001379 N 
 
-This is exactly the right order of magnitude for:
-- a 300 g BLDC
-- decent bearings
-- open-circuit (no electrical braking)
-- moderate windage
+ChatG says is exactly the right order of magnitude for:
+- A 300 g BLDC
+- Decent bearings
+- Open-circuit (no electrical braking)
+- Moderate windage
 
 ## Review of TWR data
+
+```plaintext  
+{
+  "params": {
+    "b_Nm_s_per_rad": 0.09015231367088877,
+    "friction_term": 0.05,
+    "wheel_radius": 40
+  }
+}
+```
 
 These are useful prompts for ChatG:
 - What is your interpretation of these eigen values?
