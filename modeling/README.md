@@ -74,12 +74,9 @@ Set up value:
 Substitute in mass:
 - 𝐽 = 1/2 ⋅ 0.429 (0.12)² ≈ 0.00309 kg ⋅ m²
 - This J was used to convert the measured spin-down time constant b=J/τ
-- With this command:
-```
-./apps/spin_decay.py /dev/cu.usbmodem181813701 --J 0.00309
-```
+- With this command: `./apps/spin_decay.py /dev/cu.usbmodem181813701 --J 0.00309`
 
-**Result:** 
+**Result:**   
 <img src="PICS/graph1.png" alt="Plot result" width="600"/>
 
 From the plot text:
