@@ -13,7 +13,6 @@
 - Generate data/GL80/GL80_parts.json
   - describe values that are used in this json
   - (stl files, origin, axis of rotation)  
-  - 
 
 ## Robot design tips
 - In some cases the motor is mounted on the bot
@@ -25,7 +24,6 @@
   - the IMU should be placed away from the axis of rotation
   - vibration isolation is a huge issue [see here](../teensy40/vibration_testing/README.md) and [here](..//teensy40/mpu6050_spec.md) 
   - 
-  
 
 ## General workflow
 
@@ -54,9 +52,7 @@ View results:
 
 ## Motor / flywheel inertia calculation 
 
-One part of modeling is calculating the damping coefficient of the motor. 
-
-b_Nm_s_per_rad is the rotational viscous damping coefficient. It models torque loss proportional to angular velocity: `𝜏_loss = 𝑏𝜔`
+One part of modeling is calculating the damping coefficient of the motor `b_Nm_s_per_rad`, the rotational viscous damping coefficient. It models torque loss proportional to angular velocity: `𝜏_loss = 𝑏𝜔`
 
 It is needed to:
 - Correctly capture energy dissipation in the motor + drivetrain
@@ -66,7 +62,7 @@ It is needed to:
 
 Set up value:
 - Load ../teensy40/can_posvel_on to the teensy
-- This is the rig I used: [LINK](rig1.png)
+- This is the rig I used: [LINK](PICS/rig1.png)
 - Spun with a cordless drill
 - Flywheel treated as a solid flat disk
 - Phase wires on motor were not connected to ESC
@@ -85,21 +81,20 @@ Substitute in mass:
 ```
 
 **Result:** 
-<img src="graph1.png" alt="Plot result" width="600"/>
+<img src="PICS/graph1.png" alt="Plot result" width="600"/>
 
 From the plot text:
+- τ = 2.246 s (since 𝑏/𝐽 = 0.4463)
+- R² = 0.932 → solid fit for real hardware
+- J = 0.00309 kg·m² (flywheel)
 
-τ = 2.246 s (since 𝑏/𝐽 = 0.4463)
-R² = 0.932 → solid fit for real hardware
-J = 0.00309 kg·m² (flywheel)
+`b_Nm_s_per_rad` = b=τ / J​ = 0.001379 N 
 
-"b_Nm_s_per_rad" = b=τ / J​ = 0.001379 N 
-
-ChatG says is exactly the right order of magnitude for:
+ChatG says this is exactly the right order of magnitude for:
 - A 300 g BLDC
 - Decent bearings
-- Open-circuit (no electrical braking)
 - Moderate windage
+- Open-circuit (not connected to ESC)
 
 ## Review of TWR data
 
@@ -226,7 +221,7 @@ $ ./plot_TWR_response.py LQR_bot_data.json
 
 Check system dynamics and actuator demand by giving it some negative torque at then plot a smooth exponential decay toward zero as the robot rebalances.
 
-<img src="Figure_1.png" alt="Plot result" width="600"/>
+<img src="PICS/Figure_1.png" alt="Plot result" width="600"/>
 
 This is validation that the gains **_for the model of the robot_** are probably okay. 
 
