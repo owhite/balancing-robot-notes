@@ -1,0 +1,40 @@
+	"battery.stl": {
+	    "mass": 235,
+	    "CoM": 166.67
+	},
+	"battery_clamp.stl": {
+	    "mass": 8,
+	    "CoM": 163
+	},
+	"battery_connect.stl": {
+	    "mass": 43,
+	    "CoM": 141
+	},
+	"brain_board.stl": {
+	    "mass": 53,
+	    "CoM": 190
+	},
+	"frame.stl": {
+	    "mass": 105,
+	    "CoM": 140
+	},
+	"pcb_encoder_mounts.stl": {
+	    "mass": 118,
+	    "CoM": 62
+	},
+	"switch.stl": {
+	    "mass": 21,
+	    "CoM": 186
+	},
+	"stators.stl": {
+	    "mass": 384,
+	    "CoM": 52
+	},
+	"rotors.stl": {
+	    "mass": 220,
+	    "CoM": 52
+	},
+	"wheels.stl": {
+	    "mass": 106,
+	    "CoM": 52
+	}

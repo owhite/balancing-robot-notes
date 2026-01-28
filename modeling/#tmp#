@@ -1,0 +1,21 @@
+What I know is that in general 
+
+https://www.ga4gh.org/product/data-repository-service-drs/
+
+
+I'm designing a two-wheeled robot that will balance using LQR control theory.
+
+You are going to help with the modeling process. I will be showing you some input files, as well as python code that calculates the gains.  Before we begin, I'm going to give you some backround.
+
+One part of modeling is calculating the damping coefficient of the motor b_Nm_s_per_rad, the rotational viscous damping coefficient. It models torque loss proportional to angular velocity: 𝜏_loss = 𝑏𝜔
+
+I created a physical rig that involved a flywheel attached to a motor. The flywheel lies flat, and I spun the flywheel to determine b_Nm_s_per_rad. The result was that I first calculated J, where 𝐽 = 1/2 ⋅ M ⋅ R².
+
+The value for J ended up being 0.00309 kg ⋅ m²
+
+Therefore: b_Nm_s_per_rad = b=τ / J​ = 0.001379 N
+
+Please confirm that you follow me so far. 
+ 
+
+

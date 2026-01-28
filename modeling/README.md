@@ -14,6 +14,8 @@
   - (stl files, origin, axis of rotation)  
 
 ## Robot design tips
+(should break this out into a separate document)
+
 - In some cases the motor is mounted on the bot
 - A portion of the motor is serving as the wheels
 - Another portion is stationary
@@ -31,13 +33,14 @@ Note:
 $ ./spin_decay.py /dev/cu.usbmodem181813701 --J 0.00309
    ↓
    └── compute damping coefficient (b_Nm_s_per_rad)
+   ↓
 
 $ ./generate_TWR_data.py -i LQR_bot_metadata.json -r robot_params.json
    ↓
    ├── computes mass, CoM, inertia
-   └── writes JSON LQR_bot_LQR_data.json
+   └── writes JSON LQR_bot_data.json
    ↓
-$ ./verify_TWR_data.py LQR_bot_LQR_data.json
+$ ./verify_TWR_data.py LQR_bot_data.json
    ↓
    └── sanity checks lots of values
    ↓
@@ -84,7 +87,10 @@ From the plot text:
 - J = 0.00309 kg·m² (flywheel)
 
 Therefore:  
-`b_Nm_s_per_rad` = b=τ / J​ = 0.001379 N 
+
+𝑏 =  𝐽 / 𝜏_time = 0.00309/ 2.246 = =0.00138 N⋅m⋅s/rad
+
+The identified viscous damping coefficient represents the linearized low-speed loss of the motor–flywheel system under open-circuit conditions. Quadratic (aerodynamic) losses are present but intentionally excluded for LQR linear modeling.
 
 ChatG says this is exactly the right order of magnitude for:
 - A 300 g BLDC
@@ -92,16 +98,19 @@ ChatG says this is exactly the right order of magnitude for:
 - Moderate windage
 - Open-circuit (not connected to ESC)
 
+
 ## Review of TWR data
 
 ```plaintext  
-{
-  "params": {
-    "b_Nm_s_per_rad": 0.09015231367088877,
-    "friction_term": 0.05,
-    "wheel_radius": 40
-  }
-}
+    "params": {
+	"b_Nm_s_per_rad": 0.001379,
+	"friction_term": 0.05,
+	"wheel_radius": 52.78,
+	"axle_origin": [0.0, 0.0, 52.78],
+	"axle_vector": [0.0, 1.0, 0.0],
+	"input_path": "/Users/owhite/MESC_brain_board/modeling/data/GL80",
+	"output_file_name": "GL80_LQR_params.json"
+    }
 ```
 
 These are useful prompts for ChatG:
@@ -172,7 +181,7 @@ eig_disc = [
 - If you increased the Q weight on the position state, those slow eigenvalues would move further left (faster correction, less drift).
 
 ```
-$ ./verify_TWR_data.py LQR_bot_LQR_data.json
+$ ./verify_TWR_data.py LQR_bot_data.json
 ```
 
 |📏 Dimensions           |              |
