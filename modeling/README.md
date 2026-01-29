@@ -9,10 +9,18 @@ Model correctness is verified through automated checks including controllability
 ## Steps to model validation
 - Design your model in CAD 
 - Export each stl part individually
+- Consistency:
+  - the global coordinate system for all STLs should be the same
+  - the scripts assume the bot is sitting on the ground plane
+  - units for STL parts are grams and millimeters
 - Carefully weigh each part and record
 - Generate data/GL80/GL80_parts.json
   - describe values that are used in this json [like this](data/GL80/GL80_params.json)
   - record other values (stl files, origin, axis of rotation)  
+
+My current bot in CAD:
+
+[LINK](PICS/bot_CAD.png)
 
 ## Robot design tips
 (future plan: break this out into a separate document)
@@ -50,6 +58,16 @@ View results:
 **NOTE:** I strongly recommend that you review each of the steps with ChatGPT. Show it the code and describe what you are doing, chat can play a role of lab partner and explain the purpose of each step. 
 
 
+These are useful prompts for ChatG:
+- What is your interpretation of these eigen values?
+- Tell me about how total damping was calculated
+- How did you arrive at the conclusion that the model and LQR data consistent and stable?
+- Lets reality check my COM CoM 
+- Lets reality check Moment of inertia
+- How do all of my results compare to other 1.5kg sized balancing bots?
+- What do you mean by "Q/R tradeoff"? 
+
+
 ## Motor / flywheel inertia calculation 
 
 One part of modeling is calculating the damping coefficient of the motor `b_Nm_s_per_rad`, the rotational viscous damping coefficient. It models torque loss proportional to angular velocity: `𝜏_loss = 𝑏𝜔`
@@ -75,7 +93,7 @@ Set up value:
 Substitute in mass:
 - 𝐽 = 1/2 ⋅ 0.429 (0.12)² ≈ 0.00309 kg ⋅ m²
 - This J was used to convert the measured spin-down time constant b=J/τ
-- With this command: `./apps/spin_decay.py /dev/cu.usbmodem181813701 --J 0.00309`
+- Run this command: `$ ./apps/spin_decay.py /dev/cu.usbmodem181813701 --J 0.00309`
 
 **Result:**   
 <img src="PICS/graph1.png" alt="Plot result" width="600"/>
@@ -125,14 +143,6 @@ Review all these values
 | com_body_mm   | mm       | ideal for stable LQR tuning          |
 | m_total       | kg       | consistent with geometry and inertia |
 
-
-These are useful prompts for ChatG:
-- What is your interpretation of these eigen values?
-- Tell me about how total damping was calculated
-- How did you arrive at the conclusion that the model and LQR data consistent and stable?
-- Lets reality check my COM CoM 
-- Lets reality check Moment of inertia
-- How do all of my results compare to other 1.5kg sized balancing bots
 
 **1. Continuous-time eigenvalues**
 ```
