@@ -20,7 +20,7 @@ Model correctness is verified through automated checks including controllability
 
 My current bot in CAD:
 
-[LINK](PICS/bot_CAD.png)
+<img src="PICS/bot_CAD.png" alt="CAD pic of balance bot" width="600"/>
 
 ## Robot design tips
 (future plan: break this out into a separate document)
@@ -234,7 +234,7 @@ Run: ```$ ./apps/verify_LQR_data.py data/GL80/GL80_metadata.json ```
 
 Results:
 
-<img src="PICS/verification_results1.png" alt="Plot result" width="600"/>
+<img src="PICS/verification_results1.png" alt="Verification result" width="600"/>
 
 Make a screen shot of your output, show it to brother G, and ask for an interpretation of the data it sees
 
