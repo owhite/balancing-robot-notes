@@ -27,8 +27,6 @@ Model correctness is verified through automated checks including controllability
 
 ## General workflow
 
-Note: 
-
 ```plaintext
 $ ./spin_decay.py /dev/cu.usbmodem181813701 --J 0.00309
    ↓
@@ -48,6 +46,9 @@ View results:
    ↓
    └── ./plot_TWR_response.py LQR_bot_data.json 
 ```
+
+**NOTE:** I strongly recommend that you review each of the steps with ChatGPT. Show it the code and describe what you are doing, chat can play a role of lab partner and explain the purpose of each step. 
+
 
 ## Motor / flywheel inertia calculation 
 
