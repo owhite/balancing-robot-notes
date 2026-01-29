@@ -100,7 +100,7 @@ ChatG says this is exactly the right order of magnitude for:
 
 ## Review of TWR data
 
-Running ```./apps/generate_LQR_data.py -i data/GL80/GL80_params.json ```
+Run: ```./apps/generate_LQR_data.py -i data/GL80/GL80_params.json ```
 
 The program reads the STL assembly and per-part masses to compute the robot’s total mass, body and total centers of mass, and body moment of inertia, then builds the linearized continuous and discrete state-space models of the balancing robot about the wheel axle. It then computes the continuous and discrete LQR gains and reports the closed-loop eigenvalues to verify stability and dynamic behavior.
 
@@ -220,10 +220,7 @@ So, physically:
 
 ----
 
-Now its time to run this:
-```
-$ ./apps/verify_LQR_data.py data/GL80/GL80_metadata.json 
-```
+Run: ```$ ./apps/verify_LQR_data.py data/GL80/GL80_metadata.json ```
 
 Results:
 
@@ -233,9 +230,7 @@ Make a screen shot of your output, show it to brother G, and ask for an interpre
 
 ----
 
-```
-$ ./apps/plot_TWR_response.py data/GL80/GL80_metadata.json 
-```
+Run: ```$ ./apps/plot_TWR_response.py data/GL80/GL80_metadata.json ```
 
 Check system dynamics and actuator demand by giving it some negative torque at then plot a smooth exponential decay toward zero as the robot rebalances.
 
