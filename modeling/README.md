@@ -244,7 +244,7 @@ Check system dynamics and actuator demand by giving it some negative torque at t
 
 <img src="PICS/plot_closed_loop_response.png" alt="Plot result" width="600"/>
 
-This is validation that the gains **_for the model of the robot_** are probably okay. 
+Comments:
 
 - Units (e.g., mm → m, g → kg) and inertia scaling are probably correct.
    - If they were off the smooth decay either be a sluggish drift or a chaotic oscillation.
@@ -272,4 +272,4 @@ If something were wrong, this plot would usually show:
 
 The simulated closed-loop step response shows bounded control effort and monotonic state decay consistent with the computed closed-loop poles and time constants.
 
-On balance (pun intended) this does **NOT** mean the gains when applied physical robot is going to behave as well, but you cant expect your model to work without these values behaving properly. 
+This is validation that the gains **_for the model of the robot_** are probably okay. It's all great but _on balance_ (pun intended) this does **NOT** mean the gains when applied physical robot is going to behave as well, but you cant expect your model to work without these values behaving properly. 
