@@ -9,23 +9,21 @@ Model correctness is verified through automated checks including controllability
 ## Steps to model validation
 - Design your model in CAD 
 - Export each stl part individually
-- At first I tried to do export with scripts in Rhino, but that kind of sucked. 
-- Export is not rate-limiting so just did it by hand
+- Carefully weigh each part and record
 - Generate data/GL80/GL80_parts.json
-  - describe values that are used in this json
-  - (stl files, origin, axis of rotation)  
+  - describe values that are used in this json [like this](data/GL80/GL80_params.json)
+  - record other values (stl files, origin, axis of rotation)  
 
 ## Robot design tips
 (future plan: break this out into a separate document)
 
-- In some cases the motor is mounted on the bot
-- A portion of the motor is serving as the wheels
-- Another portion is stationary
-- For the CoM calculations you'll need to separate those weights
-- Other tips
-  - mount the imu over the axle
-  - the IMU should be placed away from the axis of rotation
-  - vibration isolation is a huge issue [see here](../teensy40/vibration_testing/README.md) and [here](..//teensy40/mpu6050_spec.md)
+- For most cases with a balancer, the motor is mounted on the bot
+  - A portion of the motor is serving as the wheels (rotor)
+  - Another portion is stationary (stator)
+  - For the CoM calculations you'll need to figure out the masses of those parts
+- Mount the imu over the axle
+- The IMU should be placed away from the axis of rotation
+- Vibration isolation is a huge issue [see here](../teensy40/vibration_testing/README.md) and [here](..//teensy40/mpu6050_spec.md)
 
 ## General workflow
 
