@@ -225,7 +225,7 @@ So, physically:
 
 Now its time to run this:
 ```
-$ $ ./apps/verify_LQR_data.py data/GL80/GL80_metadata.json 
+$ ./apps/verify_LQR_data.py data/GL80/GL80_metadata.json 
 ```
 
 Results:
