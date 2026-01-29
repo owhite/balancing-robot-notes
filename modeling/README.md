@@ -9,13 +9,13 @@ Model correctness is verified through automated checks including controllability
 ## Steps to model validation
 - Design your model in CAD 
 - Export each stl part individually
-- Consistency:
-  - the global coordinate system for all STLs should be the same
-  - the scripts assume the bot is sitting on the ground plane
-  - units for STL parts are grams and millimeters
 - Carefully weigh each part and record
 - Generate data/GL80/GL80_parts.json
   - describe values that are used in this json [like this](data/GL80/GL80_params.json)
+  - the global coordinate system for all STLs should be the same
+  - the scripts assume the bot is sitting on the ground plane
+  - units for STL parts are grams and millimeters
+  - parts like the wheels get combined into a single STL and weight reflects both wheels
   - record other values (stl files, origin, axis of rotation)  
 
 My current bot in CAD:
@@ -58,7 +58,7 @@ View results:
 **NOTE:** I strongly recommend that you review each of the steps with ChatGPT. Show it the code and describe what you are doing, chat can play a role of lab partner and explain the purpose of each step. 
 
 
-These are useful prompts for ChatG:
+These are useful prompts for ChatG as you work through your data:
 - What is your interpretation of these eigen values?
 - Tell me about how total damping was calculated
 - How did you arrive at the conclusion that the model and LQR data consistent and stable?
