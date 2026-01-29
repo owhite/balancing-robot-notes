@@ -237,7 +237,7 @@ Make a screen shot of your output, show it to brother G, and ask for an interpre
 ----
 
 ```
-$ $ ./apps/plot_TWR_response.py data/GL80/GL80_metadata.json 
+$ ./apps/plot_TWR_response.py data/GL80/GL80_metadata.json 
 ```
 
 Check system dynamics and actuator demand by giving it some negative torque at then plot a smooth exponential decay toward zero as the robot rebalances.
