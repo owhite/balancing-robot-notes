@@ -35,10 +35,10 @@ $ ./spin_decay.py /dev/cu.usbmodem181813701 --J 0.00309
    └── compute damping coefficient (b_Nm_s_per_rad)
    ↓
 
-$ ./generate_TWR_data.py -i LQR_bot_metadata.json -r robot_params.json
+$ ./apps/generate_LQR_data.py -i data/GL80/GL80_params.json 
    ↓
    ├── computes mass, CoM, inertia
-   └── writes JSON LQR_bot_data.json
+   └── writes JSON GL80_metadata.json
    ↓
 $ ./verify_TWR_data.py LQR_bot_data.json
    ↓
@@ -101,6 +101,12 @@ ChatG says this is exactly the right order of magnitude for:
 
 ## Review of TWR data
 
+Running ```./apps/generate_LQR_data.py -i data/GL80/GL80_params.json ```
+
+The program reads the STL assembly and per-part masses to compute the robot’s total mass, body and total centers of mass, and body moment of inertia, then builds the linearized continuous and discrete state-space models of the balancing robot about the wheel axle. It then computes the continuous and discrete LQR gains and reports the closed-loop eigenvalues to verify stability and dynamic behavior.
+
+The program computes the closed-loop eigenvalues of the system using the LQR gains for both the continuous and discretized state-space models. These eigenvalues indicate whether the controller stabilizes the robot and show how fast each dynamic mode decays or oscillates. Continuous eigenvalues must have negative real parts and discrete eigenvalues must lie inside the unit circle for the balance controller to be stable.
+
 ```plaintext  
     "params": {
 	"b_Nm_s_per_rad": 0.001379,
@@ -113,36 +119,57 @@ ChatG says this is exactly the right order of magnitude for:
     }
 ```
 
+Review all these values
+| Parameter          | Units    | Interpretation                       |
+| ------------- | -------- | ------------------------------------ |
+| com_total_mm  | mm       | consistent with 13 cm above ground   |
+| com_body_mm   | mm       | ideal for stable LQR tuning          |
+| m_total       | kg       | consistent with geometry and inertia |
+
+
 These are useful prompts for ChatG:
 - What is your interpretation of these eigen values?
 - Tell me about how total damping was calculated
 - How did you arrive at the conclusion that the model and LQR data consistent and stable?
-- Reality check this value: Moment inertia I_b = 1.1758e-02 kg·m²
-- Reality check my COM CoM (mm) = [-2.46032006e-02 -1.14117663e+01 1.30614191e+02]
+- Lets reality check my COM CoM 
+- Lets reality check Moment of inertia
 - How do all of my results compare to other 1.5kg sized balancing bots
-
-| Parameter          | Value    | Interpretation                       |
-| ------------------ | -------- | ------------------------------------ |
-| COM height (Z)     | 130.6 mm | consistent with 13 cm above ground   |
-| COM above axle     | 90.6 mm  | ideal for stable LQR tuning          |
-| Lateral offset (Y) | −11 mm   | reasonable asymmetry                 |
-| Axial offset (X)   | ~0 mm    | symmetric about midplane             |
-| Derived mass       | 1.4 kg   | consistent with geometry and inertia |
 
 **1. Continuous-time eigenvalues**
 ```
-eig_cont = [
-  -1.1401778985598954,
-  -1.1401778985598954,
-  -0.05262332464223693,
-  -0.053248906264029436
-]
+  "eig_cont": [
+    [
+      -52.967859199698964,
+      0.0
+    ],
+    [
+      -7.067002375469126,
+      0.0
+    ],
+    [
+      -0.45941090750909785,
+      0.44746221761027616
+    ],
+    [
+      -0.45941090750909785,
+      -0.44746221761027616
+    ]
+  ],
 ```
 
 **Interpretation**
 
-- All eigenvalues are real and negative, meaning the closed-loop system is stable (no oscillation, no complex conjugate pairs).
-- There are two fast modes near –1.14 s⁻¹ and two slow modes near –0.053 s⁻¹.
+Verifying the system poles (eigenvalues) confirms that the modeled dynamics and computed controller gains **actually produce a stable closed-loop system with the expected response speeds and damping**. It provides a direct, quantitative check that the LQR design, numerical implementation, and exported model data are internally consistent before deploying the controller to hardware.
+
+ChatG is REALLY good at interpretting the eigen values. I have developed gains for two bots and they were different in behavior, but it has useful things to say about both sets. In this current case:
+
+- The eigenvalues include a complex conjugate pair (nonzero imaginary parts), which means the closed-loop system is stable but underdamped — it will exhibit decaying oscillatory modes rather than purely monotonic decay. Stability requires negative real parts (continuous) or magnitudes < 1 (discrete), not that all eigenvalues be purely real.
+- For a balancing robot with LQR, having a complex conjugate pole pair just means one mode is underdamped — you’ll get a small, decaying oscillatory component in the response rather than purely exponential (non-oscillatory) decay. 
+- What is important is:
+  - continuous poles have negative real part, and
+  - discrete poles have magnitude < 1, and these do. 
+
+
 
 |Mode         | Eigenvalue Time constant τ = –1/λ  | Interpretation
 | ----------- | ---------------------------------- | ------------------------------------ |
@@ -157,82 +184,69 @@ So, physically:
 
 **2. Discrete-time eigenvalues**
 ```
-eig_disc = [
-  0.9977201969697364,
-  0.9977201969697364,
-  0.9998947593913394,
-  0.9998935079390716
-]
+  "eig_disc": [
+    [
+      0.8995269476247606,
+      0.0
+    ],
+    [
+      0.9859653460432849,
+      0.0
+    ],
+    [
+      0.9990812001385199,
+      0.0008941024634992121
+    ],
+    [
+      0.9990812001385199,
+      -0.0008941024634992121
+    ]
+  ],
 ```
 
 **Interpretation**
+
 - These correspond to a discrete-time system at 500 Hz (Ts = 0.002 s).
 - All values are less than 1, so the system is discretely stable.
-- You can convert them to approximate continuous decay rates and if you do that:
+- 0.8995 → fast decay, about 19 ms time constant (very quickly dies out).
+- 0.9860 → slower decay, about 0.14 s time constant.
+- The last two form a complex conjugate pair, so that mode is oscillatory but decaying 
 
 |eig     | λ_cont (approx) | τ = –1/λ
 | ------ | --------------- | --------
-|0.99772 | –1.14 s⁻¹       | 0.88 s
-|0.99989 | –0.053 s⁻¹      | 19 s
-
-- The LQR successfully stabilizes your system: all modes decay, none oscillate.
-- Two modes decay relatively quickly → you’ll see the body angle settle in ~1 s.
-- Two modes decay very slowly → you’ll notice the bot can still drift forward/backward slowly over tens of seconds if you don’t include position feedback or integral correction.
-- If you increased the Q weight on the position state, those slow eigenvalues would move further left (faster correction, less drift).
-
-```
-$ ./verify_TWR_data.py LQR_bot_data.json
-```
-
-|📏 Dimensions           |              |
-| ---------------------- | ------------ |
-| Body mass (kg):        | 0.6000       |
-| Wheel mass (kg):       | 0.7600       |
-| Inertia (kg·m²):       | 6.217621e+02 |
-| Lever arm l (m):       | 0.0906       |
-| Wheel radius r (m):    | 0.0400       |
-| Damping b (N·m·s/rad): | 0.1402       |
-|  Gravity (m/s²):       | 9.810        |
-
-🧮 **Controllability rank: 4/4**  
-  → System is fully controllable.  
-
-⚙  **Observability rank:   4/4**  
-  → System is fully observable (full-state feedback assumed).  
-
-⚙️  **Continuous-time dynamics:**  
-  Open-loop eigenvalues: `[ 0. -0.10305  0.04398 -0.04421]`  
-  Closed-loop eigenvalues: `[-1.14018+1.01253j -1.14018-1.01253j -0.05262+0.j -0.05325+0.j]`   
-  → Closed-loop system is stable.
-
-⚙️  **Discrete-time dynamics (Ts = 0.002000 s):**  
-  Open-loop eigenvalues: `[1. 0.999794 1.000088 0.999912]`  
-  Closed-loop eigenvalues: `[0.99772 +0.00202j 0.99772 -0.00202j 0.999895+0.j 0.999894+0.j]`  
-  → Discrete-time closed-loop is stable.  
-
-⏱️  **Characteristic time constants (s)**: `[0.877 0.877 18.78 19.003]`  
-Fast modes: ~0.88 s, Slow modes: ~18.9 s  
-  → Lever arm l = 0.0906 m appears physically reasonable.  
-
-✅ **Verification summary:**  
- → Model and LQR data consistent and stable.  
+| 0.89953 | –52.97 s⁻¹ | 0.0189 s |
+| 0.98597 | –7.07 s⁻¹ | 0.142 s |
+| 0.99908 ± j… | –0.459 s⁻¹ | 2.18 s |
 
 
 ----
 
+now its time to run this:
 ```
-$ ./plot_TWR_response.py LQR_bot_data.json 
+$ $ ./apps/verify_LQR_data.py data/GL80/GL80_metadata.json 
+```
+
+Results:
+
+<img src="PICS/verification_results.png" alt="Plot result" width="600"/>
+
+Make a screen shot of your output, show it to brother G, and ask for an interpretation of the data it sees
+
+----
+
+```
+$ $ ./apps/plot_TWR_response.py data/GL80/GL80_metadata.json 
 ```
 
 Check system dynamics and actuator demand by giving it some negative torque at then plot a smooth exponential decay toward zero as the robot rebalances.
 
-<img src="PICS/Figure_1.png" alt="Plot result" width="600"/>
+<img src="PICS/plot_closed_loop_response.png" alt="Plot result" width="600"/>
 
 This is validation that the gains **_for the model of the robot_** are probably okay. 
 
 - Units (e.g., mm → m, g → kg) and inertia scaling are probably correct.
-- (If they were off the smooth decay either be a sluggish drift or a chaotic oscillation.)
+   - If they were off the smooth decay either be a sluggish drift or a chaotic oscillation.
 - 𝑄 and  𝑅 weights are balanced to keep torque effort reasonable, and not over-penalize wheel displacement.
-- Mechanical and electrical damping seems ok
+- Mechanical and electrical damping are promising
 
-This does **NOT** mean the gains when applied physical robot is going to behave as well. 
+This does **NOT** mean the gains when applied physical robot is going to behave as well, but you cant expect your model to work without these values behaving properly. 
