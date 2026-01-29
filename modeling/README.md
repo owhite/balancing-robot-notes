@@ -223,14 +223,14 @@ So, physically:
 
 ----
 
-now its time to run this:
+Now its time to run this:
 ```
 $ $ ./apps/verify_LQR_data.py data/GL80/GL80_metadata.json 
 ```
 
 Results:
 
-<img src="PICS/verification_results.png" alt="Plot result" width="600"/>
+<img src="PICS/verification_results1.png" alt="Plot result" width="600"/>
 
 Make a screen shot of your output, show it to brother G, and ask for an interpretation of the data it sees
 
@@ -265,10 +265,10 @@ That implies:
 - Reasonable Q/R tradeoff
 
 If something were wrong, this plot would usually show:
-- repeated torque sign flips
-- growing amplitude
-- saturation-scale commands
-- slow nonzero bias
+- Repeated torque sign flips
+- Growing amplitude
+- Saturation-scale commands
+- Slow nonzero bias
 
 The simulated closed-loop step response shows bounded control effort and monotonic state decay consistent with the computed closed-loop poles and time constants.
 
