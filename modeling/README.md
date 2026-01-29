@@ -4,7 +4,11 @@
 
 **Develop a final workflow for determining the gains to run a two wheel robot (TWR)**
 
-## Steps
+This project includes a complete, reproducible workflow for generating and validating the balancing robot model and LQR controller gains. Physical parameters are derived from CAD STL geometry and measured part masses, then automatically converted to SI units and used to compute CoM, inertia, and the linearized state-space model.
+
+Model correctness is verified through automated checks including controllability/observability rank, continuous and discrete closed-loop pole analysis, time-constant estimation, and time-domain closed-loop simulation with actuator effort plots. This validation pipeline ensures the controller gains are consistent with the modeled physics before deployment to hardware.
+
+## Steps to model validation
 - Design your model in CAD 
 - Export each stl part individually
 - At first I tried to do export with scripts in Rhino, but that kind of sucked. 
@@ -14,7 +18,7 @@
   - (stl files, origin, axis of rotation)  
 
 ## Robot design tips
-(should break this out into a separate document)
+(future plan: break this out into a separate document)
 
 - In some cases the motor is mounted on the bot
 - A portion of the motor is serving as the wheels
@@ -46,9 +50,7 @@ $ ./verify_TWR_data.py LQR_bot_data.json
    ↓
 View results: 
    ↓
-   ├── ./plot_TWR_response.py LQR_bot_data.json 
-   └── ./graph_LQR_data.py     pendulum_LQR_data.json 
-   └── ./graph_angle_torque.py pendulum_LQR_data.json 
+   └── ./plot_TWR_response.py LQR_bot_data.json 
 ```
 
 ## Motor / flywheel inertia calculation 
@@ -249,4 +251,25 @@ This is validation that the gains **_for the model of the robot_** are probably 
 - 𝑄 and  𝑅 weights are balanced to keep torque effort reasonable, and not over-penalize wheel displacement.
 - Mechanical and electrical damping are promising
 
-This does **NOT** mean the gains when applied physical robot is going to behave as well, but you cant expect your model to work without these values behaving properly. 
+The bottom plot shows
+- Large initial corrective torque
+- Rapid decay toward ~0
+- No chatter
+- No sustained bias
+- No oscillatory control effort
+
+That implies:
+- No hidden unstable mode
+- No sign error in B or K
+- No unit blow-up in inertia or lever arm
+- Reasonable Q/R tradeoff
+
+If something were wrong, this plot would usually show:
+- repeated torque sign flips
+- growing amplitude
+- saturation-scale commands
+- slow nonzero bias
+
+The simulated closed-loop step response shows bounded control effort and monotonic state decay consistent with the computed closed-loop poles and time constants.
+
+On balance (pun intended) this does **NOT** mean the gains when applied physical robot is going to behave as well, but you cant expect your model to work without these values behaving properly. 
