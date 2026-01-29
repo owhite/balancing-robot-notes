@@ -20,7 +20,7 @@ Model correctness is verified through automated checks including controllability
 
 My current bot in CAD:
 
-<img src="PICS/bot_CAD.png" alt="CAD pic of balance bot" width="600"/>
+<img src="PICS/bot_CAD.png" alt="CAD pic of balance bot" width="300"/>
 
 ## Robot design tips
 (future plan: break this out into a separate document)
