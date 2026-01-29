@@ -1,10 +1,8 @@
 # Pendulum State-space Model Generation and Validation
 
-## GOAL:
+## GOAL: Develop a final workflow for determining the gains to run a two wheel robot (TWR)
 
-**Develop a final workflow for determining the gains to run a two wheel robot (TWR)**
-
-This project includes a complete, reproducible workflow for generating and validating the balancing robot model and LQR controller gains. Physical parameters are derived from CAD STL geometry and measured part masses, then automatically converted to SI units and used to compute CoM, inertia, and the linearized state-space model.
+The intention here is to create a reproducible workflow for generating and validating the balancing robot model and LQR controller gains. Physical parameters are derived from CAD STL geometry and measured part masses, then automatically converted to SI units and used to compute CoM, inertia, and the linearized state-space model.
 
 Model correctness is verified through automated checks including controllability/observability rank, continuous and discrete closed-loop pole analysis, time-constant estimation, and time-domain closed-loop simulation with actuator effort plots. This validation pipeline ensures the controller gains are consistent with the modeled physics before deployment to hardware.
 
