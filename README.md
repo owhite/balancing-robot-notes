@@ -75,7 +75,7 @@ Why? Well:
 
 ## The really great news is there is a new source of help. 
 
-I want to be transparent about this: building this robot wasn’t just me writing code. I've written code for 20 plus years, but in this case I worked through the entire project with ChatGPT as a kind of engineering partner. ChatG helps with asking questions, testing ideas, refining approaches, debugging weird behavior, and iterating the design over and over.
+I want to be transparent about this: building a robot is not about writing code. I've written code for 20 plus years, in my case I worked through the entire project with ChatGPT as a kind of engineering partner. ChatG helps with asking questions, testing ideas, refining approaches, debugging weird behavior, and iterating the design over and over.
 
 A balancing robot is a complex closed-loop control problem. As far as I know I never would have been able to use Google to address how robots behaves. ChatGPT creates the ability to explore those problems conversationally:
 
