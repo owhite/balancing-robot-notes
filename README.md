@@ -48,7 +48,7 @@ These notes are intended to make the development and validation process transpar
 
 ## Let's be real
 
-You may not want to hear this. If you came here for the code to make a balancing robot, it is here, but it probably wont help. 
+You probably will not want to hear this. If you came here for the code to make a balancing robot, it is here, but it probably wont help. 
 
 You might assume building a balancing robot is mostly a matter of assembling parts and flashing someone else’s code onto it. I used to think that too — until I finally worked out how to create on one. Balancing robots are not just bolted together -- they are tuned and integrated. Everything about them depends on tight interactions between hardware, sensors, motors, and feedback loops, and those interactions are different for every single robot.
 
@@ -91,3 +91,5 @@ The project was far less like copying code from the internet and more like havin
 
 So if you see this robot standing and balancing in a video, know that behind the scenes was not just hardware and code — it was hundreds of micro-conversations, experiments, adjustments, and iterations. ChatGPT was the scaffolding that helped me structure that process.
 
+## ACKNOWLEDGEMENTS
+This project would be completely impossible without the help, support and guidance of David Molony, developer of [MESC firmware](https://github.com/davidmolony/MESC_Firmware.git). Use of the MESC firmware is described throughout this repo. 
