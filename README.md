@@ -22,6 +22,7 @@ A repo of engineering lab notes, validated workflows and implementation details 
 * Firmware design choices that keep the balancing control loop deterministic [[LINK](DOCS/determinism_design.md)]
 * Measuring phase resistance, d-axis, and q-axis inductance of a BLDC Motor [[LINK](DOCS/BLDC_inductance_measurement.md)]
 * Prompt ChatGPT so it is less of a exhuberant cheerleader and more of a skeptical lab partner: [[LINK](DOCS/chatGPT_tips.md)]
+* Development of the robot control board [[LINK](brainboardV1.2/README.md)]
 
 ## Not totally coherent discussions:
 * [LQR](DOCS/learn_LQR.md). 
