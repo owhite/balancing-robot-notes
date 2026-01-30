@@ -62,14 +62,16 @@ A balancing robot is a dynamic control system, not a static device. It’s const
 
 If you change any of these, even slightly, the controller behaves differently. That’s why tuning is so time-consuming: you’re adjusting a control law to match the physics and imperfections of your specific robot.
 
-You are welcome to take my code and run it on your bot. But remember:
-- It will not balance your robot without a lot of tuning.
+You are welcome to take my code and run it on your bot. But unfortunately just like musical instruments or high-performance cars, balancing robots need to be customized, adjusted, and dialed in until the system “feels right.” The code is just the beginning; the tuning is the craft.
+
+Why?:
+- Your robot will not balance without a lot of tuning.
 - What's most important to use this project as a prompt for making your own system
 - Tuning is the real work — not a flaw, but part of the fun
 - What really makes a robot stand is eliminating all the problems like jitter, timing issues, CAN communications, and modeling
 - The code, and any intellectual ideas found here should remain in the public domain
 
-Just like musical instruments or high-performance cars, balancing robots need to be customized, adjusted, and dialed in until the system “feels right.” The code is just the beginning; the tuning is the craft.
+**Finally, dearest reader***... I care about you, youre adorable, but quite unfortunately one of the ESCs that I use is closed source. Nothing would delight me more to make it open and I will try. Also not that for a while, I was using the Flipsky Mini FSESC6.7 pro 70A but I got tired of blowing them up because of cheap parts. 
 
 ## The really great news is there is a new source of help. 
 
