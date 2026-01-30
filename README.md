@@ -48,7 +48,7 @@ These notes are intended to make the development and validation process transpar
 
 ## Let's be real
 
-You probably will not want to hear this. If you came here for the code to make a balancing robot, it is here, but it probably wont help. 
+**You probably will not want to hear this.** If you came here for the code to make a balancing robot, it is here, but it probably wont help. 
 
 You might assume building a balancing robot is mostly a matter of assembling parts and flashing someone else’s code onto it. I used to think that too — until I finally worked out how to create on one. Balancing robots are not just bolted together -- they are tuned and integrated. Everything about them depends on tight interactions between hardware, sensors, motors, and feedback loops, and those interactions are different for every single robot.
 
